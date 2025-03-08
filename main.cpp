@@ -74,7 +74,7 @@ int main() {
 
     SomeClass *c = getC();
     std::cout << c << "\n";
-    ///delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
+    delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
 
     sf::RenderWindow window;
     ///////////////////////////////////////////////////////////////////////////
