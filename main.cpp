@@ -27,8 +27,8 @@ public:
     void draw(sf::RenderWindow& window) const {
         window.draw(sprite);
     }
-    void setPosition(const sf::Vector2f& position) {
-        sprite.setPosition(position);
+    void setPosition(const sf::Vector2f& position_) {
+        sprite.setPosition(position_);
     }
 
     sf::Vector2f getPosition() const {
