@@ -1,7 +1,8 @@
 #include <iostream>
 #include <chrono>
 //#include <thread>
-
+//#include <cmath>
+#include <set>
 #include <SFML/Graphics.hpp>
 
 class Player {
@@ -34,31 +35,51 @@ public:
     sf::Vector2f getPosition() const {
         return sprite.getPosition();
     }
+    void move(const sf::Vector2f& offset) {
+        position += offset;
+        sprite.setPosition(position);
+    }
 };
 class Game {
 private:
     sf::RenderWindow window;
     Player player;
+    std::set<sf::Keyboard::Scancode> keysPressed;
     void handle_events() {
-            bool shouldExit = false;
-            while(const std::optional event = window.pollEvent()) {
-                if (event->is<sf::Event::Closed>()) {
-                    window.close();
-                }
-                if (event->is<sf::Event::KeyPressed>()) {
-                    const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                    if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-                        shouldExit = true;
-                    }
-                    if(keyPressed->scancode == sf::Keyboard::Scancode::Up) {player.setPosition(player.getPosition() + sf::Vector2f(0, -1));}
-                    if(keyPressed->scancode == sf::Keyboard::Scancode::Down) {player.setPosition(player.getPosition() + sf::Vector2f(0, 1));}
-                    if(keyPressed->scancode == sf::Keyboard::Scancode::Left) {player.setPosition(player.getPosition() + sf::Vector2f(-1, 0));}
-                    if(keyPressed->scancode == sf::Keyboard::Scancode::Right) {player.setPosition(player.getPosition() + sf::Vector2f(1, 0));}
-                }
-            }
-            if(shouldExit) {
+        while (const std::optional<sf::Event> event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
+            if (event->is<sf::Event::KeyPressed>()) {
+                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
+                keysPressed.insert(keyPressed->scancode);
+
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
+                    window.close();
+                }
+            }
+            if (event->is<sf::Event::KeyReleased>()) {
+                const auto* keyReleased = event->getIf<sf::Event::KeyReleased>();
+                keysPressed.erase(keyReleased->scancode);
+            }
+        }
+    }
+
+    void update() {
+        constexpr float speed = 4.0f;
+        sf::Vector2f moveOffset(0, 0);
+
+        if (keysPressed.contains(sf::Keyboard::Scancode::Up)) moveOffset.y -= speed;
+        if (keysPressed.contains(sf::Keyboard::Scancode::Down)) moveOffset.y += speed;
+        if (keysPressed.contains(sf::Keyboard::Scancode::Left)) moveOffset.x -= speed;
+        if (keysPressed.contains(sf::Keyboard::Scancode::Right)) moveOffset.x += speed;
+
+        // Normalize diagonal movement to maintain consistent speed
+        // if (moveOffset.x != 0 && moveOffset.y != 0) {
+        //     moveOffset /= std::sqrt(2.f);
+        // }
+
+        player.move(moveOffset);
     }
     void render() {
         window.clear();
@@ -72,6 +93,7 @@ public:
     void run() {
         while (window.isOpen()) {
             handle_events();
+            update();
             render();
         }
     }
