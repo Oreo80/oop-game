@@ -83,10 +83,6 @@ public:
     [[nodiscard]] float getSpeed() const { return speed; }
     [[nodiscard]] sf::Vector2f getDirection() const { return direction; }
 
-    void set_direction(const sf::Vector2f &direction) {
-        this->direction = direction;
-    }
-
     BulletType(const BulletType &other)= default;
 
     BulletType(BulletType &&other) noexcept
