@@ -1,4 +1,5 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+# Undertale:: Ribbit Edition
+O recreere a sistemului de luptă din Undertale, unde broaștele nu sunt doar spectatori, ci adversari serioși. Evită atacurile, atacă sau găsește o cale pașnică de a rezolva confruntările.
 
 ### Folosiți template-ul corespunzător grupei voastre!
 
