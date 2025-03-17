@@ -1,9 +1,8 @@
 #include <iostream>
 #include <chrono>
-//#include <thread>
-//#include <cmath>
 #include <ostream>
 #include <set>
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 class Player {
@@ -52,12 +51,12 @@ class BulletType {
 private:
     std::vector<sf::Texture> textures;
     float speed;
-    sf::Vector2f direction;
+
 
 public:
     explicit BulletType(const std::vector<std::string>& paths={"../img/spr_flybullet_0.png", "../img/spr_flybullet_1.png"},
-        const float spd=5.0f, const sf::Vector2f dir={ 1.0f, 0.0f })
-        : speed(spd), direction(dir)
+        const float spd=5.0f)
+        : speed(spd)
     {
         for (const auto& path : paths) {
             sf::Texture tex;
@@ -75,20 +74,17 @@ public:
     friend std::ostream & operator<<(std::ostream &os, const BulletType &obj) {
         return os
                << "Speed: " << obj.speed
-               << ", Direction: (" << obj.direction.x << ", " << obj.direction.y
                << ", Textures Loaded: " << obj.textures.size();
     }
 
     [[nodiscard]] const std::vector<sf::Texture>& getTextures() const { return textures; }
     [[nodiscard]] float getSpeed() const { return speed; }
-    [[nodiscard]] sf::Vector2f getDirection() const { return direction; }
 
     BulletType(const BulletType &other)= default;
 
     BulletType(BulletType &&other) noexcept
         : textures(std::move(other.textures)),
-          speed(other.speed),
-          direction(other.direction) {
+          speed(other.speed){
     }
 
     BulletType & operator=(const BulletType &other) {
@@ -96,7 +92,6 @@ public:
             return *this;
         textures = other.textures;
         speed = other.speed;
-        direction = other.direction;
         return *this;
     }
 
@@ -105,7 +100,6 @@ public:
             return *this;
         textures = std::move(other.textures);
         speed = other.speed;
-        direction = other.direction;
         return *this;
     }
 };
@@ -116,6 +110,7 @@ private:
     sf::Clock animationClock;
     BulletType bulletType;
     sf::Vector2f position;
+    sf::Vector2f direction;
     sf::Vector2f velocity;
     sf::Sprite sprite;
 
@@ -124,11 +119,11 @@ private:
         return defaultbullet;
     }
 public:
-    explicit Bullet(const BulletType& type=getDefaultBulletType(), const sf::Vector2f& startPos={100.f,100.f})
-    : bulletType(type),position(startPos), velocity(type.getDirection() * type.getSpeed()), sprite(type.getTextures()[0])
+    explicit Bullet(const BulletType& type=getDefaultBulletType(), const sf::Vector2f& startPos={100.f,100.f}, const sf::Vector2f dir={ 1.0f, 0.0f })
+    : bulletType(type),position(startPos), direction(dir), velocity(direction * type.getSpeed()), sprite(type.getTextures()[0])
     {
         sprite.setPosition(position);
-        std::cout<<"constructor initializare\n";
+        std::cout<<"constructor initializare bullet \n";
     }
 
     Bullet(const Bullet &other) = default;
@@ -208,7 +203,7 @@ private:
     sf::RenderWindow window;
     Player player;
     BulletType flybullet;
-    std::unique_ptr<Bullet> bullet;
+    std::vector<Bullet> bullet;
     std::set<sf::Keyboard::Scancode> keysPressed;
     void handle_events() {
         while (const std::optional<sf::Event> event = window.pollEvent()) {
@@ -240,37 +235,39 @@ private:
         if (keysPressed.contains(sf::Keyboard::Scancode::Right)) moveOffset.x += speed;
 
         player.move(moveOffset);
-        if (bullet) {
-            bullet->update();
-            if (bullet->isOffScreen(window)) {
-                bullet.reset();
-            }
+        for (auto& bulletobj : bullet) {
+            bulletobj.update();
+            // std::cout << "bullet updated" << std::endl;
         }
+        std::erase_if(bullet,
+                      [this](const Bullet& b) {return b.isOffScreen(window); });
     }
     void render() {
         window.clear();
         player.draw(window);
         // std::cout << "Player: " << player << std::endl;
-        if (bullet) {
-            bullet->draw(window);
-            // std::cout << "Bullet: " << *bullet << std::endl;
+        for (const auto& bulletobj : bullet) {
+            bulletobj.draw(window);
+            // std::cout <<"drawed ::::::"<< bulletobj<<std::endl;
         }
         window.display();
     }
 public:
-    Game() : window(sf::VideoMode({640, 480}), "My Window", sf::Style::Titlebar | sf::Style::Close),
-            flybullet({ "../img/spr_flybullet_0.png", "../img/spr_flybullet_1.png" }, 5.0f, { 1.0f, 0.0f }),
-            bullet(std::make_unique<Bullet>(flybullet, sf::Vector2f{100.f, 100.f}))
+    Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close)
     {
         window.setFramerateLimit(30);
+        for (int i=0;i<5;i++) {
+            bullet.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(100+(i+1)*50)}, sf::Vector2f{1.0f, 0.0f}); //fish
+            std::cout<<"bullet "<<i+1<<" created"<<std::endl;
+        }
     }
 
-    bool isBulletActive() const { return bullet != nullptr; }
+    bool isBulletsActive() const { return !bullet.empty();}
 
     friend std::ostream & operator<<(std::ostream &os, const Game &obj) {
         return os
                << "Game Status - Player: " << obj.player
-               << " , Bullet Active: " << (obj.isBulletActive() ? "Yes" : "No");
+               << " , Bullets Active: " << (obj.isBulletsActive() ? "Yes" : "No");
     }
 
     void run() {

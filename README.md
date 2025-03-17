@@ -1,14 +1,6 @@
 # Undertale:: Ribbit Edition
 O recreere a sistemului de luptă din Undertale, unde broaștele nu sunt doar spectatori, ci adversari serioși. Evită atacurile, atacă sau găsește o cale pașnică de a rezolva confruntările.
 
-### Folosiți template-ul corespunzător grupei voastre!
-
-| Laborant  | Link template                                |
-|-----------|----------------------------------------------|
-| Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
-| Marius MC | https://github.com/mcmarius/oop-template     |
-
 ### Important!
 
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
