@@ -4,6 +4,7 @@
 #include <set>
 #include <vector>
 #include <SFML/Graphics.hpp>
+//#include <SFML/Audio.hpp>
 
 class Player {
 private:
@@ -30,6 +31,10 @@ public:
     friend std::ostream & operator<<(std::ostream &os, const Player &obj) {
         return os
                << "Position: (" << obj.position.x << ", " << obj.position.y << ")";
+        // <<" test, position: ("<<obj.getLocalBounds().position.x<<", " << obj.getLocalBounds().position.y<<") "
+        // <<" size: ("<<obj.getLocalBounds().size.x<<" , "<<obj.getLocalBounds().size.y<<") \n"
+        // <<" testGLOBAL, position: ("<<obj.getGlobalBounds().position.x<<", " << obj.getGlobalBounds().position.y<<") "
+        // <<" size: ("<<obj.getGlobalBounds().size.x<<" , "<<obj.getGlobalBounds().size.y<<") ";
     }
 
     void draw(sf::RenderWindow& window) const {
@@ -45,6 +50,12 @@ public:
     void move(const sf::Vector2f& offset) {
         position += offset;
         sprite.setPosition(position);
+    }
+    sf::FloatRect getLocalBounds() const {
+        return sprite.getLocalBounds();
+    }
+    sf::FloatRect getGlobalBounds() const {
+        return sprite.getGlobalBounds();
     }
 };
 class BulletType {
@@ -194,6 +205,15 @@ public:
         return position.x < 0 || position.x > windowWidth ||
                position.y < 0 || position.y > windowHeight;
     }
+    sf::Vector2f getPosition() const {
+        return position;
+    }
+    sf::FloatRect getLocalBounds() const {
+        return sprite.getLocalBounds();
+    }
+    sf::FloatRect getGlobalBounds() const {
+        return sprite.getGlobalBounds();
+    }
 
 };
 
@@ -241,6 +261,10 @@ private:
         }
         std::erase_if(bullet,
                       [this](const Bullet& b) {return b.isOffScreen(window); });
+        std::erase_if(bullet,
+                      [this](const Bullet& b) {
+                          return std::nullopt!=player.getGlobalBounds().findIntersection(b.getGlobalBounds());
+                      }); //collision attempt laterz
     }
     void render() {
         window.clear();
@@ -298,3 +322,5 @@ int main() {
     std::cout << "Programul a terminat execuția\n";
     return 0;
 }
+
+
