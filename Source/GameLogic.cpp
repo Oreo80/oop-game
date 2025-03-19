@@ -1,5 +1,13 @@
 #include "../Headers/GameLogic.h"
 
+void Game::play_mus_battle1() {
+    if (!mus_battle1.openFromFile("./mus/mus_battle1.ogg")) {
+        std::cerr << "Failed to load mus_battle1.ogg file" << std::endl;
+        throw std::runtime_error("Failed to load mus_battle1.ogg file");
+    }
+    mus_battle1.setLooping(true);
+    mus_battle1.play();
+}
 void Game::handle_events() {
     while (const std::optional<sf::Event> event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -71,6 +79,7 @@ std::ostream & operator<<(std::ostream &os, const Game &obj) {
 
 void Game::run() {
     std::cout <<"Running..." << std::endl;
+    play_mus_battle1();
     while (window.isOpen()) {
         handle_events();
         update();
