@@ -2,6 +2,7 @@
 
 #include "Bullet.h"
 #include "Player.h"
+#include "BattleBox.h"
 #include <set>
 #include <SFML/Audio.hpp>
 
@@ -11,6 +12,7 @@ private:
     Player player;
     BulletType flybullet;
     std::vector<Bullet> bullet;
+    BattleBox battlebox;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
     void play_mus_battle1();

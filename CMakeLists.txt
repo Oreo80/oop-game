@@ -67,6 +67,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     Headers/Bullet.h
     Source/GameLogic.cpp
     Headers/GameLogic.h
+        Headers/BattleBox.h
+        Source/BattleBox.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
