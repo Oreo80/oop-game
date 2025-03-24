@@ -15,8 +15,8 @@ private:
     BattleBox battlebox;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
-    void play_mus_battle1();
-    void handle_events();
+    void playMusBattle1();
+    void handleEvents();
     void update();
     void render();
     bool isBulletsActive() const;

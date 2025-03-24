@@ -32,4 +32,6 @@ public:
     sf::Vector2f getPosition() const;
     void move(const sf::Vector2f& offset);
     sf::FloatRect getGlobalBounds() const;
+    sf::Vector2f getOrigin() const;
+    void setOrigin(const sf::Vector2f& origin_);
 };

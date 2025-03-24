@@ -10,6 +10,7 @@ void Player::draw(sf::RenderWindow& window) const{
 }
 
 void Player::setPosition(const sf::Vector2f& position_){
+    position = position_;
     sprite.setPosition(position_);
 }
 
@@ -24,4 +25,10 @@ void Player::move(const sf::Vector2f& offset){
 
 sf::FloatRect Player::getGlobalBounds() const {
     return sprite.getGlobalBounds();
+}
+sf::Vector2f Player::getOrigin() const {
+    return sprite.getOrigin();
+}
+void Player::setOrigin(const sf::Vector2f& origin_) {
+    sprite.setOrigin(origin_);
 }
