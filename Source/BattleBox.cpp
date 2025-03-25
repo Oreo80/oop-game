@@ -48,3 +48,16 @@ float BattleBox::getOutlineThickness() const {
 sf::Vector2f BattleBox::getCenter() const {
     return {box.getPosition().x+box.getSize().x/2, box.getPosition().y+box.getSize().y/2};
 }
+sf::FloatRect BattleBox::getInnerBounds() const {
+    const sf::Vector2f rectPos = box.getPosition();
+    const sf::Vector2f rectSize = box.getSize();
+    const float thickness = box.getOutlineThickness();
+
+    return {{rectPos.x + thickness, rectPos.y + thickness },
+        {rectSize.x - 2 * thickness, rectSize.y - 2 * thickness}};
+}
+void BattleBox::setBottomY(const float fixedBottomY) {
+    const float battleboxHeight = box.getSize().y;
+    float const newBattleboxY = fixedBottomY - battleboxHeight;
+    box.setPosition({box.getPosition().x, newBattleboxY});
+}

@@ -8,6 +8,13 @@ void Game::playMusBattle1() {
     mus_battle1.setLooping(true);
     mus_battle1.play();
 }
+
+void Game::centerPlayer() {
+    player.setOrigin({player.getGlobalBounds().size.x/2.f,player.getGlobalBounds().size.y/2.f});
+    player.setPosition(battlebox.getCenter());
+    player.setOrigin({0,0});
+}
+
 void Game::handleEvents() {
     while (const std::optional<sf::Event> event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -30,7 +37,7 @@ void Game::handleEvents() {
     }
 }
 
-void Game::update() {
+sf::Vector2f Game::calculateMoveOffset() const {
     constexpr float speed = 4.0f;
     sf::Vector2f moveOffset(0, 0);
 
@@ -47,12 +54,11 @@ void Game::update() {
         moveOffset.x += speed;
     }
 
-    const sf::Vector2f rectPos = battlebox.getPosition();
-    const sf::Vector2f rectSize = battlebox.getSize();
-    const float thickness =  battlebox.getOutlineThickness();
+    return moveOffset;
+}
 
-    const sf::FloatRect innerBounds({rectPos.x + thickness, rectPos.y + thickness},
-                              {rectSize.x - 2 * thickness, rectSize.y - 2 * thickness});
+void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
+    const sf::FloatRect innerBounds=battlebox.getInnerBounds();
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
@@ -71,9 +77,9 @@ void Game::update() {
         moveOffset.y = (innerBounds.position.y + innerBounds.size.y) - (player.getPosition().y + playerSize.y) +
                        battlebox.getOutlineThickness() - 1;;
     }
+}
 
-    player.move(moveOffset);
-
+void Game::updateBullets() {
     for (auto& bulletobj : bullet) {
         bulletobj.update();
         // std::cout << "bullet updated" << std::endl;
@@ -83,8 +89,17 @@ void Game::update() {
     std::erase_if(bullet,
                   [this](const Bullet& b) {
                       return std::nullopt!=player.getGlobalBounds().findIntersection(b.getGlobalBounds());
-                  }); //collision attempt laterz
+                  });
 }
+
+void Game::update() {
+    sf::Vector2f moveOffset = calculateMoveOffset();
+    enforceBattleBoxBounds(moveOffset);
+    player.move(moveOffset);
+
+    updateBullets();
+}
+
 void Game::render() {
     window.clear();
     battlebox.draw(window);
@@ -105,21 +120,10 @@ Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | s
                battlebox({242, 150}, {155, 130})
 {
     window.setFramerateLimit(30);
+    battlebox.setBottomY(385.f);
+    centerPlayer();
 
-    constexpr float fixedBottomY=385.f;
-    const float battleboxHeight = battlebox.getSize().y;
-    float const newBattleboxY = fixedBottomY - battleboxHeight;
-    battlebox.setPosition({battlebox.getPosition().x, newBattleboxY});
-    std::cout<<battlebox.getPosition().x<<" "<<battlebox.getPosition().y<<std::endl;
-
-
-    // std::cout<<battlebox.getCenter().x<<" "<<battlebox.getCenter().y<<std::endl;
-
-    // pt plasat in centru maybe make it a seperate function
-    player.setOrigin({player.getGlobalBounds().size.x/2.f,player.getGlobalBounds().size.y/2.f});
-    player.setPosition(battlebox.getCenter());
-    player.setOrigin({0,0});
-
+    // temporary
     for (int i=0;i<5;i++) {
         bullet.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(100 + (i + 1) * 50)},
                             sf::Vector2f{1.0f, 0.0f}); // fish

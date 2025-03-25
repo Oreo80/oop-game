@@ -5,7 +5,7 @@ private:
     sf::RectangleShape box;
     // sf::FloatRect bounds;
 
-    void updateBounds();
+    // void updateBounds();
 public:
     BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size);
     friend std::ostream & operator<<(std::ostream &os, const BattleBox &obj);
@@ -17,5 +17,7 @@ public:
     void setPosition(const sf::Vector2f &pos);
     float getOutlineThickness() const;
     sf::Vector2f getCenter() const;
+    sf::FloatRect getInnerBounds() const;
+    void setBottomY(float fixedBottomY);
 
 };

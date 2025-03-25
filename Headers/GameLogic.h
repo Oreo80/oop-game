@@ -16,7 +16,11 @@ private:
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
     void playMusBattle1();
+    void centerPlayer();
     void handleEvents();
+    sf::Vector2f calculateMoveOffset() const;
+    void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
+    void updateBullets();
     void update();
     void render();
     bool isBulletsActive() const;
