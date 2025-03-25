@@ -1,5 +1,7 @@
 #include "../Headers/GameLogic.h"
 
+#include "../Headers/SplashScreen.h"
+
 void Game::playMusBattle1() {
     if (!mus_battle1.openFromFile("./mus/mus_battle1.ogg")) {
         std::cerr << "Failed to load mus_battle1.ogg file" << std::endl;
@@ -141,11 +143,15 @@ std::ostream & operator<<(std::ostream &os, const Game &obj) {
 
 void Game::run() {
     std::cout <<"Running..." << std::endl;
+
+    const SplashScreen splash;
+    std::cout<<splash<<std::endl;
+    splash.show(window);
+
     playMusBattle1();
     while (window.isOpen()) {
         handleEvents();
         update();
         render();
-
     }
 }
