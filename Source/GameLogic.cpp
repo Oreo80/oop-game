@@ -145,7 +145,6 @@ void Game::run() {
     std::cout <<"Running..." << std::endl;
 
     const SplashScreen splash;
-    std::cout<<splash<<std::endl;
     splash.show(window);
 
     playMusBattle1();
