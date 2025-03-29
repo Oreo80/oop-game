@@ -19,7 +19,6 @@ std::ostream & operator<<(std::ostream &os, const BattleBox &obj) {
 }
 // void BattleBox::resize(const sf::Vector2f& newSize) {
 //     box.setSize(newSize);
-//     updateBounds();
 // }
 void BattleBox::draw(sf::RenderWindow& window) const {
     window.draw(box);
@@ -46,7 +45,7 @@ float BattleBox::getOutlineThickness() const {
 }
 
 sf::Vector2f BattleBox::getCenter() const {
-    return {box.getPosition().x+box.getSize().x/2, box.getPosition().y+box.getSize().y/2};
+    return box.getPosition() + (box.getSize() / 2.f);
 }
 sf::FloatRect BattleBox::getInnerBounds() const {
     const sf::Vector2f rectPos = box.getPosition();
@@ -61,3 +60,16 @@ void BattleBox::setBottomY(const float fixedBottomY) {
     float const newBattleboxY = fixedBottomY - battleboxHeight;
     box.setPosition({box.getPosition().x, newBattleboxY});
 }
+void BattleBox::resizeCentered(const sf::Vector2f &deltaSize) {
+    const sf::Vector2f currentSize = box.getSize();
+    const sf::Vector2f currentPos = box.getPosition();
+    const sf::Vector2f newSize = {currentSize.x + deltaSize.x, currentSize.y + deltaSize.y};
+    const float bottomY = currentPos.y + currentSize.y;
+    float newY = bottomY - newSize.y;
+
+    box.setSize(newSize);
+    box.setPosition({currentPos.x - (deltaSize.x / 2.f), newY});
+}
+
+
+

@@ -19,5 +19,5 @@ public:
     sf::Vector2f getCenter() const;
     sf::FloatRect getInnerBounds() const;
     void setBottomY(float fixedBottomY);
-
+    void resizeCentered(const sf::Vector2f& deltaSize);
 };

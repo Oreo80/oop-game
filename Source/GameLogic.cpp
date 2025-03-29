@@ -26,10 +26,12 @@ void Game::updateView() {
 
     if (windowRatio > targetRatio) {
         const float newWidth = targetRatio * static_cast<float>(winSize.y);
-        view.setViewport(sf::FloatRect({(1.f - newWidth / static_cast<float>(winSize.x)) / 2.f, 0.f}, {newWidth / static_cast<float>(winSize.x), 1.f}));
+        view.setViewport(sf::FloatRect({(1.f - newWidth / static_cast<float>(winSize.x)) / 2.f, 0.f},
+                                       {newWidth / static_cast<float>(winSize.x), 1.f}));
     } else {
         const float newHeight = static_cast<float>(winSize.x) / targetRatio;
-        view.setViewport(sf::FloatRect({0.f, (1.f - newHeight / static_cast<float>(winSize.y)) / 2.f},{ 1.f, newHeight / static_cast<float>(winSize.y)}));
+        view.setViewport(sf::FloatRect({0.f, (1.f - newHeight / static_cast<float>(winSize.y)) / 2.f},
+                                       {1.f, newHeight / static_cast<float>(winSize.y)}));
     }
 
     window.setView(view);
@@ -98,6 +100,10 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
+    if (const sf::FloatRect newPlayerBounds(playerPos, playerSize);
+        std::nullopt == innerBounds.findIntersection(newPlayerBounds)) {
+        return;
+    }
 
     if (playerPos.x < innerBounds.position.x) {
         moveOffset.x = innerBounds.position.x - player.getPosition().x - battlebox.getOutlineThickness() + 1;
@@ -116,25 +122,108 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 }
 
 void Game::updateBullets() {
-    for (auto& bulletobj : bullet) {
+    for (auto& bulletobj : bullets) {
         bulletobj.update();
         // std::cout << "bullet updated" << std::endl;
     }
-    std::erase_if(bullet,
-                  [this](const Bullet& b) {return b.isOffScreen(window); });
-    std::erase_if(bullet,
-                  [this](const Bullet& b) {
-                      return std::nullopt!=player.getGlobalBounds().findIntersection(b.getGlobalBounds());
+    std::erase_if(bullets,
+                  [this](const Bullet& bulletobj) {return bulletobj.isOffScreen(window); });
+    std::erase_if(bullets,
+                  [this](const Bullet& bulletobj) {
+                      return std::nullopt!=player.getGlobalBounds().findIntersection(bulletobj.getGlobalBounds());
                   });
 }
 
 void Game::update() {
+    switch (currentTurn) {
+        case TurnState::PlayerTurn:
+            updateActionSelection();
+            break;
+        case TurnState::EnemyTurn:
+            updateEnemyTurn();
+            break;
+    }
+}
+
+void Game::updateActionSelection() {
+    if (keysPressed.contains(sf::Keyboard::Scancode::Left)) {
+        currentActionIndex = (currentActionIndex - 1 + static_cast<int>(actionButtons.size())) % static_cast<int>(
+                                 actionButtons.size());
+        player.setPosition(actionButtons[currentActionIndex]->getPositionForPlayer());
+        keysPressed.erase(sf::Keyboard::Scancode::Left);
+        updateButtonTextures();
+    }
+    if (keysPressed.contains(sf::Keyboard::Scancode::Right)) {
+        currentActionIndex = (currentActionIndex + 1 + static_cast<int>(actionButtons.size())) % static_cast<int>(
+                                 actionButtons.size());
+        player.setPosition(actionButtons[currentActionIndex]->getPositionForPlayer());
+        keysPressed.erase(sf::Keyboard::Scancode::Right);
+        updateButtonTextures();
+    }
+
+    if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
+        processSelectedAction(currentActionIndex);
+        actionButtons[currentActionIndex]->setTexture(false);
+        enterEnemyTurn();
+    }
+}
+void Game::enterEnemyTurn() {
+    currentTurn = TurnState::EnemyTurn;
+    keysPressed.clear();
+    centerPlayer();
+    enemyTurnClock.restart();
+
+    for (int i=0;i<5;i++) {
+        bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
+                            sf::Vector2f{1.0f, 0.0f}); // fish
+    }
+}
+
+void Game::updateEnemyTurn() {
     sf::Vector2f moveOffset = calculateMoveOffset();
     enforceBattleBoxBounds(moveOffset);
     player.move(moveOffset);
 
     updateBullets();
+
+    if (!isBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
+        bullets.clear();
+        currentTurn = TurnState::PlayerTurn;
+        enterActionSelection();
+    }
 }
+
+void Game::enterActionSelection() {
+    currentActionIndex = 0;
+    player.setPosition(fightButton.getPositionForPlayer());
+    actionButtons[0]->setTexture(true);
+    keysPressed.clear();
+}
+void Game::updateButtonTextures() const {
+    for (size_t i = 0; i < actionButtons.size(); i++) {
+        actionButtons[i]->setTexture(i == static_cast<size_t>(currentActionIndex));
+    }
+}
+
+void Game::processSelectedAction(const int actionIndex) {
+    switch (actionIndex) {
+        case 0: // Fight
+            std::cout << "Fight selected! Player attacks!\n";
+        break;
+        case 1: // Talk
+            std::cout << "Talk selected! Player tries to communicate.\n";
+        break;
+        case 2: // Item
+            std::cout << "Item selected! Open inventory.\n";
+        break;
+        case 3: // Spare
+            std::cout << "Spare selected! Attempting mercy...\n";
+        break;
+        default:
+            std::cerr << "Invalid action index!\n";
+    };
+}
+
 
 void Game::render() {
     window.clear();
@@ -144,13 +233,13 @@ void Game::render() {
     itemButton.draw(window);
     spareButton.draw(window);
     player.draw(window);
-    for (const auto& bulletobj : bullet) {
+    for (const auto& bulletobj : bullets) {
         bulletobj.draw(window);
     }
     window.display();
 }
 
-bool Game::isBulletsActive() const { return !bullet.empty();}
+bool Game::isBulletsActive() const { return !bullets.empty();}
 
 Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close),
                battlebox({242, 150}, {155, 130})
@@ -160,11 +249,11 @@ Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | s
     centerPlayer();
 
     // temporary
-    for (int i=0;i<5;i++) {
-        bullet.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(100 + (i + 1) * 50)},
-                            sf::Vector2f{1.0f, 0.0f}); // fish
-        std::cout<<"bullet "<<i+1<<" created"<<std::endl;
-    }
+    // for (int i=0;i<5;i++) {
+    //     bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
+    //                         sf::Vector2f{1.0f, 0.0f}); // fish
+    // }
+    actionButtons = { &fightButton, &talkButton, &itemButton, &spareButton };
 
 }
 
@@ -190,6 +279,7 @@ void Game::run() {
     instructions.show(window);
 
     playMusBattle1();
+    enterActionSelection();
     while (window.isOpen()) {
         handleEvents();
         update();

@@ -9,7 +9,6 @@ Bullet::Bullet(const BulletType& type, const sf::Vector2f& startPos, const sf::V
 : bulletType(type),position(startPos), direction(dir), velocity(direction * type.getSpeed()), sprite(type.getTextures()[0])
 {
     sprite.setPosition(position);
-    std::cout<<"constructor initializare bullet \n";
 }
 
 Bullet::Bullet(const Bullet &other) = default;
@@ -47,7 +46,7 @@ Bullet & Bullet::operator=(Bullet &&other) noexcept {
     return *this;
 }
 
-Bullet::~Bullet() {std::cout<<"bullet destructor\n";}
+Bullet::~Bullet() = default;
 
 std::ostream & operator<<(std::ostream &os, const Bullet &obj) {
     return os
