@@ -1,5 +1,12 @@
 # Undertale:: Ribbit Edition
-O recreere a sistemului de luptă din Undertale, unde broaștele nu sunt doar spectatori, ci adversari serioși. Evită atacurile, atacă sau găsește o cale pașnică de a rezolva confruntările.
+O recreere a sistemului de luptă din Undertale, 
+realizată folosind C++ și SFML. Proiectul reproduce 
+mecanicile de luptă turn-based ale jocului original, 
+permițând jucătorilor să aleagă între acțiunile clasice—Fight, 
+Act, Item și Mercy—și să navigheze printr-un meniu de acțiuni. 
+Sistemul de luptă include și mecanica specifică bullet hell, 
+unde jucătorii trebuie să evite atacurile inamicilor într-un mod 
+interactiv.
 
 ### Important!
 

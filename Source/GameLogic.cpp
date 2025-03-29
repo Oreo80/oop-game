@@ -172,6 +172,7 @@ void Game::enterEnemyTurn() {
     keysPressed.clear();
     centerPlayer();
     enemyTurnClock.restart();
+    battlebox.resizeCentered({-410,0});
 
     for (int i=0;i<5;i++) {
         bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
@@ -198,6 +199,7 @@ void Game::enterActionSelection() {
     player.setPosition(fightButton.getPositionForPlayer());
     actionButtons[0]->setTexture(true);
     keysPressed.clear();
+    battlebox.resizeCentered({410,0});
 }
 void Game::updateButtonTextures() const {
     for (size_t i = 0; i < actionButtons.size(); i++) {
