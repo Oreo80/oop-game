@@ -6,6 +6,7 @@
 #include <set>
 #include <SFML/Audio.hpp>
 
+
 class Game {
 private:
     sf::RenderWindow window;
@@ -15,6 +16,9 @@ private:
     BattleBox battlebox;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
+    bool isFullscreen=false;
+    void toggleFullscreen();
+    void updateView();
     void playMusBattle1();
     void centerPlayer();
     void handleEvents();

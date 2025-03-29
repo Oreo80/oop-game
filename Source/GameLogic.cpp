@@ -1,6 +1,40 @@
 #include "../Headers/GameLogic.h"
 
 #include "../Headers/SplashScreen.h"
+void Game::toggleFullscreen() {
+    isFullscreen = !isFullscreen;
+
+    if (isFullscreen) {
+        window.create(sf::VideoMode::getDesktopMode(), "Game", sf::State::Fullscreen);
+        window.setFramerateLimit(30);
+    } else {
+        window.create(sf::VideoMode({640, 480}), "Game", sf::State::Windowed);
+        window.setFramerateLimit(30);
+    }
+
+    updateView();
+}
+void Game::updateView() {
+    const sf::Vector2u winSize = window.getSize();
+    sf::Vector2f targetSize(640.f, 480.f);
+
+    const float windowRatio = static_cast<float>(winSize.x) / winSize.y;
+    const float targetRatio = targetSize.x / targetSize.y;
+
+    sf::View view(sf::FloatRect({0, 0}, {targetSize.x, targetSize.y}));
+
+    if (windowRatio > targetRatio) {
+        const float newWidth = targetRatio * winSize.y;
+        view.setViewport(sf::FloatRect({(1.f - newWidth / winSize.x) / 2.f, 0.f}, {newWidth / winSize.x, 1.f}));
+    } else {
+        const float newHeight = winSize.x / targetRatio;
+        view.setViewport(sf::FloatRect({0.f, (1.f - newHeight / winSize.y) / 2.f},{ 1.f, newHeight / winSize.y}));
+    }
+
+    window.setView(view);
+}
+
+
 
 void Game::playMusBattle1() {
     if (!mus_battle1.openFromFile("./mus/mus_battle1.ogg")) {
@@ -29,8 +63,9 @@ void Game::handleEvents() {
             if (keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
                 window.close();
             }
-
-
+            if (keyPressed->scancode == sf::Keyboard::Scancode::F4) {
+                toggleFullscreen();
+            }
         }
         if (event->is<sf::Event::KeyReleased>()) {
             const auto* keyReleased = event->getIf<sf::Event::KeyReleased>();
@@ -146,6 +181,14 @@ void Game::run() {
 
     const SplashScreen splash;
     splash.show(window);
+    const SplashScreen instructions{"./img/black.png"," --- Instruction --- \n\n"
+                                                               "[Z or ENTER] - Confirm\n"
+                                                               "[X or SHIFT] - Cancel\n"
+                                                               "[F4] - Fullscreen\n"
+                                                               "[ESC] - Quit\n"
+                                                               "When HP is 0, you lose.\n\n"
+                                                               "[Press Z or ENTER] to begin game",{170,100}, 30};
+    instructions.show(window);
 
     playMusBattle1();
     while (window.isOpen()) {

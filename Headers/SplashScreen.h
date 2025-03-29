@@ -7,30 +7,31 @@ private:
     sf::Texture splashTexture;
     sf::Sprite splashSprite;
     sf::Font font;
-    sf::Text pressKeyText;
+    sf::Text splashText;
 public:
-    explicit SplashScreen()
+    explicit SplashScreen(const std::string &filePath="./img/splash.png", const std::string &text="[PRESS Z OR ENTER]",
+        const sf::Vector2f positionText = sf::Vector2f(50, 400), const unsigned int fontSize=24)
     : splashTexture([&]() {
             sf::Texture tex;
-            if (!tex.loadFromFile("./img/splash.png")) {
-                std::cerr << "Failed to load splash texture!\n";
-                throw std::runtime_error("Failed to load splash texture");
+            if (!tex.loadFromFile(filePath)) {
+                std::cerr << "Failed to load texture! "<< filePath << std::endl;
+                throw std::runtime_error("Failed to load texture " + filePath);
             }
             return tex;
         }()),
     splashSprite(splashTexture),
     font([&]() {
         sf::Font font_;
-        if (!font_.openFromFile("./fonts/Roboto.ttf")) {
+        if (!font_.openFromFile("./fonts/DeterminationSans.ttf")) {
             std::cerr << "Failed to load font file!\n";
             throw std::runtime_error("Failed to load font file");
         }
         return font_;
     }()),
-    pressKeyText(font, "[PRESS Z OR ENTER]", 24)
+    splashText(font, text, fontSize)
     {
-        pressKeyText.setFillColor(sf::Color::White);
-        pressKeyText.setPosition({50, 400});
+        splashText.setFillColor(sf::Color::White);
+        splashText.setPosition(positionText);
         splashSprite.setPosition({0, 0});
     }
     void show(sf::RenderWindow& window) const;

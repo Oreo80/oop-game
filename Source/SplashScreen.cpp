@@ -22,7 +22,7 @@ void SplashScreen::show(sf::RenderWindow& window) const {
         }
         window.clear();
         window.draw(splashSprite);
-        window.draw(pressKeyText);
+        window.draw(splashText);
         window.display();
     }
 }
@@ -30,6 +30,6 @@ std::ostream & operator<<(std::ostream &os, const SplashScreen &obj) {
 
     return os
                 << "Splash image position: ("<< obj.splashSprite.getPosition().x<<", "<<obj.splashSprite.getPosition().y<<") "
-                << ", Splash screen string loaded: "<<std::string(obj.pressKeyText.getString())
-                << ", Splash text position: ("<<obj.pressKeyText.getPosition().x<<", "<<obj.pressKeyText.getPosition().y<<") ";
+                << ", Splash screen string loaded: "<<std::string(obj.splashText.getString())
+                << ", Splash text position: ("<<obj.splashText.getPosition().x<<", "<<obj.splashText.getPosition().y<<") ";
 }
