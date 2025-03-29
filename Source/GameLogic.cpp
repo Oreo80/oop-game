@@ -14,27 +14,26 @@ void Game::toggleFullscreen() {
 
     updateView();
 }
+
 void Game::updateView() {
     const sf::Vector2u winSize = window.getSize();
     sf::Vector2f targetSize(640.f, 480.f);
 
-    const float windowRatio = static_cast<float>(winSize.x) / winSize.y;
+    const float windowRatio = static_cast<float>(winSize.x) / static_cast<float>(winSize.y);
     const float targetRatio = targetSize.x / targetSize.y;
 
     sf::View view(sf::FloatRect({0, 0}, {targetSize.x, targetSize.y}));
 
     if (windowRatio > targetRatio) {
-        const float newWidth = targetRatio * winSize.y;
-        view.setViewport(sf::FloatRect({(1.f - newWidth / winSize.x) / 2.f, 0.f}, {newWidth / winSize.x, 1.f}));
+        const float newWidth = targetRatio * static_cast<float>(winSize.y);
+        view.setViewport(sf::FloatRect({(1.f - newWidth / static_cast<float>(winSize.x)) / 2.f, 0.f}, {newWidth / static_cast<float>(winSize.x), 1.f}));
     } else {
-        const float newHeight = winSize.x / targetRatio;
-        view.setViewport(sf::FloatRect({0.f, (1.f - newHeight / winSize.y) / 2.f},{ 1.f, newHeight / winSize.y}));
+        const float newHeight = static_cast<float>(winSize.x) / targetRatio;
+        view.setViewport(sf::FloatRect({0.f, (1.f - newHeight / static_cast<float>(winSize.y)) / 2.f},{ 1.f, newHeight / static_cast<float>(winSize.y)}));
     }
 
     window.setView(view);
 }
-
-
 
 void Game::playMusBattle1() {
     if (!mus_battle1.openFromFile("./mus/mus_battle1.ogg")) {
@@ -140,13 +139,13 @@ void Game::update() {
 void Game::render() {
     window.clear();
     battlebox.draw(window);
-    // std::cout << "battlebox coordonates " << battlebox.getGlobalBounds().position.x << " " << battlebox.
-    //         getGlobalBounds().position.y << std::endl;
+    fightButton.draw(window);
+    talkButton.draw(window);
+    itemButton.draw(window);
+    spareButton.draw(window);
     player.draw(window);
-    // std::cout << "Player: " << player << std::endl;
     for (const auto& bulletobj : bullet) {
         bulletobj.draw(window);
-        // std::cout <<"drawed ::::::"<< bulletobj<<std::endl;
     }
     window.display();
 }

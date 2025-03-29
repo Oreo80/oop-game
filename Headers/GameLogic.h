@@ -3,9 +3,9 @@
 #include "Bullet.h"
 #include "Player.h"
 #include "BattleBox.h"
+#include "Button.h"
 #include <set>
 #include <SFML/Audio.hpp>
-
 
 class Game {
 private:
@@ -16,6 +16,10 @@ private:
     BattleBox battlebox;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
+    Button fightButton{"./img/spr_fightbt_0.png",{32,432}},
+            talkButton{"./img/spr_talkbt_0.png",{185,432}},
+            itemButton{"./img/spr_itembt_0.png",{345,432}},
+            spareButton{"./img/spr_sparebt_0.png",{500,432}};
     bool isFullscreen=false;
     void toggleFullscreen();
     void updateView();

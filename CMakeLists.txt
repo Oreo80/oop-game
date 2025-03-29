@@ -71,8 +71,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/BattleBox.cpp
         Headers/SplashScreen.h
         Source/SplashScreen.cpp
-#        Headers/Button.h
-#        Source/Button.cpp
+        Headers/Button.h
+        Source/Button.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
