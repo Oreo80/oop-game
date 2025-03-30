@@ -23,7 +23,7 @@ private:
     BattleText battleText;
 
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
-            talkButton{"./img/spr_talkbt_0.png","../img/spr_talkbt_1.png",{185,432}},
+            talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
             itemButton{"./img/spr_itembt_0.png","./img/spr_itembt_1.png",{345,432}},
             spareButton{"./img/spr_sparebt_0.png","./img/spr_sparebt_1.png",{500,432}};
     enum class TurnState {
