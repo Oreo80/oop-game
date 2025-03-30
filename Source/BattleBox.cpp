@@ -60,16 +60,38 @@ void BattleBox::setBottomY(const float fixedBottomY) {
     float const newBattleboxY = fixedBottomY - battleboxHeight;
     box.setPosition({box.getPosition().x, newBattleboxY});
 }
+
 void BattleBox::resizeCentered(const sf::Vector2f &deltaSize) {
+    targetSize = {box.getSize().x + deltaSize.x, box.getSize().y + deltaSize.y};
+    isResizing = true;
+}
+
+void BattleBox::updateResize(const float pixelSpeed) {
+    if (!isResizing) return;
     const sf::Vector2f currentSize = box.getSize();
+    const sf::Vector2f sizeDiff = targetSize - currentSize;
+
+    const sf::Vector2f step(
+        std::clamp(sizeDiff.x, -pixelSpeed, pixelSpeed),
+        std::clamp(sizeDiff.y, -pixelSpeed, pixelSpeed)
+    );
+
+    sf::Vector2f newSize = currentSize + step;
+
+    if (std::abs(sizeDiff.x) < pixelSpeed && std::abs(sizeDiff.y) < pixelSpeed) {
+        newSize = targetSize;
+        isResizing = false;
+    }
+
     const sf::Vector2f currentPos = box.getPosition();
-    const sf::Vector2f newSize = {currentSize.x + deltaSize.x, currentSize.y + deltaSize.y};
     const float bottomY = currentPos.y + currentSize.y;
     float newY = bottomY - newSize.y;
 
     box.setSize(newSize);
-    box.setPosition({currentPos.x - (deltaSize.x / 2.f), newY});
+    box.setPosition({currentPos.x - step.x / 2.f, newY});
 }
+
+
 
 
 

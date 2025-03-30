@@ -3,6 +3,8 @@
 class BattleBox {
 private:
     sf::RectangleShape box;
+    sf::Vector2f targetSize;
+    bool isResizing = false;
     // sf::FloatRect bounds;
 
     // void updateBounds();
@@ -20,4 +22,6 @@ public:
     sf::FloatRect getInnerBounds() const;
     void setBottomY(float fixedBottomY);
     void resizeCentered(const sf::Vector2f& deltaSize);
+
+    void updateResize(float pixelSpeed);
 };

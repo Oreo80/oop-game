@@ -48,7 +48,7 @@ void Game::playMusBattle1() {
 
 void Game::centerPlayer() {
     player.setOrigin({player.getGlobalBounds().size.x/2.f,player.getGlobalBounds().size.y/2.f});
-    player.setPosition(battlebox.getCenter());
+    player.setPosition(battleBox.getCenter());
     player.setOrigin({0,0});
 }
 
@@ -96,7 +96,7 @@ sf::Vector2f Game::calculateMoveOffset() const {
 }
 
 void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
-    const sf::FloatRect innerBounds=battlebox.getInnerBounds();
+    const sf::FloatRect innerBounds=battleBox.getInnerBounds();
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
@@ -106,18 +106,18 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
     }
 
     if (playerPos.x < innerBounds.position.x) {
-        moveOffset.x = innerBounds.position.x - player.getPosition().x - battlebox.getOutlineThickness() + 1;
+        moveOffset.x = innerBounds.position.x - player.getPosition().x - battleBox.getOutlineThickness() + 1;
     }
     if (playerPos.y < innerBounds.position.y) {
-        moveOffset.y = innerBounds.position.y - player.getPosition().y - battlebox.getOutlineThickness() + 1;
+        moveOffset.y = innerBounds.position.y - player.getPosition().y - battleBox.getOutlineThickness() + 1;
     }
     if ((playerPos.x + playerSize.x) > (innerBounds.position.x + innerBounds.size.x)) {
         moveOffset.x = (innerBounds.position.x + innerBounds.size.x) - (player.getPosition().x + playerSize.x) +
-                       battlebox.getOutlineThickness() - 1;;
+                       battleBox.getOutlineThickness() - 1;;
     }
     if ((playerPos.y + playerSize.y) > (innerBounds.position.y + innerBounds.size.y)) {
         moveOffset.y = (innerBounds.position.y + innerBounds.size.y) - (player.getPosition().y + playerSize.y) +
-                       battlebox.getOutlineThickness() - 1;;
+                       battleBox.getOutlineThickness() - 1;;
     }
 }
 
@@ -135,6 +135,8 @@ void Game::updateBullets() {
 }
 
 void Game::update() {
+    battleBox.updateResize(15*2.f); // increases by 15 in both directions
+    battleText.update();
     switch (currentTurn) {
         case TurnState::PlayerTurn:
             updateActionSelection();
@@ -168,11 +170,12 @@ void Game::updateActionSelection() {
     }
 }
 void Game::enterEnemyTurn() {
+    battleText.setText("");
     currentTurn = TurnState::EnemyTurn;
     keysPressed.clear();
     centerPlayer();
     enemyTurnClock.restart();
-    battlebox.resizeCentered({-410,0});
+    battleBox.resizeCentered({-205 * 2, 0});
 
     for (int i=0;i<5;i++) {
         bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
@@ -191,6 +194,7 @@ void Game::updateEnemyTurn() {
         bullets.clear();
         currentTurn = TurnState::PlayerTurn;
         enterActionSelection();
+
     }
 }
 
@@ -199,7 +203,8 @@ void Game::enterActionSelection() {
     player.setPosition(fightButton.getPositionForPlayer());
     actionButtons[0]->setTexture(true);
     keysPressed.clear();
-    battlebox.resizeCentered({410,0});
+    battleBox.resizeCentered({205 * 2, 0});
+    battleText.setText("* Smells like frog..?\n  Temporary text",0.5f);
 }
 void Game::updateButtonTextures() const {
     for (size_t i = 0; i < actionButtons.size(); i++) {
@@ -210,26 +215,33 @@ void Game::updateButtonTextures() const {
 void Game::processSelectedAction(const int actionIndex) {
     switch (actionIndex) {
         case 0: // Fight
+            // battleText.setText("* You throw a punch!");
             std::cout << "Fight selected! Player attacks!\n";
         break;
         case 1: // Talk
+            // battleText.setText("* You try to reason with them.");
             std::cout << "Talk selected! Player tries to communicate.\n";
         break;
         case 2: // Item
+            // battleText.setText("* You check your inventory.");
             std::cout << "Item selected! Open inventory.\n";
         break;
         case 3: // Spare
+            // battleText.setText("* You show mercy...");
             std::cout << "Spare selected! Attempting mercy...\n";
         break;
         default:
             std::cerr << "Invalid action index!\n";
     };
+    waitingForTextDelay = true;
 }
 
 
 void Game::render() {
     window.clear();
-    battlebox.draw(window);
+    background.draw(window);
+    battleBox.draw(window);
+    battleText.draw(window);
     fightButton.draw(window);
     talkButton.draw(window);
     itemButton.draw(window);
@@ -244,10 +256,10 @@ void Game::render() {
 bool Game::isBulletsActive() const { return !bullets.empty();}
 
 Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close),
-               battlebox({242, 150}, {155, 130})
+               battleBox({242, 150}, {155, 130}), background("./img/spr_battlebg_0.png"),battleText({52,270},24)
 {
     window.setFramerateLimit(30);
-    battlebox.setBottomY(385.f);
+    battleBox.setBottomY(385.f);
     centerPlayer();
 
     // temporary
@@ -262,7 +274,7 @@ Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | s
 std::ostream & operator<<(std::ostream &os, const Game &obj) {
     return os
            << "Game Status - Player: " << obj.player
-           << " , Battle Box: " << obj.battlebox
+           << " , Battle Box: " << obj.battleBox
            << " , Bullets Active: " << (obj.isBulletsActive() ? "Yes" : "No");
 }
 

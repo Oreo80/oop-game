@@ -4,8 +4,11 @@
 #include "Player.h"
 #include "BattleBox.h"
 #include "Button.h"
+#include "Background.h"
 #include <set>
 #include <SFML/Audio.hpp>
+
+#include "BattleText.h"
 
 class Game {
 private:
@@ -13,9 +16,11 @@ private:
     Player player;
     BulletType flybullet;
     std::vector<Bullet> bullets;
-    BattleBox battlebox;
+    BattleBox battleBox;
+    Background background;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
+    BattleText battleText;
 
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
             talkButton{"./img/spr_talkbt_0.png","../img/spr_talkbt_1.png",{185,432}},
@@ -30,6 +35,7 @@ private:
     const float enemyTurnDuration = 10.f;
     int currentActionIndex = 0;
     std::vector<Button*> actionButtons;
+    bool waitingForTextDelay=false;
     bool isFullscreen=false;
     void toggleFullscreen();
     void updateView();
@@ -49,7 +55,7 @@ private:
 
     void updateButtonTextures() const;
 
-    static void processSelectedAction(int actionIndex);
+    void processSelectedAction(int actionIndex);
 
     void render();
     bool isBulletsActive() const;
