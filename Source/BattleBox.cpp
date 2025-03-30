@@ -72,7 +72,7 @@ void BattleBox::updateResize(const float pixelSpeed) {
     const sf::Vector2f sizeDiff = targetSize - currentSize;
 
     const sf::Vector2f step{
-        std::max(-pixelSpeed, std::min(sizeDiff.x, pixelSpeed)),
+        std::max(-pixelSpeed, std::min(sizeDiff.x, pixelSpeed)), // test for test commit
         std::max(-pixelSpeed, std::min(sizeDiff.y, pixelSpeed))
     };
 
