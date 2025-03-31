@@ -148,18 +148,20 @@ void Game::update() {
 }
 
 void Game::updateActionSelection() {
-    if (keysPressed.contains(sf::Keyboard::Scancode::Left)) {
+    if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
         currentActionIndex = (currentActionIndex - 1 + static_cast<int>(actionButtons.size())) % static_cast<int>(
                                  actionButtons.size());
         player.setPosition(actionButtons[currentActionIndex]->getPositionForPlayer());
         keysPressed.erase(sf::Keyboard::Scancode::Left);
+        keysPressed.erase(sf::Keyboard::Scancode::A);
         updateButtonTextures();
     }
-    if (keysPressed.contains(sf::Keyboard::Scancode::Right)) {
+    if (keysPressed.contains(sf::Keyboard::Scancode::Right) || keysPressed.contains(sf::Keyboard::Scancode::D)) {
         currentActionIndex = (currentActionIndex + 1 + static_cast<int>(actionButtons.size())) % static_cast<int>(
                                  actionButtons.size());
         player.setPosition(actionButtons[currentActionIndex]->getPositionForPlayer());
         keysPressed.erase(sf::Keyboard::Scancode::Right);
+        keysPressed.erase(sf::Keyboard::Scancode::D);
         updateButtonTextures();
     }
 
