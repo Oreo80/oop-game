@@ -1,27 +1,20 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <vector>
 #include <string>
+#include <vector>
+#include <iostream>
+
+enum class BulletID { Fly, Temp };
 
 class BulletType {
 private:
-  std::vector<sf::Texture> textures;
-  float speed;
-
+    float speed;
+    std::vector<std::string> paths;
+    BulletType(float speed_, std::vector<std::string> paths_);
 
 public:
-    explicit BulletType(const std::vector<std::string>& paths = {"./img/spr_flybullet_0.png", "./img/spr_flybullet_1.png"},
-      float spd = 5.0f);
+    static const BulletType &get(BulletID id);
+    [[nodiscard]] float getSpeed() const;
+    [[nodiscard]] std::vector<std::string> getPaths() const;
 
-  friend std::ostream & operator<<(std::ostream &os, const BulletType &obj);
-
-  [[nodiscard]] const std::vector<sf::Texture>& getTextures() const;
-  [[nodiscard]] float getSpeed() const;
-
-  BulletType(const BulletType &other);
-
-  BulletType(BulletType &&other) noexcept;
-
-  BulletType & operator=(const BulletType &other);
-  BulletType & operator=(BulletType &&other) noexcept;
+    friend std::ostream & operator<<(std::ostream &os, const BulletType &obj);
 };

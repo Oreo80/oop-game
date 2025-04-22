@@ -1,6 +1,7 @@
 #include "../Headers/GameLogic.h"
 
 #include "../Headers/SplashScreen.h"
+
 void Game::toggleFullscreen() {
     isFullscreen = !isFullscreen;
 
@@ -11,7 +12,7 @@ void Game::toggleFullscreen() {
         window.create(sf::VideoMode({640, 480}), "Game", sf::State::Windowed);
         window.setFramerateLimit(30);
     }
-
+    
     updateView();
 }
 
@@ -44,12 +45,6 @@ void Game::playMusBattle1() {
     }
     mus_battle1.setLooping(true);
     mus_battle1.play();
-}
-
-void Game::centerPlayer() {
-    player.setOrigin({player.getGlobalBounds().size.x/2.f,player.getGlobalBounds().size.y/2.f});
-    player.setPosition(battleBox.getCenter());
-    player.setOrigin({0,0});
 }
 
 void Game::handleEvents() {
@@ -100,10 +95,11 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
-    if (const sf::FloatRect newPlayerBounds(playerPos, playerSize);
-        std::nullopt == innerBounds.findIntersection(newPlayerBounds)) {
-        return;
-    }
+    // if (const sf::FloatRect newPlayerBounds(playerPos, playerSize);
+    //     std::nullopt == innerBounds.findIntersection(newPlayerBounds)) {
+    //     return;
+    // }
+    if (!innerBounds.findIntersection({playerPos, playerSize})) return;
 
     if (playerPos.x < innerBounds.position.x) {
         moveOffset.x = innerBounds.position.x - player.getPosition().x - battleBox.getOutlineThickness() + 1;
@@ -139,15 +135,22 @@ void Game::update() {
     battleText.update();
     switch (currentTurn) {
         case TurnState::PlayerTurn:
-            updateActionSelection();
+            updatePlayerTurn();
             break;
         case TurnState::EnemyTurn:
             updateEnemyTurn();
             break;
     }
 }
-
-void Game::updateActionSelection() {
+void Game::enterPlayerTurn() {
+    currentActionIndex = 0;
+    player.setPosition(fightButton.getPositionForPlayer());
+    actionButtons[0]->setSelected(true);
+    keysPressed.clear();
+    battleBox.resizeCentered({205 * 2, 0});
+    battleText.setText("* Smells like frog..?\n  Temporary text",0.5f);
+}
+void Game::updatePlayerTurn() {
     if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
         currentActionIndex = (currentActionIndex - 1 + static_cast<int>(actionButtons.size())) % static_cast<int>(
                                  actionButtons.size());
@@ -167,7 +170,7 @@ void Game::updateActionSelection() {
 
     if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
         processSelectedAction(currentActionIndex);
-        actionButtons[currentActionIndex]->setTexture(false);
+        actionButtons[currentActionIndex]->setSelected(false);
         enterEnemyTurn();
     }
 }
@@ -175,16 +178,16 @@ void Game::enterEnemyTurn() {
     battleText.setText("");
     currentTurn = TurnState::EnemyTurn;
     keysPressed.clear();
-    centerPlayer();
+    player.centerPlayer(battleBox);
     enemyTurnClock.restart();
     battleBox.resizeCentered({-205 * 2, 0});
 
     for (int i=0;i<5;i++) {
-        bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
+        bullets.emplace_back(BulletID::Fly, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
                             sf::Vector2f{1.0f, 0.0f}); // fish
     }
+    // std::cout << TextureCache{} << std::endl;
 }
-
 void Game::updateEnemyTurn() {
     sf::Vector2f moveOffset = calculateMoveOffset();
     enforceBattleBoxBounds(moveOffset);
@@ -195,22 +198,15 @@ void Game::updateEnemyTurn() {
     if (!isBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
         bullets.clear();
         currentTurn = TurnState::PlayerTurn;
-        enterActionSelection();
+        enterPlayerTurn();
 
     }
 }
 
-void Game::enterActionSelection() {
-    currentActionIndex = 0;
-    player.setPosition(fightButton.getPositionForPlayer());
-    actionButtons[0]->setTexture(true);
-    keysPressed.clear();
-    battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText("* Smells like frog..?\n  Temporary text",0.5f);
-}
+
 void Game::updateButtonTextures() const {
     for (size_t i = 0; i < actionButtons.size(); i++) {
-        actionButtons[i]->setTexture(i == static_cast<size_t>(currentActionIndex));
+        actionButtons[i]->setSelected(i == static_cast<size_t>(currentActionIndex));
     }
 }
 
@@ -262,7 +258,7 @@ Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | s
 {
     window.setFramerateLimit(30);
     battleBox.setBottomY(385.f);
-    centerPlayer();
+    player.centerPlayer(battleBox);
 
     // temporary
     // for (int i=0;i<5;i++) {
@@ -285,7 +281,7 @@ void Game::run() {
 
     const SplashScreen splash;
     splash.show(window);
-    const SplashScreen instructions{"./img/black.png"," --- Instruction --- \n\n"
+    const SplashScreen instructions{"./img/black.png"," --- Instructions --- \n\n"
                                                                "[Z or ENTER] - Confirm\n"
                                                                "[X or SHIFT] - Cancel\n"
                                                                "[F4] - Fullscreen\n"
@@ -295,7 +291,7 @@ void Game::run() {
     instructions.show(window);
 
     playMusBattle1();
-    enterActionSelection();
+    enterPlayerTurn();
     while (window.isOpen()) {
         handleEvents();
         update();

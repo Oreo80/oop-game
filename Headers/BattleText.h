@@ -14,6 +14,7 @@ private:
     float textStartDelay = 0.5f;
     bool textStarted = false;
     sf::Clock textClock;
+    bool isuUpdating = false;
 public:
     explicit BattleText(const sf::Vector2f position, const unsigned int fontSize_) :
     font([&]() {
@@ -36,4 +37,9 @@ public:
     void setText(const std::string& newText, float delayTime = 0.5f);
     void update();
     void draw(sf::RenderWindow& window) const;
+    unsigned int getFontSize() const;
+    sf::Vector2f getScale() const;
+    void setFontSize(unsigned int newFontSize);
+    void setScale(sf::Vector2f newScale);
+
 };

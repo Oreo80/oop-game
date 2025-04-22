@@ -1,79 +1,39 @@
 #include "../Headers/BattleBox.h"
+#include <algorithm>
 
-// void BattleBox::updateBounds() {
-//     bounds = box.getGlobalBounds();
-// }
-
-BattleBox::BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size) {
-    box.setSize(size);
-    box.setPosition(pos);
-    box.setFillColor(sf::Color::Transparent);
-    box.setOutlineColor(sf::Color::White);
-    box.setOutlineThickness(5);
-    // updateBounds();
-};
-std::ostream & operator<<(std::ostream &os, const BattleBox &obj) {
-    return os
-            << "Size: (" << obj.getSize().x << ", " << obj.getSize().y<<") "
-            << ", Position: ("<< obj.getPosition().x << ", " << obj.getPosition().y<<") ";
-}
-// void BattleBox::resize(const sf::Vector2f& newSize) {
-//     box.setSize(newSize);
-// }
-void BattleBox::draw(sf::RenderWindow& window) const {
-    window.draw(box);
-}
-
-sf::FloatRect BattleBox::getGlobalBounds() const {
-    return box.getGlobalBounds();
-}
-
-
-sf::Vector2f BattleBox::getSize() const {
-    return box.getSize();
-}
-
-sf::Vector2f BattleBox::getPosition() const {
-    return box.getPosition();
-}
-void BattleBox::setPosition(const sf::Vector2f &pos) {
-    box.setPosition(pos);
-}
-
-float BattleBox::getOutlineThickness() const {
-    return box.getOutlineThickness();
-}
-
-sf::Vector2f BattleBox::getCenter() const {
-    return box.getPosition() + (box.getSize() / 2.f);
+float BattleBox::getBottomY() const {
+    return shape.getPosition().y + shape.getSize().y;
 }
 sf::FloatRect BattleBox::getInnerBounds() const {
-    const sf::Vector2f rectPos = box.getPosition();
-    const sf::Vector2f rectSize = box.getSize();
-    const float thickness = box.getOutlineThickness();
+    const sf::Vector2f rectPos = shape.getPosition();
+    const sf::Vector2f rectSize = shape.getSize();
+    const float thickness = shape.getOutlineThickness();
 
     return {{rectPos.x + thickness, rectPos.y + thickness },
         {rectSize.x - 2 * thickness, rectSize.y - 2 * thickness}};
 }
+
 void BattleBox::setBottomY(const float fixedBottomY) {
-    const float battleboxHeight = box.getSize().y;
-    float const newBattleboxY = fixedBottomY - battleboxHeight;
-    box.setPosition({box.getPosition().x, newBattleboxY});
+    const float currentBottomY = getBottomY();
+    const float yDelta = fixedBottomY - currentBottomY;
+    shape.setPosition({
+        shape.getPosition().x,
+        shape.getPosition().y + yDelta
+    });
 }
 
 void BattleBox::resizeCentered(const sf::Vector2f &deltaSize) {
-    targetSize = {box.getSize().x + deltaSize.x, box.getSize().y + deltaSize.y};
+    targetSize = {shape.getSize().x + deltaSize.x, shape.getSize().y + deltaSize.y};
     isResizing = true;
 }
 
 void BattleBox::updateResize(const float pixelSpeed) {
-    if (!isResizing) return;
-    const sf::Vector2f currentSize = box.getSize();
+    const sf::Vector2f currentSize = shape.getSize();
     const sf::Vector2f sizeDiff = targetSize - currentSize;
 
     const sf::Vector2f step{
-        std::max(-pixelSpeed, std::min(sizeDiff.x, pixelSpeed)), // test for test commit
-        std::max(-pixelSpeed, std::min(sizeDiff.y, pixelSpeed))
+        std::clamp(sizeDiff.x, -pixelSpeed, pixelSpeed),
+        std::clamp(sizeDiff.y, -pixelSpeed, pixelSpeed)
     };
 
     sf::Vector2f newSize = currentSize + step;
@@ -83,15 +43,21 @@ void BattleBox::updateResize(const float pixelSpeed) {
         isResizing = false;
     }
 
-    const sf::Vector2f currentPos = box.getPosition();
-    const float bottomY = currentPos.y + currentSize.y;
+    const sf::Vector2f currentPos = shape.getPosition();
+    const float bottomY = getBottomY();
     float newY = bottomY - newSize.y;
 
-    box.setSize(newSize);
-    box.setPosition({currentPos.x - step.x / 2.f, newY});
+    shape.setSize(newSize);
+    shape.setPosition({currentPos.x - step.x / 2.f, newY});
+}
+
+bool BattleBox::getisResizing() const {
+    return isResizing;
 }
 
 
-
-
+std::ostream & operator<<(std::ostream &os, const BattleBox &obj){
+    return os
+            << static_cast<const ShapeEntity&>(obj);
+}
 

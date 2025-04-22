@@ -1,5 +1,16 @@
 #include "../Headers/SplashScreen.h"
 
+#include <iostream>
+
+sf::Font SplashScreen::loadFont() {
+    sf::Font font_;
+    if (!font_.openFromFile("./fonts/DeterminationSans.ttf")) {
+        std::cerr << "Failed to load font file!\n";
+        throw std::runtime_error("Failed to load font file");
+    }
+    return font_;
+}
+
 void SplashScreen::show(sf::RenderWindow& window) const {
     while(window.isOpen()) {
 
@@ -21,7 +32,7 @@ void SplashScreen::show(sf::RenderWindow& window) const {
             }
         }
         window.clear();
-        window.draw(splashSprite);
+        window.draw(sprite);
         window.draw(splashText);
         window.display();
     }
@@ -29,7 +40,7 @@ void SplashScreen::show(sf::RenderWindow& window) const {
 std::ostream & operator<<(std::ostream &os, const SplashScreen &obj) {
 
     return os
-                << "Splash image position: ("<< obj.splashSprite.getPosition().x<<", "<<obj.splashSprite.getPosition().y<<") "
+                << "Splash image position: ("<< static_cast<const SpriteEntity&>(obj)
                 << ", Splash screen string loaded: "<<std::string(obj.splashText.getString())
                 << ", Splash text position: ("<<obj.splashText.getPosition().x<<", "<<obj.splashText.getPosition().y<<") ";
 }

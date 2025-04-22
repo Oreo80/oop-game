@@ -4,7 +4,6 @@
 #include "Player.h"
 #include "BattleBox.h"
 #include "Button.h"
-#include "Background.h"
 #include <set>
 #include <SFML/Audio.hpp>
 
@@ -14,10 +13,10 @@ class Game {
 private:
     sf::RenderWindow window;
     Player player;
-    BulletType flybullet;
     std::vector<Bullet> bullets;
     BattleBox battleBox;
-    Background background;
+    // Background background;
+    SpriteEntity background;
     std::set<sf::Keyboard::Scancode> keysPressed;
     sf::Music mus_battle1;
     BattleText battleText;
@@ -40,24 +39,24 @@ private:
     void toggleFullscreen();
     void updateView();
     void playMusBattle1();
-    void centerPlayer();
     void handleEvents();
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
     void updateBullets();
     void update();
-    void updateActionSelection();
+    void updatePlayerTurn();
 
     void enterEnemyTurn();
 
     void updateEnemyTurn();
-    void enterActionSelection();
+    void enterPlayerTurn();
 
     void updateButtonTextures() const;
 
     void processSelectedAction(int actionIndex);
 
     void render();
+
     bool isBulletsActive() const;
 public:
     Game();

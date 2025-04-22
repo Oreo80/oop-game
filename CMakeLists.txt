@@ -73,10 +73,19 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/SplashScreen.cpp
         Headers/Button.h
         Source/Button.cpp
-        Headers/Background.h
-        Source/Background.cpp
         Headers/BattleText.h
         Source/BattleText.cpp
+        Headers/DrawableEntity.h
+        Headers/SpriteEntity.h
+        Headers/ShapeEntity.h
+        Source/SpriteEntity.cpp
+        Source/ShapeEntity.cpp
+        Headers/StatefulSprite.h
+        Source/StatefulSprite.cpp
+        Headers/AnimatedEntity.h
+        Source/AnimatedEntity.cpp
+        Headers/TextureCache.h
+        Source/TextureCache.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -113,6 +122,4 @@ endif()
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-copy_files(DIRECTORY img COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-copy_files(DIRECTORY mus COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-copy_files(DIRECTORY fonts COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(DIRECTORY img mus fonts COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
