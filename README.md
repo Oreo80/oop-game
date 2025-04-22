@@ -8,7 +8,7 @@ Sistemul de luptă include și mecanica specifică bullet hell,
 unde jucătorii trebuie să evite atacurile inamicilor într-un mod 
 interactiv.
 
-## Instrucțiuni
+### Instrucțiuni
 ---
 ### 🐸 Deplasare 🐸
 - W sau ⬆️ pentru a te mișca în sus
