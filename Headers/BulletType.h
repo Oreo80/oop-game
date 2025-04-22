@@ -14,7 +14,7 @@ private:
 public:
     static const BulletType &get(BulletID id);
     [[nodiscard]] float getSpeed() const;
-    [[nodiscard]] std::vector<std::string> getPaths() const;
+    [[nodiscard]] const std::vector<std::string>& getPaths() const;
 
     friend std::ostream & operator<<(std::ostream &os, const BulletType &obj);
 };

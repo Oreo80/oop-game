@@ -23,9 +23,9 @@ float BulletType::getSpeed() const {
     return speed;
 }
 
-std::vector<std::string> BulletType::getPaths() const {
-    return paths;
-}
+const std::vector<std::string>& BulletType::getPaths() const{
+        return paths;
+    }
 
 std::ostream & operator<<(std::ostream &os, const BulletType &obj){
     os << "BulletType( speed=" << obj.speed << ", paths=[";

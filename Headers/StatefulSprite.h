@@ -10,9 +10,8 @@ private:
 public:
     explicit StatefulSprite(const std::string &defaultPath = "./img/missing.png",
                             const std::string &defaultStateName = "normal",
-                            const sf::Vector2f &pos = {0, 0}) : SpriteEntity(defaultPath, pos) {
+                            const sf::Vector2f &pos = {0, 0}) : SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
         states[defaultStateName] = texture;
-        currentState = defaultStateName;
     }
 
     void addState(const std::string &stateName, const std::string& texturePath);
