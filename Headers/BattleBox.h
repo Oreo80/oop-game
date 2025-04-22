@@ -16,6 +16,5 @@ public:
     void setBottomY(float fixedBottomY);
     void resizeCentered(const sf::Vector2f& deltaSize);
     void updateResize(float pixelSpeed);
-    bool getisResizing() const;
     friend std::ostream & operator<<(std::ostream &os, const BattleBox &obj);
 };

@@ -9,6 +9,15 @@ std::ostream & operator<<(std::ostream &os, const BattleText &obj){
             << "Font size: "<<obj.fontSize;
 }
 
+sf::Font BattleText::loadFont() {
+    sf::Font font_;
+    if (!font_.openFromFile("./fonts/DeterminationSans.ttf")) {
+        std::cerr << "Failed to load font file!\n";
+        throw std::runtime_error("Failed to load font file");
+    }
+    return font_;
+}
+
 void BattleText::setText(const std::string& newText, const float delayTime) {
     fullText = newText;
     currentLength = 0;
@@ -41,18 +50,11 @@ void BattleText::draw(sf::RenderWindow& window) const{
         window.draw(text);
     }
 }
-unsigned int BattleText::getFontSize() const {
-    return fontSize;
-}
 
 sf::Vector2f BattleText::getScale() const {
     return text.getScale();
 }
 
-void BattleText::setFontSize(const unsigned int newFontSize) {
-    text.setCharacterSize(newFontSize);
-    fontSize = newFontSize;
-}
 void BattleText::setScale(const sf::Vector2f newScale) {
     text.setScale(newScale);
 }

@@ -51,11 +51,6 @@ void BattleBox::updateResize(const float pixelSpeed) {
     shape.setPosition({currentPos.x - step.x / 2.f, newY});
 }
 
-bool BattleBox::getisResizing() const {
-    return isResizing;
-}
-
-
 std::ostream & operator<<(std::ostream &os, const BattleBox &obj){
     return os
             << static_cast<const ShapeEntity&>(obj);

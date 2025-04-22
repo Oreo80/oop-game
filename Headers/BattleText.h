@@ -15,16 +15,11 @@ private:
     bool textStarted = false;
     sf::Clock textClock;
     bool isuUpdating = false;
+
+    static sf::Font loadFont();
 public:
     explicit BattleText(const sf::Vector2f position, const unsigned int fontSize_) :
-    font([&]() {
-        sf::Font font_;
-        if (!font_.openFromFile("./fonts/DeterminationMono.ttf")) {
-            std::cerr << "Failed to load font file!\n";
-            throw std::runtime_error("Failed to load font file");
-        }
-        return font_;
-    }()),
+    font(loadFont()),
     text(font,"",fontSize_),
     fontSize(fontSize_)
     {
@@ -37,9 +32,7 @@ public:
     void setText(const std::string& newText, float delayTime = 0.5f);
     void update();
     void draw(sf::RenderWindow& window) const;
-    unsigned int getFontSize() const;
     sf::Vector2f getScale() const;
-    void setFontSize(unsigned int newFontSize);
     void setScale(sf::Vector2f newScale);
 
 };
