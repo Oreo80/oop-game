@@ -7,9 +7,9 @@ Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vecto
     velocity(dir * BulletType::get(id_).getSpeed()) {
 }
 
-std::unique_ptr<DrawableEntity> Bullet::clone() const {
-    return std::make_unique<Bullet>(*this);
-}
+// std::unique_ptr<DrawableEntity> Bullet::clone() const {
+//     return std::make_unique<Bullet>(*this);
+// }
 
 void Bullet::update() {
     setPosition(getPosition() + velocity);

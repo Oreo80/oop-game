@@ -7,9 +7,9 @@ BattleBox::BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size): ShapeEn
     shape.setOutlineThickness(5);
 }
 
-std::unique_ptr<DrawableEntity> BattleBox::clone() const {
-    return std::make_unique<BattleBox>(*this);
-}
+// std::unique_ptr<DrawableEntity> BattleBox::clone() const {
+//     return std::make_unique<BattleBox>(*this);
+// }
 
 float BattleBox::getBottomY() const {
     return shape.getPosition().y + shape.getSize().y;

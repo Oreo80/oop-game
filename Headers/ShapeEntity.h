@@ -6,7 +6,7 @@ protected:
     sf::RectangleShape shape;
 public:
     ShapeEntity(const sf::Vector2f &pos, const sf::Vector2f &size);
-    std::unique_ptr<DrawableEntity> clone() const override;
+    // std::unique_ptr<DrawableEntity> clone() const override;
     void draw(sf::RenderWindow &window) const override;
     sf::Vector2f getPosition() const override;
     sf::Vector2f getSize() const;

@@ -17,9 +17,9 @@ AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
     sprite.setPosition(pos);
 }
 
-std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
-    return std::make_unique<AnimatedEntity>(*this);
-}
+// std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
+//     return std::make_unique<AnimatedEntity>(*this);
+// }
 
 void AnimatedEntity::animate() {
     if (animationClock.getElapsedTime().asMilliseconds() > 100) {
