@@ -6,15 +6,12 @@ private:
     sf::Vector2f targetSize;
     bool isResizing = false;
 public:
-    BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size) : ShapeEntity(pos, size) {
-        shape.setFillColor(sf::Color::Transparent);
-        shape.setOutlineColor(sf::Color::White);
-        shape.setOutlineThickness(5);
-    }
+    BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size);
+    std::unique_ptr<DrawableEntity> clone() const override;
     float getBottomY() const;
     sf::FloatRect getInnerBounds() const;
     void setBottomY(float fixedBottomY);
     void resizeCentered(const sf::Vector2f& deltaSize);
-    void updateResize(float pixelSpeed);
+    void update() override;
     friend std::ostream & operator<<(std::ostream &os, const BattleBox &obj);
 };

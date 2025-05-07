@@ -5,6 +5,10 @@ ShapeEntity::ShapeEntity(const sf::Vector2f &pos, const sf::Vector2f &size) {
     shape.setPosition(pos);
 }
 
+std::unique_ptr<DrawableEntity> ShapeEntity::clone() const {
+    return std::make_unique<ShapeEntity>(*this);
+}
+
 void ShapeEntity::draw(sf::RenderWindow &window) const {
     window.draw(shape);
 }

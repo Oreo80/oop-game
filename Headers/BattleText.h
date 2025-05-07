@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>
-#include <SFML/Graphics.hpp>
+#include "DrawableEntity.h"
 #include <string>
 
-class BattleText {
+class BattleText : public DrawableEntity{
 private:
     sf::Font font;
     sf::Text text;
@@ -18,21 +17,17 @@ private:
 
     static sf::Font loadFont();
 public:
-    explicit BattleText(const sf::Vector2f position, const unsigned int fontSize_) :
-    font(loadFont()),
-    text(font,"",fontSize_),
-    fontSize(fontSize_)
-    {
-        text.setFillColor(sf::Color::White);
-        text.setPosition(position);
-    }
-
+    explicit BattleText(sf::Vector2f position, unsigned int fontSize_);
     friend std::ostream & operator<<(std::ostream &os, const BattleText &obj);
-
+    std::unique_ptr<DrawableEntity> clone() const override;
     void setText(const std::string& newText, float delayTime = 0.5f);
-    void update();
-    void draw(sf::RenderWindow& window) const;
+    void update() override;
+    void draw(sf::RenderWindow& window) const override;
     sf::Vector2f getScale() const;
     void setScale(sf::Vector2f newScale);
+    sf::FloatRect getGlobalBounds() const override;
+    void setPosition(const sf::Vector2f& pos) override;
+    sf::Vector2f getPosition() const override;
+    ~BattleText() override = default;
 
 };

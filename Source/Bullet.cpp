@@ -1,8 +1,19 @@
 #include "../Headers/Bullet.h"
 
+Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vector2f &dir): AnimatedEntity(
+        BulletType::get(id_).getPaths(), startPos),
+    id(id_),
+    direction(dir),
+    velocity(dir * BulletType::get(id_).getSpeed()) {
+}
+
+std::unique_ptr<DrawableEntity> Bullet::clone() const {
+    return std::make_unique<Bullet>(*this);
+}
+
 void Bullet::update() {
     setPosition(getPosition() + velocity);
-    updateAnimation();
+    animate();
 }
 bool Bullet::isOffScreen(const sf::RenderWindow& window) const {
     const float windowWidth = static_cast<float>(window.getSize().x);

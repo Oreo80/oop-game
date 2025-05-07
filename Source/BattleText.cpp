@@ -1,5 +1,7 @@
 #include "../Headers/BattleText.h"
 
+#include <iostream>
+
 
 std::ostream & operator<<(std::ostream &os, const BattleText &obj){
     return os
@@ -16,6 +18,18 @@ sf::Font BattleText::loadFont() {
         throw std::runtime_error("Failed to load font file");
     }
     return font_;
+}
+
+BattleText::BattleText(const sf::Vector2f position, const unsigned int fontSize_):
+    font(loadFont()),
+    text(font,"",fontSize_),
+    fontSize(fontSize_) {
+    text.setFillColor(sf::Color::White);
+    text.setPosition(position);
+}
+
+std::unique_ptr<DrawableEntity> BattleText::clone() const {
+    return std::make_unique<BattleText>(*this);
 }
 
 void BattleText::setText(const std::string& newText, const float delayTime) {
@@ -57,4 +71,16 @@ sf::Vector2f BattleText::getScale() const {
 
 void BattleText::setScale(const sf::Vector2f newScale) {
     text.setScale(newScale);
+}
+
+sf::FloatRect BattleText::getGlobalBounds() const {
+    return text.getGlobalBounds();
+}
+
+void BattleText::setPosition(const sf::Vector2f &pos) {
+    text.setPosition(pos);
+}
+
+sf::Vector2f BattleText::getPosition() const {
+    return text.getPosition();
 }

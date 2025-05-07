@@ -12,12 +12,25 @@ std::vector<std::shared_ptr<sf::Texture>> AnimatedEntity::loadTextures(
     return textures;
 }
 
-void AnimatedEntity::updateAnimation() {
+AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
+                               const sf::Vector2f &pos): frames(loadTextures(paths)), sprite(*frames[0]) {
+    sprite.setPosition(pos);
+}
+
+std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
+    return std::make_unique<AnimatedEntity>(*this);
+}
+
+void AnimatedEntity::animate() {
     if (animationClock.getElapsedTime().asMilliseconds() > 100) {
         currentFrame = (currentFrame + 1) % frames.size();
         sprite.setTexture(*frames[currentFrame]);
         animationClock.restart();
     }
+}
+
+void AnimatedEntity::update() {
+    animate();
 }
 
 void AnimatedEntity::draw(sf::RenderWindow& window) const {

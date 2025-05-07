@@ -1,6 +1,16 @@
 #include "../Headers/BattleBox.h"
 #include <algorithm>
 
+BattleBox::BattleBox(const sf::Vector2f &pos, const sf::Vector2f &size): ShapeEntity(pos, size) {
+    shape.setFillColor(sf::Color::Transparent);
+    shape.setOutlineColor(sf::Color::White);
+    shape.setOutlineThickness(5);
+}
+
+std::unique_ptr<DrawableEntity> BattleBox::clone() const {
+    return std::make_unique<BattleBox>(*this);
+}
+
 float BattleBox::getBottomY() const {
     return shape.getPosition().y + shape.getSize().y;
 }
@@ -27,7 +37,10 @@ void BattleBox::resizeCentered(const sf::Vector2f &deltaSize) {
     isResizing = true;
 }
 
-void BattleBox::updateResize(const float pixelSpeed) {
+void BattleBox::update() {
+    constexpr float pixelSpeed = 30.f;
+    if (!isResizing) return;
+
     const sf::Vector2f currentSize = shape.getSize();
     const sf::Vector2f sizeDiff = targetSize - currentSize;
 

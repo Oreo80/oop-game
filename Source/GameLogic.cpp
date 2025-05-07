@@ -2,6 +2,19 @@
 
 #include "../Headers/SplashScreen.h"
 
+void Game::initEntities() {
+    entities = {
+        &background,
+        &battleBox,
+        &battleText,
+        &fightButton,
+        &talkButton,
+        &itemButton,
+        &spareButton,
+        &player
+    };
+}
+
 void Game::toggleFullscreen() {
     isFullscreen = !isFullscreen;
 
@@ -95,10 +108,7 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
-    // if (const sf::FloatRect newPlayerBounds(playerPos, playerSize);
-    //     std::nullopt == innerBounds.findIntersection(newPlayerBounds)) {
-    //     return;
-    // }
+
     if (!innerBounds.findIntersection({playerPos, playerSize})) return;
 
     if (playerPos.x < innerBounds.position.x) {
@@ -117,22 +127,17 @@ void Game::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
     }
 }
 
-void Game::updateBullets() {
-    for (auto& bulletobj : bullets) {
-        bulletobj.update();
-        // std::cout << "bullet updated" << std::endl;
-    }
-    std::erase_if(bullets,
-                  [this](const Bullet& bulletobj) {return bulletobj.isOffScreen(window); });
-    std::erase_if(bullets,
-                  [this](const Bullet& bulletobj) {
-                      return std::nullopt!=player.getGlobalBounds().findIntersection(bulletobj.getGlobalBounds());
-                  });
+void Game::cleanupBullets() {
+    std::erase_if(bullets, [this](const std::unique_ptr<Bullet>& bulletobj) {
+        return bulletobj->isOffScreen(window);
+    });
+
+    std::erase_if(bullets, [this](const std::unique_ptr<Bullet>& bulletobj) {
+        return std::nullopt != player.getGlobalBounds().findIntersection(bulletobj->getGlobalBounds());
+    });
 }
 
 void Game::update() {
-    battleBox.updateResize(15*2.f); // increases by 15 in both directions
-    battleText.update();
     switch (currentTurn) {
         case TurnState::PlayerTurn:
             updatePlayerTurn();
@@ -182,9 +187,12 @@ void Game::enterEnemyTurn() {
     enemyTurnClock.restart();
     battleBox.resizeCentered({-205 * 2, 0});
 
-    for (int i=0;i<5;i++) {
-        bullets.emplace_back(BulletID::Fly, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
-                            sf::Vector2f{1.0f, 0.0f}); // fish
+    for (int i = 0; i < 5; i++) {
+        bullets.emplace_back(std::make_unique<Bullet>(
+            BulletID::Fly,
+            sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
+            sf::Vector2f{1.0f, 0.0f}
+        ));
     }
     // std::cout << TextureCache{} << std::endl;
 }
@@ -193,7 +201,7 @@ void Game::updateEnemyTurn() {
     enforceBattleBoxBounds(moveOffset);
     player.move(moveOffset);
 
-    updateBullets();
+    cleanupBullets();
 
     if (!isBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
         bullets.clear();
@@ -237,16 +245,11 @@ void Game::processSelectedAction(const int actionIndex) {
 
 void Game::render() {
     window.clear();
-    background.draw(window);
-    battleBox.draw(window);
-    battleText.draw(window);
-    fightButton.draw(window);
-    talkButton.draw(window);
-    itemButton.draw(window);
-    spareButton.draw(window);
-    player.draw(window);
-    for (const auto& bulletobj : bullets) {
-        bulletobj.draw(window);
+    for (auto* e : entities) {
+        e->tick(window);
+    }
+    for (const auto& b : bullets) {
+        b->tick(window);
     }
     window.display();
 }
@@ -259,13 +262,8 @@ Game::Game() : window(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | s
     window.setFramerateLimit(30);
     battleBox.setBottomY(385.f);
     player.centerPlayer(battleBox);
-
-    // temporary
-    // for (int i=0;i<5;i++) {
-    //     bullets.emplace_back(flybullet, sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
-    //                         sf::Vector2f{1.0f, 0.0f}); // fish
-    // }
     actionButtons = { &fightButton, &talkButton, &itemButton, &spareButton };
+    initEntities();
 
 }
 

@@ -11,6 +11,12 @@ sf::Font SplashScreen::loadFont() {
     return font_;
 }
 
+SplashScreen::SplashScreen(const std::string &filePath, const std::string &text, sf::Vector2f positionText,
+                           const unsigned int fontSize) : background(filePath,{0,0}), font(loadFont()), splashText(font,text, fontSize) {
+    splashText.setFillColor(sf::Color::White);
+    splashText.setPosition(positionText);
+}
+
 void SplashScreen::show(sf::RenderWindow& window) const {
     while(window.isOpen()) {
 
@@ -32,7 +38,7 @@ void SplashScreen::show(sf::RenderWindow& window) const {
             }
         }
         window.clear();
-        window.draw(sprite);
+        background.draw(window);
         window.draw(splashText);
         window.display();
     }
@@ -40,7 +46,6 @@ void SplashScreen::show(sf::RenderWindow& window) const {
 std::ostream & operator<<(std::ostream &os, const SplashScreen &obj) {
 
     return os
-                << "Splash image position: ("<< static_cast<const SpriteEntity&>(obj)
-                << ", Splash screen string loaded: "<<std::string(obj.splashText.getString())
+                << "Splash screen string loaded: "<<std::string(obj.splashText.getString())
                 << ", Splash text position: ("<<obj.splashText.getPosition().x<<", "<<obj.splashText.getPosition().y<<") ";
 }

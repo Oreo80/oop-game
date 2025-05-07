@@ -10,10 +10,8 @@ private:
 public:
     explicit StatefulSprite(const std::string &defaultPath = "./img/missing.png",
                             const std::string &defaultStateName = "normal",
-                            const sf::Vector2f &pos = {0, 0}) : SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
-        states[defaultStateName] = texture;
-    }
-
+                            const sf::Vector2f &pos = {0, 0});
+    std::unique_ptr<DrawableEntity> clone() const override;
     void addState(const std::string &stateName, const std::string& texturePath);
     void setState(const std::string& stateName);
     friend std::ostream & operator<<(std::ostream &os, const StatefulSprite &obj);

@@ -13,7 +13,7 @@ class Game {
 private:
     sf::RenderWindow window;
     Player player;
-    std::vector<Bullet> bullets;
+    std::vector<std::unique_ptr<Bullet>> bullets;
     BattleBox battleBox;
     // Background background;
     SpriteEntity background;
@@ -29,6 +29,7 @@ private:
         PlayerTurn,
         EnemyTurn
     };
+    std::vector<DrawableEntity*> entities;
     TurnState currentTurn = TurnState::PlayerTurn;
     sf::Clock enemyTurnClock;
     const float enemyTurnDuration = 10.f;
@@ -36,13 +37,14 @@ private:
     std::vector<Button*> actionButtons;
     bool waitingForTextDelay=false;
     bool isFullscreen=false;
+    void initEntities();
     void toggleFullscreen();
     void updateView();
     void playMusBattle1();
     void handleEvents();
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
-    void updateBullets();
+    void cleanupBullets();
     void update();
     void updatePlayerTurn();
 

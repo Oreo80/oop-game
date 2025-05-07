@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 #include "DrawableEntity.h"
 #include "TextureCache.h"
@@ -13,19 +12,15 @@ protected:
 
     static std::vector<std::shared_ptr<sf::Texture>> loadTextures(const std::vector<std::string>& paths);
 public:
-    explicit AnimatedEntity(const std::vector<std::string> &paths,
-                               const sf::Vector2f &pos) : frames(loadTextures(paths)), sprite(*frames[0]) {
-        sprite.setPosition(pos);
-    }
+    explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos);
+    std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
-
-    void updateAnimation();
-
+    void animate();
+    void update() override;
     void draw(sf::RenderWindow& window) const override;
     sf::Vector2f getPosition() const override;
     void setPosition(const sf::Vector2f& pos) override;
     sf::FloatRect getGlobalBounds() const override;
-
     friend std::ostream & operator<<(std::ostream &os, const AnimatedEntity &obj);
 
 };

@@ -11,6 +11,15 @@ sf::Texture SpriteEntity::initTexture(const std::string &texturePath) {
     return tex;
 }
 
+SpriteEntity::SpriteEntity(const std::string &texturePath, const sf::Vector2f &pos)
+    : texture(initTexture(texturePath)), sprite(texture) {
+    sprite.setPosition(pos);
+}
+
+std::unique_ptr<DrawableEntity> SpriteEntity::clone() const {
+    return std::make_unique<SpriteEntity>(*this);
+}
+
 void SpriteEntity::draw(sf::RenderWindow &window) const {
     window.draw(sprite);
 }
