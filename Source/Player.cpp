@@ -5,9 +5,9 @@ Player::Player(const std::string &normalPath, const std::string &hurtPath, const
     addState("hurt", hurtPath);
 }
 
-std::unique_ptr<DrawableEntity> Player::clone() const {
-    return std::make_unique<Player>(*this);
-}
+// std::unique_ptr<DrawableEntity> Player::clone() const {
+//     return std::make_unique<Player>(*this);
+// }
 
 void Player::move(const sf::Vector2f& offset){
     const sf::Vector2f newPosition=sprite.getPosition()+offset;
