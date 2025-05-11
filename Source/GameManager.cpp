@@ -31,12 +31,12 @@ void GameManager::popState() {
     }
 }
 
-void GameManager::clearStates() {
-    while(!states.empty()) {
-        states.pop();
-    }
-    window->close();
-}
+// void GameManager::clearStates() {
+//     while(!states.empty()) {
+//         states.pop();
+//     }
+//     window->close();
+// }
 
 void GameManager::run() {
     pushState(std::make_unique<SplashState>());

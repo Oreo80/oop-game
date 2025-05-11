@@ -37,7 +37,7 @@ public:
 
     void pushState(std::unique_ptr<GameState> state);
     void popState();
-    void clearStates();
+    // void clearStates();
 
     void run();
 

@@ -253,9 +253,9 @@ PlayState & PlayState::operator=(PlayState other) {
 //     return std::make_unique<PlayState>(*this);
 // }
 
-bool PlayState::shouldChangeState() const {
-    return false;
-}
+// bool PlayState::shouldChangeState() const {
+//     return false;
+// }
 
 void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
