@@ -1,0 +1,27 @@
+#pragma once
+#include "GameState.h"
+
+class InstructionsState : public GameState {
+private:
+    sf::Text instrText;
+    bool shouldTransition = false;
+
+    void doProcessEvent(const std::optional<sf::Event> &event) override;
+    void doUpdate() override;
+    void doRender(sf::RenderWindow& window) const override;
+
+public:
+    explicit InstructionsState(const std::string &text=" --- Instructions --- \n\n"
+                                                               "[Z or ENTER] - Confirm\n"
+                                                               "[X or SHIFT] - Cancel\n"
+                                                               "[F4] - Fullscreen\n"
+                                                               "[ESC] - Quit\n"
+                                                               "When HP is 0, you lose.\n\n"
+                                                               "[Press Z or ENTER] to begin game",
+                            sf::Vector2f positionText=sf::Vector2f(170, 100), unsigned int fontSize=30);
+    ~InstructionsState() override = default;
+
+    std::unique_ptr<GameState> clone() const override;
+    bool shouldChangeState() const override;
+
+};

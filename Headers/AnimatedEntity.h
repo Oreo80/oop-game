@@ -1,7 +1,6 @@
 #pragma once
-
+#include "ResourceManager.h"
 #include "DrawableEntity.h"
-#include "TextureCache.h"
 
 class AnimatedEntity : public DrawableEntity {
 protected:
@@ -11,6 +10,7 @@ protected:
     sf::Clock animationClock;
 
     static std::vector<std::shared_ptr<sf::Texture>> loadTextures(const std::vector<std::string>& paths);
+
 public:
     explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos);
     // std::unique_ptr<DrawableEntity> clone() const override;

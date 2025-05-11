@@ -5,10 +5,14 @@
 std::vector<std::shared_ptr<sf::Texture>> AnimatedEntity::loadTextures(
     const std::vector<std::string>& paths)
 {
+    static ResourceManager<sf::Texture> textureCache;  // cache local, singleton-ish per TU
     std::vector<std::shared_ptr<sf::Texture>> textures;
+    textures.reserve(paths.size());
+
     for (const auto& path : paths) {
-        textures.push_back(TextureCache::get(path));
+        textures.push_back(textureCache.get(path));
     }
+
     return textures;
 }
 

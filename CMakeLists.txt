@@ -86,6 +86,18 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/AnimatedEntity.cpp
         Headers/TextureCache.h
         Source/TextureCache.cpp
+        Headers/GameState.h
+        Headers/SplashState.h
+        Headers/PlayState.h
+        Headers/GameManager.h
+        Source/GameManager.cpp
+        Source/SplashState.cpp
+        Source/PlayState.cpp
+        Source/GameState.cpp
+        Headers/Singleton.h
+        Headers/ResourceManager.h
+        Headers/InstructionsState.h
+        Source/InstructionsState.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
