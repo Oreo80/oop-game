@@ -8,7 +8,7 @@ private:
 
 protected:
     GameManager& gameManager;
-    std::shared_ptr<sf::RenderWindow> window;
+    std::shared_ptr<sf::RenderWindow> windowPtr;
 
     GameState();
 
@@ -41,6 +41,6 @@ public:
     }
 
     [[nodiscard]] virtual bool shouldChangeState() const { return false; }
-    [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
+    // [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
 
 };

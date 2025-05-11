@@ -14,7 +14,7 @@ private:
     std::shared_ptr<sf::RenderWindow> window;
     bool isFullscreen = false;
 
-    std::stack<std::unique_ptr<GameState>> m_states;
+    std::stack<std::unique_ptr<GameState>> states;
 
     GameManager() : window(std::make_shared<sf::RenderWindow>(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close)) {
         window->setFramerateLimit(30);

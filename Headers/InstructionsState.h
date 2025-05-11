@@ -21,7 +21,7 @@ public:
                             sf::Vector2f positionText=sf::Vector2f(170, 100), unsigned int fontSize=30);
     ~InstructionsState() override = default;
 
-    std::unique_ptr<GameState> clone() const override;
+    // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
 
 };

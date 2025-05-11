@@ -54,6 +54,6 @@ public:
     PlayState(const PlayState& other);
     PlayState& operator=(PlayState other);
     friend void swap(PlayState& first, PlayState& second) noexcept;
-    std::unique_ptr<GameState> clone() const override;
+    // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
 };

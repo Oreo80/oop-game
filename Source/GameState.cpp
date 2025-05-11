@@ -5,7 +5,7 @@ void GameState::handleGlobalEvent(const std::optional<sf::Event> &event) const {
         const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
 
         if (keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-            window->close();
+            windowPtr->close();
         }
         if (keyPressed->scancode == sf::Keyboard::Scancode::F4) {
             gameManager.toggleFullscreen();
@@ -13,4 +13,4 @@ void GameState::handleGlobalEvent(const std::optional<sf::Event> &event) const {
     }
 }
 
-GameState::GameState(): gameManager(GameManager::getInstance()), window(gameManager.getWindow()) {}
+GameState::GameState(): gameManager(GameManager::getInstance()), windowPtr(gameManager.getWindow()) {}

@@ -18,22 +18,22 @@ void GameManager::toggleFullscreen() {
 }
 
 void GameManager::pushState(std::unique_ptr<GameState> state) {
-    m_states.push(std::move(state));
+    states.push(std::move(state));
 }
 
 void GameManager::popState() {
-    if(!m_states.empty()) {
-        m_states.pop();
+    if(!states.empty()) {
+        states.pop();
     }
 
-    if(m_states.empty()) {
+    if(states.empty()) {
         window->close();
     }
 }
 
 void GameManager::clearStates() {
-    while(!m_states.empty()) {
-        m_states.pop();
+    while(!states.empty()) {
+        states.pop();
     }
     window->close();
 }
@@ -43,11 +43,15 @@ void GameManager::run() {
     while(window->isOpen()) {
         handleEvents();
 
-        if(!m_states.empty()) {
-            m_states.top()->update();
+        if(!states.empty()) {
+            states.top()->update();
+
+            if (states.top()->shouldChangeState()) {
+                popState();
+            }
 
             window->clear();
-            m_states.top()->render(*window);
+            states.top()->render(*window);
             window->display();
         }
     }
@@ -73,8 +77,8 @@ void GameManager::handleEvents() {
         if (event->is<sf::Event::Closed>()) {
             window->close();
         }
-        if(!m_states.empty()) {
-            m_states.top()->processEvent(event);
+        if(!states.empty()) {
+            states.top()->processEvent(event);
         }
     }
     }

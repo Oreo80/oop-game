@@ -8,9 +8,9 @@ InstructionsState::InstructionsState(const std::string &text, const sf::Vector2f
     gameManager.playMusic("./mus/mus_menu0.ogg");
 }
 
-std::unique_ptr<GameState> InstructionsState::clone() const {
-    return std::make_unique<InstructionsState>(*this);
-}
+// std::unique_ptr<GameState> InstructionsState::clone() const {
+//     return std::make_unique<InstructionsState>(*this);
+// }
 
 void InstructionsState::doProcessEvent(const std::optional<sf::Event> &event) {
     if (event->is<sf::Event::KeyPressed>()) {
@@ -23,7 +23,7 @@ void InstructionsState::doProcessEvent(const std::optional<sf::Event> &event) {
 void InstructionsState::doUpdate() {
     if(shouldTransition) {
         gameManager.playMusic("./mus/mus_ohyes.ogg");
-        GameManager::getInstance().pushState(std::make_unique<PlayState>());
+        gameManager.pushState(std::make_unique<PlayState>());
     }
 }
 
