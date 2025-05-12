@@ -65,12 +65,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     Headers/BulletType.h
     Source/Bullet.cpp
     Headers/Bullet.h
-    Source/GameLogic.cpp
-    Headers/GameLogic.h
         Headers/BattleBox.h
         Source/BattleBox.cpp
-        Headers/SplashScreen.h
-        Source/SplashScreen.cpp
         Headers/Button.h
         Source/Button.cpp
         Headers/BattleText.h
@@ -84,8 +80,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/StatefulSprite.cpp
         Headers/AnimatedEntity.h
         Source/AnimatedEntity.cpp
-        Headers/TextureCache.h
-        Source/TextureCache.cpp
         Headers/GameState.h
         Headers/SplashState.h
         Headers/PlayState.h
