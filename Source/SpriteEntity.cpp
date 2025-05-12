@@ -1,18 +1,9 @@
 #include "../Headers/SpriteEntity.h"
-
+#include "../Headers/ResourceManager.h"
 #include <iostream>
 
-sf::Texture SpriteEntity::initTexture(const std::string &texturePath) {
-    sf::Texture tex;
-    if (!tex.loadFromFile(texturePath)) {
-        std::cerr << "Failed to load texture: "<< texturePath << std::endl;
-        throw std::runtime_error("Failed to load texture: " + texturePath);
-    }
-    return tex;
-}
-
 SpriteEntity::SpriteEntity(const std::string &texturePath, const sf::Vector2f &pos)
-    : texture(initTexture(texturePath)), sprite(texture) {
+    : texture(ResourceManager<sf::Texture>().get(texturePath)), sprite(*texture) {
     sprite.setPosition(pos);
 }
 

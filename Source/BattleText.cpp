@@ -1,5 +1,5 @@
 #include "../Headers/BattleText.h"
-
+#include "../Headers/ResourceManager.h"
 #include <iostream>
 
 
@@ -11,18 +11,9 @@ std::ostream & operator<<(std::ostream &os, const BattleText &obj){
             << "Font size: "<<obj.fontSize;
 }
 
-sf::Font BattleText::loadFont() {
-    sf::Font font_;
-    if (!font_.openFromFile("./fonts/DeterminationSans.ttf")) {
-        std::cerr << "Failed to load font file!\n";
-        throw std::runtime_error("Failed to load font file");
-    }
-    return font_;
-}
-
 BattleText::BattleText(const sf::Vector2f position, const unsigned int fontSize_):
-    font(loadFont()),
-    text(font,"",fontSize_),
+    font(ResourceManager<sf::Font>().get("./fonts/DeterminationSans.ttf")),
+    text(*font,"",fontSize_),
     fontSize(fontSize_) {
     text.setFillColor(sf::Color::White);
     text.setPosition(position);

@@ -4,7 +4,7 @@
 
 class BattleText : public DrawableEntity{
 private:
-    sf::Font font;
+    std::shared_ptr<sf::Font> font;
     sf::Text text;
     unsigned int fontSize;
     std::string fullText;
@@ -14,8 +14,6 @@ private:
     bool textStarted = false;
     sf::Clock textClock;
     bool isuUpdating = false;
-
-    static sf::Font loadFont();
 public:
     explicit BattleText(sf::Vector2f position, unsigned int fontSize_);
     friend std::ostream & operator<<(std::ostream &os, const BattleText &obj);

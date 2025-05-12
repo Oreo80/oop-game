@@ -27,7 +27,6 @@ private:
     };
     std::vector<DrawableEntity*> entities;
     TurnState currentTurn = TurnState::PlayerTurn;
-    // std::vector<Button*> actionButtons;
     sf::Clock enemyTurnClock;
     const float enemyTurnDuration = 10.f;
     int currentActionIndex = 0;
@@ -54,6 +53,6 @@ public:
     PlayState(const PlayState& other);
     PlayState& operator=(PlayState other);
     friend void swap(PlayState& first, PlayState& second) noexcept;
-    // std::unique_ptr<GameState> clone() const override;
+    [[maybe_unused]] std::unique_ptr<GameState> clone() const override;
     // bool shouldChangeState() const override;
 };

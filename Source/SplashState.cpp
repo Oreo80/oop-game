@@ -9,9 +9,9 @@ splashText(*gameManager.fonts.get("./fonts/DeterminationSans.ttf"),text, fontSiz
     gameManager.playMusic("./mus/mus_menu0.ogg");
 }
 
-// std::unique_ptr<GameState> SplashState::clone() const {
-//     return std::make_unique<SplashState>(*this);
-// }
+std::unique_ptr<GameState> SplashState::clone() const {
+    return std::make_unique<SplashState>(*this);
+}
 
 void SplashState::doProcessEvent(const std::optional<sf::Event> &event) {
     if (event->is<sf::Event::KeyPressed>()) {

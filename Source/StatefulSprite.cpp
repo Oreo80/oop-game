@@ -2,7 +2,7 @@
 
 StatefulSprite::StatefulSprite(const std::string &defaultPath, const std::string &defaultStateName,
     const sf::Vector2f &pos): SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
-    states[defaultStateName] = texture;
+    states[defaultStateName] = *texture;
 }
 
 // std::unique_ptr<DrawableEntity> StatefulSprite::clone() const {

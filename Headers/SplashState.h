@@ -18,7 +18,7 @@ public:
                             sf::Vector2f positionText=sf::Vector2f(50, 400), unsigned int fontSize=24);
     ~SplashState() override = default;
 
-    // std::unique_ptr<GameState> clone() const override;
+    [[maybe_unused]] std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
 
 };

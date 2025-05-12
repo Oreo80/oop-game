@@ -249,9 +249,9 @@ PlayState & PlayState::operator=(PlayState other) {
     return *this;
 }
 
-// std::unique_ptr<GameState> PlayState::clone() const {
-//     return std::make_unique<PlayState>(*this);
-// }
+std::unique_ptr<GameState> PlayState::clone() const {
+    return std::make_unique<PlayState>(*this);
+}
 
 // bool PlayState::shouldChangeState() const {
 //     return false;
