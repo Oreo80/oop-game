@@ -9,7 +9,6 @@ protected:
 public:
     explicit GameException(std::string  msg);
     ~GameException() override = default;
-    [[nodiscard]] const char* what() const noexcept override;
 };
 
 class TextureLoadException : public GameException {
