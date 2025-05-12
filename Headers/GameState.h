@@ -41,6 +41,6 @@ public:
     }
 
     [[nodiscard]] virtual bool shouldChangeState() const { return false; }
-    [[maybe_unused]] [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
+    // [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
 
 };
