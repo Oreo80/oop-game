@@ -1,6 +1,4 @@
 #include "../Headers/GameManager.h"
-
-#include <iostream>
 #include "../Headers/SplashState.h"
 
 void GameManager::toggleFullscreen() {
@@ -58,17 +56,11 @@ void GameManager::run() {
 }
 
 void GameManager::playMusic(const std::string &path) {
-    try {
-        if(const auto newMusic = music.get(path); currentMusic != newMusic) {
-            if(currentMusic) currentMusic->stop();
-            currentMusic = newMusic;
-            currentMusic->setLooping(true);
-            currentMusic->play();
-        }
-    }
-    catch(const std::exception& e) {
-        std::cerr << "Music error[" << path << "]: " << e.what() << std::endl;
-        throw;
+    if(const auto newMusic = music.get(path); currentMusic != newMusic) {
+        if(currentMusic) currentMusic->stop();
+        currentMusic = newMusic;
+        currentMusic->setLooping(true);
+        currentMusic->play();
     }
 }
 

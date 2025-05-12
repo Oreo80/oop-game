@@ -1,7 +1,10 @@
 #include "../Headers/StatefulSprite.h"
 
+#include "../Headers/ResourceManager.h"
+#include "../Headers/Exceptions.h"
+
 StatefulSprite::StatefulSprite(const std::string &defaultPath, const std::string &defaultStateName,
-    const sf::Vector2f &pos): SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
+                               const sf::Vector2f &pos): SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
     states[defaultStateName] = *texture;
 }
 
@@ -10,14 +13,13 @@ StatefulSprite::StatefulSprite(const std::string &defaultPath, const std::string
 // }
 
 void StatefulSprite::addState(const std::string &stateName, const std::string &texturePath) {
-    sf::Texture tex;
-    if (!tex.loadFromFile(texturePath)) throw std::runtime_error("Failed to load "+texturePath);
-    states[stateName] = std::move(tex);
+    const std::shared_ptr<sf::Texture> tex = ResourceManager<sf::Texture>().get(texturePath);
+    states[stateName] = std::move(*tex);
 }
 
 void StatefulSprite::setState(const std::string &stateName) {
     const auto stateEntryIt = states.find(stateName);
-    if (stateEntryIt == states.end()) throw std::runtime_error("Unknown state "+stateName);
+    if (stateEntryIt == states.end()) throw InvalidStateException(stateName);
     currentState = stateName;
     sprite.setTexture(stateEntryIt->second);
 }

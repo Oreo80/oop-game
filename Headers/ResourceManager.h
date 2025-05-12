@@ -2,9 +2,9 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include <stdexcept>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Exceptions.h"
 template<typename Resource>
 class ResourceManager {
 private:
@@ -24,19 +24,19 @@ public:
         auto res = std::make_shared<Resource>();
         if constexpr (std::is_same_v<Resource, sf::Texture>) {
             if (!res->loadFromFile(path))
-                throw std::runtime_error("Failed to load texture: " + path);
+                throw TextureLoadException(path);
         }
         else if constexpr (std::is_same_v<Resource, sf::Font>) {
             if (!res->openFromFile(path))
-                throw std::runtime_error("Failed to load font: " + path);
+                throw FontLoadException(path);
         }
         else if constexpr (std::is_same_v<Resource, sf::SoundBuffer>) {
             if (!res->loadFromFile(path))
-                throw std::runtime_error("Failed to load sound buffer: " + path);
+                throw SoundLoadException(path);
         }
         else if constexpr (std::is_same_v<Resource, sf::Music>) {
             if (!res->openFromFile(path))
-                throw std::runtime_error("Failed to load music: " + path);
+                throw MusicLoadException(path);
         }
         else {
             static_assert(

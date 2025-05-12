@@ -92,6 +92,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Headers/ResourceManager.h
         Headers/InstructionsState.h
         Source/InstructionsState.cpp
+        Headers/Exceptions.h
+        Source/Exceptions.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

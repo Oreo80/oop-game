@@ -1,10 +1,10 @@
 #include "../Headers/BulletType.h"
 #include <map>
-#include <stdexcept>
+#include "../Headers/Exceptions.h"
 
 BulletType::BulletType(const float speed_, std::vector<std::string> paths_) : speed{speed_}, paths{std::move(paths_)} {
     if (paths.empty()) {
-        throw std::runtime_error("BulletType needs at least one frame");
+        throw GameLogicException("BulletType needs at least one frame");
     }
 }
 
@@ -15,7 +15,7 @@ const BulletType & BulletType::get(const BulletID id) {
     };
     const auto i = registry.find(id);
     if (i == registry.end())
-        throw std::out_of_range("Unknown BulletID");
+        throw GameLogicException("Invalid BulletID: " + std::to_string(static_cast<int>(id)));
     return i->second;
 }
 
