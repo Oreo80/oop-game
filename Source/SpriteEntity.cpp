@@ -7,9 +7,9 @@ SpriteEntity::SpriteEntity(const std::string &texturePath, const sf::Vector2f &p
     sprite.setPosition(pos);
 }
 
-// std::unique_ptr<DrawableEntity> SpriteEntity::clone() const {
-//     return std::make_unique<SpriteEntity>(*this);
-// }
+std::unique_ptr<DrawableEntity> SpriteEntity::clone() const {
+    return std::make_unique<SpriteEntity>(*this);
+}
 
 void SpriteEntity::draw(sf::RenderWindow &window) const {
     window.draw(sprite);

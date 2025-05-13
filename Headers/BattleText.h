@@ -17,7 +17,7 @@ private:
 public:
     explicit BattleText(sf::Vector2f position, unsigned int fontSize_);
     friend std::ostream & operator<<(std::ostream &os, const BattleText &obj);
-    // std::unique_ptr<DrawableEntity> clone() const override;
+    std::unique_ptr<DrawableEntity> clone() const override;
     void setText(const std::string& newText, float delayTime = 0.5f);
     void update() override;
     void draw(sf::RenderWindow& window) const override;

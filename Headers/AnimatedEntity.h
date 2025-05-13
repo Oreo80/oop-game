@@ -13,7 +13,7 @@ protected:
 
 public:
     explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos);
-    // std::unique_ptr<DrawableEntity> clone() const override;
+    std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();
     void update() override;

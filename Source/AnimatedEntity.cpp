@@ -5,7 +5,7 @@
 std::vector<std::shared_ptr<sf::Texture>> AnimatedEntity::loadTextures(
     const std::vector<std::string>& paths)
 {
-    static ResourceManager<sf::Texture> textureCache;  // cache local, singleton-ish per TU
+    static ResourceManager<sf::Texture> textureCache;
     std::vector<std::shared_ptr<sf::Texture>> textures;
     textures.reserve(paths.size());
 
@@ -21,9 +21,9 @@ AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
     sprite.setPosition(pos);
 }
 
-// std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
-//     return std::make_unique<AnimatedEntity>(*this);
-// }
+std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
+    return std::make_unique<AnimatedEntity>(*this);
+}
 
 void AnimatedEntity::animate() {
     if (animationClock.getElapsedTime().asMilliseconds() > 100) {

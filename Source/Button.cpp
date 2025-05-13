@@ -10,9 +10,9 @@ Button::Button(const std::string &normalPath, const std::string &selectedPath, c
     addState("selected", selectedPath);
 }
 
-// std::unique_ptr<DrawableEntity> Button::clone() const {
-//     return std::make_unique<Button>(*this);
-// }
+std::unique_ptr<DrawableEntity> Button::clone() const {
+    return std::make_unique<Button>(*this);
+}
 
 sf::Vector2f Button::getPositionForPlayer() const {
     return { sprite.getPosition().x+8,sprite.getPosition().y+14};

@@ -28,7 +28,7 @@ private:
     std::vector<DrawableEntity*> entities;
     TurnState currentTurn = TurnState::PlayerTurn;
     sf::Clock enemyTurnClock;
-    const float enemyTurnDuration = 10.f;
+    static const float enemyTurnDuration;
     int currentActionIndex = 0;
     bool waitingForTextDelay=false;
 

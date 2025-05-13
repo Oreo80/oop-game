@@ -19,9 +19,9 @@ BattleText::BattleText(const sf::Vector2f position, const unsigned int fontSize_
     text.setPosition(position);
 }
 
-// std::unique_ptr<DrawableEntity> BattleText::clone() const {
-//     return std::make_unique<BattleText>(*this);
-// }
+std::unique_ptr<DrawableEntity> BattleText::clone() const {
+    return std::make_unique<BattleText>(*this);
+}
 
 void BattleText::setText(const std::string& newText, const float delayTime) {
     fullText = newText;

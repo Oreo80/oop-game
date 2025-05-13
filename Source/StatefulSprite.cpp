@@ -8,9 +8,9 @@ StatefulSprite::StatefulSprite(const std::string &defaultPath, const std::string
     states[defaultStateName] = *texture;
 }
 
-// std::unique_ptr<DrawableEntity> StatefulSprite::clone() const {
-//     return std::make_unique<StatefulSprite>(*this);
-// }
+std::unique_ptr<DrawableEntity> StatefulSprite::clone() const {
+    return std::make_unique<StatefulSprite>(*this);
+}
 
 void StatefulSprite::addState(const std::string &stateName, const std::string &texturePath) {
     const std::shared_ptr<sf::Texture> tex = ResourceManager<sf::Texture>().get(texturePath);

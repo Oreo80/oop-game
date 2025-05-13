@@ -1,5 +1,5 @@
 #include "../Headers/PlayState.h"
-
+const float PlayState::enemyTurnDuration = 10.f;
 void PlayState::doProcessEvent(const std::optional<sf::Event> &event) {
     if (event->is<sf::Event::KeyPressed>()) {
         const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
@@ -225,21 +225,23 @@ battleBox({242, 150},{155, 130}),battleText({52,270},24) {
 
 PlayState::PlayState(const PlayState &other)
     : GameState(other),
-      background(other.background),
+      background(static_cast<const SpriteEntity&>(*other.background.clone())),
       shouldTransition(other.shouldTransition),
-      player(other.player),
-      battleBox(other.battleBox),
+      player(static_cast<const Player&>(*other.player.clone())),
+      battleBox(static_cast<const BattleBox&>(*other.battleBox.clone())),
       keysPressed(other.keysPressed),
-      battleText(other.battleText),
-      fightButton(other.fightButton),
-      talkButton(other.talkButton),
-      itemButton(other.itemButton),
-      spareButton(other.spareButton),
+      battleText(static_cast<const BattleText&>(*other.battleText.clone())),
+      fightButton(static_cast<const Button&>(*other.fightButton.clone())),
+      talkButton(static_cast<const Button&>(*other.talkButton.clone())),
+      itemButton(static_cast<const Button&>(*other.itemButton.clone())),
+      spareButton(static_cast<const Button&>(*other.spareButton.clone())),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
       waitingForTextDelay(other.waitingForTextDelay) {
     for (const auto& bullet : other.bullets) {
-        bullets.push_back(std::make_unique<Bullet>(*bullet));
+        bullets.push_back(std::unique_ptr<Bullet>(
+            static_cast<Bullet*>(bullet->clone().release())
+        ));
     }
     initEntities();
 }
