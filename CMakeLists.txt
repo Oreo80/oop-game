@@ -94,6 +94,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/InstructionsState.cpp
         Headers/Exceptions.h
         Source/Exceptions.cpp
+        Headers/BitmapFont.h
+        Source/BitmapFont.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

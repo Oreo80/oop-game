@@ -1,10 +1,8 @@
 #include "../Headers/InstructionsState.h"
 #include "../Headers/PlayState.h"
 
-InstructionsState::InstructionsState(const std::string &text, const sf::Vector2f positionText,
-                         const unsigned int fontSize) : instrText(*gameManager.fonts.get("./fonts/DeterminationSans.ttf"),text, fontSize) {
-    instrText.setFillColor(sf::Color::White);
-    instrText.setPosition(positionText);
+InstructionsState::InstructionsState(const std::string &text, const sf::Vector2f positionText, const float scale) :
+font("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",text, positionText,sf::Color::White, scale) {
     gameManager.playMusic("./mus/mus_menu0.ogg");
 }
 
@@ -29,7 +27,7 @@ void InstructionsState::doUpdate() {
 
 void InstructionsState::doRender(sf::RenderWindow& window) const {
     window.clear();
-    window.draw(instrText);
+    const_cast<BitmapFont&>(font).drawText(window);
 }
 
 bool InstructionsState::shouldChangeState() const {

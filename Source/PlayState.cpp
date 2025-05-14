@@ -159,7 +159,6 @@ void PlayState::enterEnemyTurn() {
             sf::Vector2f{1.0f, 0.0f}
         ));
     }
-    // std::cout << TextureCache{} << std::endl;
 }
 
 void PlayState::updateEnemyTurn() {
@@ -216,7 +215,8 @@ bool PlayState::isBulletsActive() const {
 }
 
 PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
-battleBox({242, 150},{155, 130}),battleText({52,270},24) {
+battleBox({242, 150},{155, 130}),battleText("./fonts/fnt_main.png",
+    "./fonts/glyphs_fnt_main.csv",{52,270}) {
     gameManager.playMusic("./mus/mus_battle1.ogg");
     battleBox.setBottomY(385.f);
     initEntities();
@@ -225,22 +225,22 @@ battleBox({242, 150},{155, 130}),battleText({52,270},24) {
 
 PlayState::PlayState(const PlayState &other)
     : GameState(other),
-      background(static_cast<const SpriteEntity&>(*other.background.clone())),
+      background(dynamic_cast<const SpriteEntity&>(*other.background.clone())),
       shouldTransition(other.shouldTransition),
-      player(static_cast<const Player&>(*other.player.clone())),
-      battleBox(static_cast<const BattleBox&>(*other.battleBox.clone())),
+      player(dynamic_cast<const Player&>(*other.player.clone())),
+      battleBox(dynamic_cast<const BattleBox&>(*other.battleBox.clone())),
       keysPressed(other.keysPressed),
-      battleText(static_cast<const BattleText&>(*other.battleText.clone())),
-      fightButton(static_cast<const Button&>(*other.fightButton.clone())),
-      talkButton(static_cast<const Button&>(*other.talkButton.clone())),
-      itemButton(static_cast<const Button&>(*other.itemButton.clone())),
-      spareButton(static_cast<const Button&>(*other.spareButton.clone())),
+      battleText(dynamic_cast<const BattleText&>(*other.battleText.clone())),
+      fightButton(dynamic_cast<const Button&>(*other.fightButton.clone())),
+      talkButton(dynamic_cast<const Button&>(*other.talkButton.clone())),
+      itemButton(dynamic_cast<const Button&>(*other.itemButton.clone())),
+      spareButton(dynamic_cast<const Button&>(*other.spareButton.clone())),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
       waitingForTextDelay(other.waitingForTextDelay) {
     for (const auto& bullet : other.bullets) {
         bullets.push_back(std::unique_ptr<Bullet>(
-            static_cast<Bullet*>(bullet->clone().release())
+            dynamic_cast<Bullet*>(bullet->clone().release())
         ));
     }
     initEntities();

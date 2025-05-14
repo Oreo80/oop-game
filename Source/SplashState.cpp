@@ -2,10 +2,8 @@
 #include "../Headers/GameManager.h"
 #include "../Headers/InstructionsState.h"
 SplashState::SplashState(const std::string &filePath ,const std::string &text, const sf::Vector2f positionText,
-                           const unsigned int fontSize) : background(filePath,{0,0}),
-splashText(*gameManager.fonts.get("./fonts/DeterminationSans.ttf"),text, fontSize) {
-    splashText.setFillColor(sf::Color::White);
-    splashText.setPosition(positionText);
+                           const float scale) : background(filePath,{0,0}),
+font("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",text,positionText,sf::Color::White, scale){
     gameManager.playMusic("./mus/mus_menu0.ogg");
 }
 
@@ -29,7 +27,7 @@ void SplashState::doUpdate() {
 
 void SplashState::doRender(sf::RenderWindow& window) const {
     background.draw(window);
-    window.draw(splashText);
+    const_cast<BitmapFont&>(font).drawText(window);
 }
 
 bool SplashState::shouldChangeState() const {

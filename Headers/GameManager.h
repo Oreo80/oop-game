@@ -6,6 +6,7 @@
 #include "Singleton.h"
 #include "GameState.h"
 #include "ResourceManager.h"
+#include "BitmapFont.h"
 class GameState;
 class GameManager : public Singleton<GameManager> {
 private:

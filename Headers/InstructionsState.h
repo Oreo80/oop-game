@@ -3,7 +3,7 @@
 
 class InstructionsState : public GameState {
 private:
-    sf::Text instrText;
+    BitmapFont font;
     bool shouldTransition = false;
 
     void doProcessEvent(const std::optional<sf::Event> &event) override;
@@ -18,7 +18,7 @@ public:
                                                                "[ESC] - Quit\n"
                                                                "When HP is 0, you lose.\n\n"
                                                                "[Press Z or ENTER] to begin game",
-                            sf::Vector2f positionText=sf::Vector2f(170, 100), unsigned int fontSize=30);
+                            sf::Vector2f positionText=sf::Vector2f(170, 100), const float scale = 1.f);
     ~InstructionsState() override = default;
 
     // std::unique_ptr<GameState> clone() const override;

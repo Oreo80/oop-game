@@ -1,12 +1,12 @@
 #pragma once
 #include "GameState.h"
 #include "SpriteEntity.h"
-
+#include "BitmapFont.h"
 
 class SplashState : public GameState {
 private:
     SpriteEntity background;
-    sf::Text splashText;
+    BitmapFont font;
     bool shouldTransition = false;
 
     void doProcessEvent(const std::optional<sf::Event> &event) override;
@@ -15,7 +15,7 @@ private:
 
 public:
     explicit SplashState(const std::string &filePath="./img/splash.png",const std::string &text="[PRESS Z OR ENTER]",
-                            sf::Vector2f positionText=sf::Vector2f(50, 400), unsigned int fontSize=24);
+                            sf::Vector2f positionText=sf::Vector2f(50, 400), float scale = 0.8f);
     ~SplashState() override = default;
 
     // std::unique_ptr<GameState> clone() const override;

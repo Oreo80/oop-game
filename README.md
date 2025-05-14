@@ -17,13 +17,13 @@ interactiv.
 - S sau ⬇️ pentru a te mișca în jos
 ---
 ### 👾 Meniu 👾
-- F4 pentru fullscreen (momentan nu functionează în splashscreen-uri)
+- F4 pentru fullscreen
 - Enter sau Z pentru confirmarea alegerii
 - ESC pentru închiderea ferestrei
 
 ---
 
 ## Resurse
-
+- [UndertaleModTool] (https://github.com/UnderminersTeam/UndertaleModTool)
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library

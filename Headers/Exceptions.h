@@ -37,3 +37,18 @@ class GameLogicException : public GameException {
 public:
     explicit GameLogicException(const std::string& description);
 };
+
+class FontMetadataLoadException : public GameException {
+public:
+    explicit FontMetadataLoadException(const std::string& path);
+};
+
+class FontMetadataParseException : public GameException {
+public:
+    FontMetadataParseException(int line, const std::string& token);
+};
+
+class FontMetadataFormatException : public GameException {
+public:
+    FontMetadataFormatException(int line, size_t got, size_t expected);
+};
