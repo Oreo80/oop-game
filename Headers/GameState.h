@@ -22,6 +22,8 @@ protected:
     virtual void preRender(sf::RenderWindow&) const {}
     virtual void postRender(sf::RenderWindow&) const {}
 
+    virtual void print(std::ostream& os) const { os<<"Game State: "; }
+
 public:
     virtual ~GameState() = default;
     void processEvent(const std::optional<sf::Event> &event) {
@@ -44,5 +46,5 @@ public:
     [[nodiscard]] virtual bool shouldChangeState() const { return false; }
     virtual std::unique_ptr<GameState> nextState() { return nullptr; }
     // [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
-
+    friend std::ostream& operator<<(std::ostream &os, const GameState &state);
 };

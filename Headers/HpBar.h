@@ -10,4 +10,5 @@ public:
     std::unique_ptr<DrawableEntity> clone() const override;
     void draw(sf::RenderWindow &window) const override;
     void setPosition(const sf::Vector2f &pos) override;
+    friend std::ostream & operator<<(std::ostream &os, const HpBar &obj);
 };

@@ -1,10 +1,16 @@
 #include "../Headers/Bullet.h"
 
+void Bullet::print(std::ostream &os) const {
+    AnimatedEntity::print(os);
+        os << ", Velocity: ( "<< velocity.x << ", " << velocity.y
+        << " , " << BulletType::get(id);
+}
+
 Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vector2f &dir): AnimatedEntity(
-        BulletType::get(id_).getPaths(), startPos),
-    id(id_),
-    direction(dir),
-    velocity(dir * BulletType::get(id_).getSpeed()) {
+                                                                                               BulletType::get(id_).getPaths(), startPos),
+                                                                                           id(id_),
+                                                                                           direction(dir),
+                                                                                           velocity(dir * BulletType::get(id_).getSpeed()) {
 }
 
 std::unique_ptr<DrawableEntity> Bullet::clone() const {
@@ -23,9 +29,6 @@ bool Bullet::isOffScreen(const sf::RenderWindow& window) const {
            getPosition().y < 0 || getPosition().y > windowHeight;
 }
 std::ostream & operator<<(std::ostream &os, const Bullet &obj) {
-    return os
-        << static_cast<const AnimatedEntity&>(obj)
-        << ", Velocity: ( "<< obj.velocity.x << ", " << obj.velocity.y
-        << " , " << BulletType::get(obj.id);
-
+    obj.print(os);
+    return os;
 }

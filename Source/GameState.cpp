@@ -14,3 +14,8 @@ void GameState::handleGlobalEvent(const std::optional<sf::Event> &event) const {
 }
 
 GameState::GameState(): gameManager(GameManager::getInstance()), windowPtr(gameManager.getWindow()) {}
+
+std::ostream & operator<<(std::ostream &os, const GameState &state) {
+    state.print(os);
+    return os;
+}

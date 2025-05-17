@@ -5,6 +5,7 @@ class SpriteEntity : public DrawableEntity {
 protected:
     std::shared_ptr<sf::Texture> texture;
     sf::Sprite sprite;
+    void print(std::ostream& os) const override;
 public:
     explicit SpriteEntity(const std::string& texturePath="./img/missing.png", const sf::Vector2f& pos={0, 0});
     std::unique_ptr<DrawableEntity> clone() const override;

@@ -55,6 +55,8 @@ private:
     void updateButtonTextures() const;
     void processSelectedAction(int actionIndex);
     bool isBulletsActive() const;
+protected:
+    void print(std::ostream &os) const override;
 public:
     PlayState();
     ~PlayState() override = default;
@@ -63,4 +65,5 @@ public:
     friend void swap(PlayState& first, PlayState& second) noexcept;
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
+    friend std::ostream& operator<<(std::ostream &os, const PlayState &state);
 };

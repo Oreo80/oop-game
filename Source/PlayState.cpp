@@ -241,11 +241,20 @@ bool PlayState::isBulletsActive() const {
     return !bullets.empty();
 }
 
+void PlayState::print(std::ostream &os) const {
+    GameState::print(os);
+    os
+        << "Play State, "
+        << "Player: "<< player << ", Player HP: " << currentHp
+        << ", Battle Box: "<<battleBox
+        << ", Bullets Active: "<< (isBulletsActive() ? "Yes" : "No");
+}
+
 PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
-battleBox({242, 150},{155, 130}),maxHp(20), currentHp(maxHp),
-hpLabelText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","HP",{244,405},sf::Color::White, 2.f),
-hpValueText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","20 / 20",{314,403},sf::Color::White, 3.f),
-battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270}) {
+                         battleBox({242, 150},{155, 130}),maxHp(20), currentHp(maxHp),
+                         hpLabelText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","HP",{244,405},sf::Color::White, 2.f),
+                         hpValueText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","20 / 20",{314,403},sf::Color::White, 3.f),
+                         battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270}) {
     gameManager.playMusic("./mus/mus_battle1.ogg");
     battleBox.setBottomY(385.f);
     hpBar.setHealth(20);
@@ -318,3 +327,9 @@ void swap(PlayState &first, PlayState &second) noexcept {
     first.initEntities();
     second.initEntities();
 }
+
+std::ostream & operator<<(std::ostream &os, const PlayState &state) {
+    state.print(os);
+    return os;
+}
+

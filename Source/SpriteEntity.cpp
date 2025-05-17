@@ -2,6 +2,10 @@
 #include "../Headers/ResourceManager.h"
 #include <iostream>
 
+void SpriteEntity::print(std::ostream &os) const {
+    os << "Position: (" << getPosition().x << ", " << getPosition().y << ")";
+}
+
 SpriteEntity::SpriteEntity(const std::string &texturePath, const sf::Vector2f &pos)
     : texture(ResourceManager<sf::Texture>().get(texturePath)), sprite(*texture) {
     sprite.setPosition(pos);
@@ -36,6 +40,6 @@ void SpriteEntity::setOrigin(const sf::Vector2f &origin_) {
 }
 
 std::ostream & operator<<(std::ostream &os, const SpriteEntity &obj) {
-    return os
-        << "Position: (" << obj.getPosition().x << ", " << obj.getPosition().y << ")";
+    obj.print(os);
+    return os;
 }

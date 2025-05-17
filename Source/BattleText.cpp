@@ -1,7 +1,12 @@
 #include "../Headers/BattleText.h"
 
+void BattleText::print(std::ostream &os) const {
+    BitmapFont::print(os);
+    os << ", Full text: "<< fullText << ", Current length: "<< currentLength;
+}
+
 BattleText::BattleText(const std::string &texturePath, const std::string &metadataPath, const sf::Vector2f &position,
-    const float scale): BitmapFont(texturePath, metadataPath, "", position, sf::Color::White, scale) {}
+                       const float scale): BitmapFont(texturePath, metadataPath, "", position, sf::Color::White, scale) {}
 
 std::unique_ptr<DrawableEntity> BattleText::clone() const {
     return std::make_unique<BattleText>(*this);
@@ -39,4 +44,9 @@ void BattleText::draw(sf::RenderWindow& window) const {
     const std::string substr = fullText.substr(0, currentLength);
     const_cast<BattleText*>(this)->BitmapFont::setText(substr);
     const_cast<BattleText*>(this)->drawText(window);
+}
+
+std::ostream & operator<<(std::ostream &os, const BattleText &obj){
+    obj.print(os);
+    return os;
 }

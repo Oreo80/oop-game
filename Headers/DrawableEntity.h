@@ -3,7 +3,9 @@
 
 
 class DrawableEntity {
-    public:
+protected:
+    virtual void print(std::ostream& os) const = 0;
+public:
     void tick (sf::RenderWindow& window) {
         update();
         draw(window);
@@ -15,6 +17,7 @@ class DrawableEntity {
     [[nodiscard]] virtual sf::FloatRect getGlobalBounds() const = 0;
     [[nodiscard]] virtual std::unique_ptr<DrawableEntity> clone() const = 0;
     virtual ~DrawableEntity() = default;
+    friend std::ostream& operator<<(std::ostream &os, const DrawableEntity&) {return os;}
 
 };
 

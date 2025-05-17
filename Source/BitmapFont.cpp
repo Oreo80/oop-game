@@ -65,6 +65,10 @@ Glyph BitmapFont::parseGlyphLine(const std::string &line, int lineNumber) {
     return Glyph{ sf::IntRect({x, y}, {w, h}), values[5], values[6] };
 }
 
+void BitmapFont::print(std::ostream &os) const {
+    os << "Text loaded: " << text << ", Position: ("<< position.x << ", " << position.y << "), Scale: " << scale;
+}
+
 BitmapFont::BitmapFont(const std::string &texturePath, const std::string &metadataPath, std::string text_,
                        const sf::Vector2f position_, const sf::Color color_, const float scale)
                      : text(std::move(text_)), position(position_), color(color_), scale(scale){
@@ -135,4 +139,9 @@ sf::FloatRect BitmapFont::getGlobalBounds() const {
 
 std::unique_ptr<DrawableEntity> BitmapFont::clone() const {
     return std::make_unique<BitmapFont>(*this);
+}
+
+std::ostream & operator<<(std::ostream &os, const BitmapFont &obj){
+    obj.print(os);
+    return os;
 }

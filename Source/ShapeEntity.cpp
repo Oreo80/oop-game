@@ -1,5 +1,10 @@
 #include "../Headers/ShapeEntity.h"
 
+void ShapeEntity::print(std::ostream &os) const {
+    os << "Size: (" << getSize().x << ", " << getSize().y<<") "
+        << ", Position: ("<< getPosition().x << ", " << getPosition().y<<") ";
+}
+
 ShapeEntity::ShapeEntity(const sf::Vector2f &pos, const sf::Vector2f &size) {
     shape.setSize(size);
     shape.setPosition(pos);
@@ -38,7 +43,6 @@ sf::Vector2f ShapeEntity::getCenter() const {
 }
 
 std::ostream & operator<<(std::ostream &os, const ShapeEntity &obj) {
-    return os
-        << "Size: (" << obj.getSize().x << ", " << obj.getSize().y<<") "
-        << ", Position: ("<< obj.getPosition().x << ", " << obj.getPosition().y<<") ";
+    obj.print(os);
+    return os;
 }

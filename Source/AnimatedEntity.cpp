@@ -16,6 +16,11 @@ std::vector<std::shared_ptr<sf::Texture>> AnimatedEntity::loadTextures(
     return textures;
 }
 
+void AnimatedEntity::print(std::ostream &os) const {
+    os << "Position: (" << getPosition().x << ", " << getPosition().y << ")"
+            << "Current frame: "<< currentFrame;
+}
+
 AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
                                const sf::Vector2f &pos): frames(loadTextures(paths)), sprite(*frames[0]) {
     sprite.setPosition(pos);
@@ -54,6 +59,6 @@ sf::FloatRect AnimatedEntity::getGlobalBounds() const {
 }
 
 std::ostream & operator<<(std::ostream &os, const AnimatedEntity &obj) {
-    return os << "Position: (" << obj.getPosition().x << ", " << obj.getPosition().y << ")"
-              << "Current frame: "<< obj.currentFrame;
+    obj.print(os);
+    return os;
 }

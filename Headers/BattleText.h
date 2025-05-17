@@ -11,10 +11,13 @@ private:
     bool textStarted = false;
     sf::Clock textClock;
     bool isUpdating = false;
+protected:
+    void print(std::ostream& os) const override;
 public:
     explicit BattleText(const std::string& texturePath, const std::string& metadataPath, const sf::Vector2f& position, const float scale = 0.8f);
     std::unique_ptr<DrawableEntity> clone() const override;
     void setText(const std::string& newText, const float delayTime = 0.5f);
     void update() override;
     void draw(sf::RenderWindow& window) const override;
+    friend std::ostream & operator<<(std::ostream &os, const BattleText &obj);
 };

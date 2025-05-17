@@ -7,6 +7,8 @@ class StatefulSprite : public SpriteEntity {
 private:
     std::map<std::string, sf::Texture> states;
     std::string currentState;
+protected:
+    void print(std::ostream& os) const override;
 public:
     explicit StatefulSprite(const std::string &defaultPath = "./img/missing.png",
                             const std::string &defaultStateName = "normal",

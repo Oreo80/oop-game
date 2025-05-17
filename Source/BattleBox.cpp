@@ -65,7 +65,7 @@ void BattleBox::update() {
 }
 
 std::ostream & operator<<(std::ostream &os, const BattleBox &obj){
-    return os
-            << static_cast<const ShapeEntity&>(obj);
+    obj.print(os);
+    return os;
 }
 

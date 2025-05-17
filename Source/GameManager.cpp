@@ -1,4 +1,7 @@
 #include "../Headers/GameManager.h"
+
+#include <iostream>
+
 #include "../Headers/SplashState.h"
 
 void GameManager::toggleFullscreen() {
@@ -43,6 +46,7 @@ void GameManager::pushState(std::unique_ptr<GameState> state) {
 // }
 
 void GameManager::run() {
+    std::cout << "Running..." << std::endl;
     pushState(std::make_unique<SplashState>());
     while(window->isOpen()) {
         handleEvents();

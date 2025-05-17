@@ -3,6 +3,11 @@
 #include "../Headers/ResourceManager.h"
 #include "../Headers/Exceptions.h"
 
+void StatefulSprite::print(std::ostream &os) const {
+    SpriteEntity::print(os);
+    os << " , Current state : " << currentState;
+}
+
 StatefulSprite::StatefulSprite(const std::string &defaultPath, const std::string &defaultStateName,
                                const sf::Vector2f &pos): SpriteEntity(defaultPath, pos), currentState(defaultStateName) {
     states[defaultStateName] = *texture;
@@ -25,6 +30,6 @@ void StatefulSprite::setState(const std::string &stateName) {
 }
 
 std::ostream & operator<<(std::ostream &os, const StatefulSprite &obj){
-    return os
-            << static_cast<const SpriteEntity&>(obj)<< " , Current state : " << obj.currentState;
+    obj.print(os);
+    return os;
 }

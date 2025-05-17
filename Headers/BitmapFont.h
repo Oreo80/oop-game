@@ -25,7 +25,8 @@ private:
     void loadMetadata(const std::string &metadataPath);
     static std::vector<std::string> readMetadataLines(const std::string &metadataPath);
     Glyph parseGlyphLine(const std::string& line, int lineNumber);
-
+protected:
+    void print(std::ostream& os) const override;
 public:
     explicit BitmapFont(const std::string& texturePath="./fonts/fnt_main.png",
         const std::string& metadataPath="./fonts/glyphs_fnt_main.csv", std::string text_ = "",
@@ -37,4 +38,5 @@ public:
     sf::Vector2f getPosition() const override;
     sf::FloatRect getGlobalBounds() const override;
     std::unique_ptr<DrawableEntity> clone() const override;
+    friend std::ostream & operator<<(std::ostream &os, const BitmapFont &obj);
 };

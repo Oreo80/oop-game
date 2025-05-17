@@ -1,10 +1,5 @@
 #include "../Headers/Button.h"
 
-std::ostream & operator<<(std::ostream &os, const Button &obj){
-    return os
-            << static_cast<const StatefulSprite&>(obj);
-}
-
 Button::Button(const std::string &normalPath, const std::string &selectedPath, const sf::Vector2f &pos): StatefulSprite(
     normalPath, "unselected", pos) {
     addState("selected", selectedPath);
@@ -27,4 +22,7 @@ void Button::setSelected(const bool &isSelected) {
     }
 }
 
-
+std::ostream & operator<<(std::ostream &os, const Button &obj){
+    obj.print(os);
+    return os;
+}

@@ -27,10 +27,20 @@ void InstructionsState::doRender(sf::RenderWindow& window) const {
     const_cast<BitmapFont&>(font).drawText(window);
 }
 
+void InstructionsState::print(std::ostream &os) const {
+    GameState::print(os);
+    os<<"Instructions State";
+}
+
 bool InstructionsState::shouldChangeState() const {
     return shouldTransition;
 }
 
 std::unique_ptr<GameState> InstructionsState::nextState() {
     return std::make_unique<PlayState>();
+}
+
+std::ostream & operator<<(std::ostream &os, const InstructionsState &state) {
+    state.print(os);
+    return os;
 }

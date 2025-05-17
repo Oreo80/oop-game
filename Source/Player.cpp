@@ -16,6 +16,11 @@ void Player::updateHurtAnimation() {
     }
 }
 
+void Player::print(std::ostream &os) const {
+    StatefulSprite::print(os);
+    os << ", Invincibility frames remaining: " << hurtFramesRemaining;
+}
+
 Player::Player(const std::string &normalPath, const std::string &hurtPath, const sf::Vector2f &pos): StatefulSprite(
     normalPath, "normal", pos) {
     addState("hurt", hurtPath);
@@ -49,6 +54,6 @@ void Player::update() {
 }
 
 std::ostream & operator<<(std::ostream &os, const Player &obj){
-    return os
-            << static_cast<const StatefulSprite&>(obj);
+    obj.print(os);
+    return os;
 }

@@ -28,10 +28,21 @@ void SplashState::doRender(sf::RenderWindow& window) const {
     const_cast<BitmapFont&>(font).drawText(window);
 }
 
+void SplashState::print(std::ostream &os) const {
+    GameState::print(os);
+    os << "Splash State";
+}
+
+
 bool SplashState::shouldChangeState() const {
     return shouldTransition;
 }
 
 std::unique_ptr<GameState> SplashState::nextState() {
     return std::make_unique<InstructionsState>();
+}
+
+std::ostream & operator<<(std::ostream &os, const SplashState &state) {
+    state.print(os);
+    return os;
 }

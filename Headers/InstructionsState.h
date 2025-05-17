@@ -9,7 +9,8 @@ private:
     void doProcessEvent(const std::optional<sf::Event> &event) override;
     void doUpdate() override;
     void doRender(sf::RenderWindow& window) const override;
-
+protected:
+    void print(std::ostream &os) const override;
 public:
     explicit InstructionsState(const std::string &text=" --- Instructions --- \n\n"
                                                                "[Z or ENTER] - Confirm\n"
@@ -24,4 +25,5 @@ public:
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
     std::unique_ptr<GameState> nextState() override;
+    friend std::ostream& operator<<(std::ostream &os, const InstructionsState &state);
 };

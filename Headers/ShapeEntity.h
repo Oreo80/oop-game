@@ -4,6 +4,7 @@
 class ShapeEntity : public DrawableEntity {
 protected:
     sf::RectangleShape shape;
+    void print(std::ostream& os) const override;
 public:
     ShapeEntity(const sf::Vector2f &pos, const sf::Vector2f &size);
     std::unique_ptr<DrawableEntity> clone() const override;

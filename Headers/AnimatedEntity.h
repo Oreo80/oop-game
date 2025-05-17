@@ -10,6 +10,7 @@ protected:
     sf::Clock animationClock;
 
     static std::vector<std::shared_ptr<sf::Texture>> loadTextures(const std::vector<std::string>& paths);
+    void print(std::ostream& os) const override;
 
 public:
     explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos);
