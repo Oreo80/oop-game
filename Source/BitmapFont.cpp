@@ -101,6 +101,38 @@ void BitmapFont::drawText(sf::RenderTarget& window)
     }
 }
 
+void BitmapFont::draw(sf::RenderWindow &window) const {
+    const_cast<BitmapFont*>(this)->drawText(window);
+}
+
 void BitmapFont::setText(const std::string &text_) {
     text = text_;
+}
+
+void BitmapFont::setPosition(const sf::Vector2f &pos) {
+    position=pos;
+}
+
+sf::Vector2f BitmapFont::getPosition() const {
+    return position;
+}
+sf::FloatRect BitmapFont::getGlobalBounds() const {
+    float width = 0.f;
+    const float height = static_cast<float>(lineHeight) * scale;
+    int lines = 1;
+
+    for (char c : text) {
+        if (c == '\n') {
+            lines++;
+            width = std::max(width, 0.f);
+        } else {
+            width += 20.f * scale;
+        }
+    }
+    return { position, { width, lines * height } };
+}
+
+
+std::unique_ptr<DrawableEntity> BitmapFont::clone() const {
+    return std::make_unique<BitmapFont>(*this);
 }

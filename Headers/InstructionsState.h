@@ -18,10 +18,10 @@ public:
                                                                "[ESC] - Quit\n"
                                                                "When HP is 0, you lose.\n\n"
                                                                "[Press Z or ENTER] to begin game",
-                            sf::Vector2f positionText=sf::Vector2f(170, 100), const float scale = 1.f);
+                            sf::Vector2f positionText=sf::Vector2f(170, 100), float scale = 1.f);
     ~InstructionsState() override = default;
 
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
-
+    std::unique_ptr<GameState> nextState() override;
 };

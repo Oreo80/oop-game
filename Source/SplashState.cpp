@@ -20,9 +20,7 @@ void SplashState::doProcessEvent(const std::optional<sf::Event> &event) {
     }
 }
 void SplashState::doUpdate() {
-    if(shouldTransition) {
-        gameManager.pushState(std::make_unique<InstructionsState>());
-    }
+
 }
 
 void SplashState::doRender(sf::RenderWindow& window) const {
@@ -32,4 +30,8 @@ void SplashState::doRender(sf::RenderWindow& window) const {
 
 bool SplashState::shouldChangeState() const {
     return shouldTransition;
+}
+
+std::unique_ptr<GameState> SplashState::nextState() {
+    return std::make_unique<InstructionsState>();
 }

@@ -7,6 +7,7 @@
 #include <set>
 #include <SFML/Audio.hpp>
 #include "BattleText.h"
+#include "HpBar.h"
 
 class PlayState : public GameState {
 private:
@@ -16,7 +17,12 @@ private:
     std::vector<std::unique_ptr<Bullet>> bullets;
     BattleBox battleBox;
     std::set<sf::Keyboard::Scancode> keysPressed;
+    int maxHp;
+    int currentHp;
+    BitmapFont hpLabelText;
+    BitmapFont hpValueText;
     BattleText battleText;
+    HpBar hpBar;
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
             talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
             itemButton{"./img/spr_itembt_0.png","./img/spr_itembt_1.png",{345,432}},
@@ -39,6 +45,8 @@ private:
     std::vector<Button*> getButtons() const;
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
+    void updateHp(int newHp);
+    void processDamage();
     void cleanupBullets();
     void enterPlayerTurn();
     void updatePlayerTurn();
@@ -54,5 +62,5 @@ public:
     PlayState& operator=(PlayState other);
     friend void swap(PlayState& first, PlayState& second) noexcept;
     // std::unique_ptr<GameState> clone() const override;
-    // bool shouldChangeState() const override;
+    bool shouldChangeState() const override;
 };

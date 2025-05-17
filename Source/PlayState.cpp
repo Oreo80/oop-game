@@ -40,7 +40,10 @@ void PlayState::initEntities() {
         &talkButton,
         &itemButton,
         &spareButton,
-        &player
+        &player,
+        &hpLabelText,
+        &hpValueText,
+        &hpBar
     };
 }
 
@@ -98,14 +101,37 @@ void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
     }
 }
 
+void PlayState::updateHp(const int newHp) {
+    currentHp = newHp;
+    hpBar.setHealth(newHp);
+    hpValueText.setText(std::to_string(newHp) + " / " + std::to_string(maxHp));
+}
+
+void PlayState::processDamage() {
+    for (auto it = bullets.begin(); it != bullets.end(); ) {
+        if (std::nullopt != player.getGlobalBounds().findIntersection((*it)->getGlobalBounds())) {
+            if (!player.isHurting()) {
+                updateHp(currentHp-2);
+                gameManager.triggerCameraShake(2);
+                player.startHurtAnimation();
+                gameManager.playSound("./sounds/snd_hurt1.wav");
+                it = bullets.erase(it);
+            }
+            else {
+                ++it;
+            }
+        } else {
+           ++it;
+        }
+    }
+
+};
+
+
 void PlayState::cleanupBullets() {
     std::erase_if(bullets, [this](const std::unique_ptr<Bullet>& bulletobj) {
     return bulletobj->isOffScreen(*windowPtr);
 });
-
-    std::erase_if(bullets, [this](const std::unique_ptr<Bullet>& bulletobj) {
-        return std::nullopt != player.getGlobalBounds().findIntersection(bulletobj->getGlobalBounds());
-    });
 }
 
 void PlayState::enterPlayerTurn() {
@@ -119,7 +145,7 @@ void PlayState::enterPlayerTurn() {
 }
 
 void PlayState::updatePlayerTurn() {
-    auto buttons = getButtons();
+    const auto buttons = getButtons();
     if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
         currentActionIndex = (currentActionIndex - 1 + static_cast<int>(buttons.size())) % static_cast<int>(
                                  buttons.size());
@@ -166,6 +192,7 @@ void PlayState::updateEnemyTurn() {
     enforceBattleBoxBounds(moveOffset);
     player.move(moveOffset);
 
+    processDamage();
     cleanupBullets();
 
     if (!isBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
@@ -215,10 +242,13 @@ bool PlayState::isBulletsActive() const {
 }
 
 PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
-battleBox({242, 150},{155, 130}),battleText("./fonts/fnt_main.png",
-    "./fonts/glyphs_fnt_main.csv",{52,270}) {
+battleBox({242, 150},{155, 130}),maxHp(20), currentHp(maxHp),
+hpLabelText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","HP",{244,405},sf::Color::White, 2.f),
+hpValueText("./fonts/fnt_small.png", "./fonts/glyphs_fnt_small.csv","20 / 20",{314,403},sf::Color::White, 3.f),
+battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270}) {
     gameManager.playMusic("./mus/mus_battle1.ogg");
     battleBox.setBottomY(385.f);
+    hpBar.setHealth(20);
     initEntities();
     enterPlayerTurn();
 }
@@ -230,6 +260,10 @@ PlayState::PlayState(const PlayState &other)
       player(dynamic_cast<const Player&>(*other.player.clone())),
       battleBox(dynamic_cast<const BattleBox&>(*other.battleBox.clone())),
       keysPressed(other.keysPressed),
+      maxHp(other.maxHp),
+      currentHp(other.currentHp),
+      hpLabelText(dynamic_cast<const BitmapFont&>(*other.hpLabelText.clone())),
+      hpValueText(dynamic_cast<const BitmapFont&>(*other.hpValueText.clone())),
       battleText(dynamic_cast<const BattleText&>(*other.battleText.clone())),
       fightButton(dynamic_cast<const Button&>(*other.fightButton.clone())),
       talkButton(dynamic_cast<const Button&>(*other.talkButton.clone())),
@@ -255,9 +289,9 @@ PlayState & PlayState::operator=(PlayState other) {
 //     return std::make_unique<PlayState>(*this);
 // }
 
-// bool PlayState::shouldChangeState() const {
-//     return false;
-// }
+bool PlayState::shouldChangeState() const {
+    return currentHp<=0;
+}
 
 void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
@@ -267,6 +301,10 @@ void swap(PlayState &first, PlayState &second) noexcept {
     swap(first.bullets, second.bullets);
     swap(first.battleBox, second.battleBox);
     swap(first.keysPressed, second.keysPressed);
+    swap(first.maxHp, second.maxHp);
+    swap(first.currentHp, second.currentHp);
+    swap(first.hpLabelText, second.hpLabelText);
+    swap(first.hpValueText, second.hpValueText);
     swap(first.battleText, second.battleText);
     swap(first.fightButton, second.fightButton);
     swap(first.talkButton, second.talkButton);

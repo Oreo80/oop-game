@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GameManager.h"
+#include "BitmapFont.h"
 class GameManager;
 class GameState {
 private:
@@ -41,6 +42,7 @@ public:
     }
 
     [[nodiscard]] virtual bool shouldChangeState() const { return false; }
+    virtual std::unique_ptr<GameState> nextState() { return nullptr; }
     // [[nodiscard]] virtual std::unique_ptr<GameState> clone() const = 0;
 
 };

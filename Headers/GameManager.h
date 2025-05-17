@@ -6,16 +6,18 @@
 #include "Singleton.h"
 #include "GameState.h"
 #include "ResourceManager.h"
-#include "BitmapFont.h"
 class GameState;
 class GameManager : public Singleton<GameManager> {
 private:
     friend class Singleton;
     std::shared_ptr<sf::Music> currentMusic;
+    std::vector<sf::Sound> activeSounds;
     std::shared_ptr<sf::RenderWindow> window;
     bool isFullscreen = false;
-
     std::stack<std::unique_ptr<GameState>> states;
+    int shakeFramesRemaining = 0;
+    float shakeMagnitude = 2.f;
+
 
     GameManager() : window(std::make_shared<sf::RenderWindow>(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close)) {
         window->setFramerateLimit(30);
@@ -35,12 +37,16 @@ public:
 
     void toggleFullscreen();
     std::shared_ptr<sf::RenderWindow> getWindow() { return window; }
+    void triggerCameraShake(int frames = 2);
 
     void pushState(std::unique_ptr<GameState> state);
-    void popState();
+    // void popState();
     // void clearStates();
 
     void run();
 
     void playMusic(const std::string &path);
+    void playSound(const std::string& path);
+
+    void cleanupSounds();
 };

@@ -19,10 +19,7 @@ void InstructionsState::doProcessEvent(const std::optional<sf::Event> &event) {
     }
 }
 void InstructionsState::doUpdate() {
-    if(shouldTransition) {
-        gameManager.playMusic("./mus/mus_ohyes.ogg");
-        gameManager.pushState(std::make_unique<PlayState>());
-    }
+
 }
 
 void InstructionsState::doRender(sf::RenderWindow& window) const {
@@ -32,4 +29,8 @@ void InstructionsState::doRender(sf::RenderWindow& window) const {
 
 bool InstructionsState::shouldChangeState() const {
     return shouldTransition;
+}
+
+std::unique_ptr<GameState> InstructionsState::nextState() {
+    return std::make_unique<PlayState>();
 }

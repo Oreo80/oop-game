@@ -15,19 +15,25 @@ void GameManager::toggleFullscreen() {
     updateView();
 }
 
+void GameManager::triggerCameraShake(const int frames) {
+    shakeFramesRemaining = frames;
+}
+
 void GameManager::pushState(std::unique_ptr<GameState> state) {
     states.push(std::move(state));
 }
 
-void GameManager::popState() {
-    if(!states.empty()) {
-        states.pop();
-    }
+// void GameManager::popState() {
+//     if(!states.empty()) {
+//         states.pop();
+//     }
+//
+//     if(states.empty()) {
+//         window->close();
+//     }
+// }
 
-    if(states.empty()) {
-        window->close();
-    }
-}
+
 
 // void GameManager::clearStates() {
 //     while(!states.empty()) {
@@ -40,15 +46,29 @@ void GameManager::run() {
     pushState(std::make_unique<SplashState>());
     while(window->isOpen()) {
         handleEvents();
+        cleanupSounds();
 
         if(!states.empty()) {
             states.top()->update();
 
             if (states.top()->shouldChangeState()) {
-                popState();
+                auto newState = states.top()->nextState();
+                states.pop();
+                if (newState != nullptr) pushState(std::move(newState));
+                if (states.empty()) {
+                    window->close();
+                    break;
+                }
             }
 
             window->clear();
+            updateView();
+            if (shakeFramesRemaining > 0) {
+                sf::View shake = window->getView();
+                shake.move({-shakeMagnitude, -shakeMagnitude});
+                window->setView(shake);
+                --shakeFramesRemaining;
+            }
             states.top()->render(*window);
             window->display();
         }
@@ -62,6 +82,21 @@ void GameManager::playMusic(const std::string &path) {
         currentMusic->setLooping(true);
         currentMusic->play();
     }
+}
+
+void GameManager::playSound(const std::string& path)
+{
+    const auto buffer = sounds.get(path);
+    activeSounds.emplace_back(*buffer);
+    sf::Sound& s = activeSounds.back();
+    s.play();
+}
+
+void GameManager::cleanupSounds()
+{
+    std::erase_if(activeSounds, [](const sf::Sound &s) {
+        return s.getStatus() == sf::Sound::Status::Stopped;
+    });
 }
 
 void GameManager::handleEvents() {
