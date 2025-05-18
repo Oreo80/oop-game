@@ -15,9 +15,9 @@ void Hp::takeDamage(const int dmg) {
     setHp(currentHp - dmg);
 }
 
-void Hp::heal(const int amt) {
-    setHp(currentHp + amt);
-}
+// void Hp::heal(const int amt) {
+//     setHp(currentHp + amt);
+// }
 
 int Hp::getHp() const {
     return currentHp;
