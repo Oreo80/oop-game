@@ -98,7 +98,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/BitmapFont.cpp
         Headers/HpBar.h
         Source/HpBar.cpp
-        Headers/froggit.h
+        Headers/Froggit.h
         Source/Froggit.cpp
 )
 
