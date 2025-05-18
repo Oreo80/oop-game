@@ -100,6 +100,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/HpBar.cpp
         Headers/Froggit.h
         Source/Froggit.cpp
+        Headers/Hp.h
+        Source/Hp.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

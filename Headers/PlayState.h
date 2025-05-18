@@ -7,7 +7,7 @@
 #include <set>
 #include <SFML/Audio.hpp>
 #include "BattleText.h"
-#include "HpBar.h"
+#include "Hp.h"
 #include "Froggit.h"
 
 class PlayState : public GameState {
@@ -18,12 +18,8 @@ private:
     std::vector<std::unique_ptr<Bullet>> bullets;
     BattleBox battleBox;
     std::set<sf::Keyboard::Scancode> keysPressed;
-    int maxHp;
-    int currentHp;
-    BitmapFont hpLabelText;
-    BitmapFont hpValueText;
     BattleText battleText;
-    HpBar hpBar;
+    Hp hp;
     Froggit froggit;
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
             talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
@@ -47,7 +43,6 @@ private:
     std::vector<Button*> getButtons() const;
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
-    void updateHp(int newHp);
     void processDamage();
     void cleanupBullets();
     void enterPlayerTurn();

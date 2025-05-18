@@ -7,7 +7,7 @@ HpBar::HpBar(const sf::Vector2f &pos, const sf::Vector2f &size) :ShapeEntity(pos
     health.setFillColor(sf::Color::Yellow);
 }
 
-void HpBar::setHealth(const int healthValue) {
+void HpBar::setHealthBar(const int healthValue) {
     const float damagepx = shape.getSize().x / 20;
     health.setSize({static_cast<float>(healthValue)*damagepx,health.getSize().y});
 }
