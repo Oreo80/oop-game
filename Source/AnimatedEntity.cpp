@@ -22,7 +22,7 @@ void AnimatedEntity::print(std::ostream &os) const {
 }
 
 AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
-                               const sf::Vector2f &pos): frames(loadTextures(paths)), sprite(*frames[0]) {
+                               const sf::Vector2f &pos, const int interval): frames(loadTextures(paths)), sprite(*frames[0]), animationInterval(interval) {
     sprite.setPosition(pos);
 }
 
@@ -31,7 +31,7 @@ std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
 }
 
 void AnimatedEntity::animate() {
-    if (animationClock.getElapsedTime().asMilliseconds() > 100) {
+    if (animationClock.getElapsedTime().asMilliseconds() > animationInterval) {
         currentFrame = (currentFrame + 1) % frames.size();
         sprite.setTexture(*frames[currentFrame]);
         animationClock.restart();

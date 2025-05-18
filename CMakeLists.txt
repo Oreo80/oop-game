@@ -98,6 +98,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/BitmapFont.cpp
         Headers/HpBar.h
         Source/HpBar.cpp
+        Headers/froggit.h
+        Source/Froggit.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

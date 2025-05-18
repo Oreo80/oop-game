@@ -8,12 +8,13 @@ protected:
     sf::Sprite sprite;
     std::size_t currentFrame = 0;
     sf::Clock animationClock;
+    int animationInterval;
 
     static std::vector<std::shared_ptr<sf::Texture>> loadTextures(const std::vector<std::string>& paths);
     void print(std::ostream& os) const override;
 
 public:
-    explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos);
+    explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos, int interval = 100);
     std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();

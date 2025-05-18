@@ -8,6 +8,7 @@
 #include <SFML/Audio.hpp>
 #include "BattleText.h"
 #include "HpBar.h"
+#include "Froggit.h"
 
 class PlayState : public GameState {
 private:
@@ -23,6 +24,7 @@ private:
     BitmapFont hpValueText;
     BattleText battleText;
     HpBar hpBar;
+    Froggit froggit;
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
             talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
             itemButton{"./img/spr_itembt_0.png","./img/spr_itembt_1.png",{345,432}},

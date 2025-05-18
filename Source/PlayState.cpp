@@ -43,7 +43,8 @@ void PlayState::initEntities() {
         &player,
         &hpLabelText,
         &hpValueText,
-        &hpBar
+        &hpBar,
+        &froggit
     };
 }
 
@@ -141,7 +142,7 @@ void PlayState::enterPlayerTurn() {
     buttons[0]->setSelected(true);
     keysPressed.clear();
     battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText("* Smells like frog..?\n  Temporary text",0.5f);
+    battleText.setText("* Smells like frog\n  Temporary text",0.5f);
 }
 
 void PlayState::updatePlayerTurn() {
