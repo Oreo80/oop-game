@@ -53,7 +53,3 @@ void Player::update() {
     updateHurtAnimation();
 }
 
-std::ostream & operator<<(std::ostream &os, const Player &obj){
-    obj.print(os);
-    return os;
-}

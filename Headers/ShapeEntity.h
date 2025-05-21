@@ -15,7 +15,8 @@ public:
     void setPosition(const sf::Vector2f &pos) override;
     float getOutlineThickness() const;
     sf::Vector2f getCenter() const;
+    void setFillColor(const sf::Color& color);
+    void setSize(const sf::Vector2f& size);
 
     ~ShapeEntity() override = default;
-    friend std::ostream & operator<<(std::ostream &os, const ShapeEntity &obj);
 };

@@ -9,5 +9,4 @@ public:
     std::unique_ptr<DrawableEntity> clone() const override;
     sf::Vector2f getPositionForPlayer() const;
     void setSelected(const bool &isSelected);
-    friend std::ostream & operator<<(std::ostream &os, const Button &obj);
 };

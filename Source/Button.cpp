@@ -21,8 +21,3 @@ void Button::setSelected(const bool &isSelected) {
         setState("unselected");
     }
 }
-
-std::ostream & operator<<(std::ostream &os, const Button &obj){
-    obj.print(os);
-    return os;
-}

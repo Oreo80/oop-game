@@ -102,19 +102,21 @@ void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 
 void PlayState::processDamage() {
     for (auto it = bullets.begin(); it != bullets.end(); ) {
-        if (std::nullopt != player.getGlobalBounds().findIntersection((*it)->getGlobalBounds())) {
-            if (!player.isHurting()) {
-                hp.takeDamage(2);
-                gameManager.triggerCameraShake(2);
-                player.startHurtAnimation();
-                gameManager.playSound("./sounds/snd_hurt1.wav");
-                it = bullets.erase(it);
-            }
-            else {
+        if (auto* b = dynamic_cast<Bullet*>(it->get())) {
+            if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
+                if (!player.isHurting()) {
+                    hp.takeDamage(2);
+                    gameManager.triggerCameraShake(2);
+                    player.startHurtAnimation();
+                    gameManager.playSound("./sounds/snd_hurt1.wav");
+                    it = bullets.erase(it);
+                }
+                else {
+                    ++it; // player has invincibility if it already got hit
+                }
+            } else {
                 ++it;
             }
-        } else {
-           ++it;
         }
     }
 
@@ -122,9 +124,12 @@ void PlayState::processDamage() {
 
 
 void PlayState::cleanupBullets() {
-    std::erase_if(bullets, [this](const std::unique_ptr<Bullet>& bulletobj) {
-    return bulletobj->isOffScreen(*windowPtr);
-});
+    std::erase_if(bullets, [&](auto& drawablePtr) {
+        if (const auto* b = dynamic_cast<Bullet*>(drawablePtr.get())) {
+            return b->isOffScreen(*windowPtr);
+        }
+        return false;
+    });
 }
 
 void PlayState::enterPlayerTurn() {
@@ -134,7 +139,7 @@ void PlayState::enterPlayerTurn() {
     buttons[0]->setSelected(true);
     keysPressed.clear();
     battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText("* Smells like frog\n  Temporary text",0.5f);
+    battleText.setText("*  Smells like frog\n  Temporary text",0.5f);
 }
 
 void PlayState::updatePlayerTurn() {
@@ -188,7 +193,7 @@ void PlayState::updateEnemyTurn() {
     processDamage();
     cleanupBullets();
 
-    if (!isBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
+    if (!areBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
         bullets.clear();
         currentTurn = TurnState::PlayerTurn;
         enterPlayerTurn();
@@ -230,7 +235,7 @@ void PlayState::processSelectedAction(const int actionIndex) {
     waitingForTextDelay = true;
 }
 
-bool PlayState::isBulletsActive() const {
+bool PlayState::areBulletsActive() const {
     return !bullets.empty();
 }
 
@@ -240,7 +245,7 @@ void PlayState::print(std::ostream &os) const {
         << "Play State, "
         << "Player: "<< player << ", Player HP: " << hp
         << ", Battle Box: "<<battleBox
-        << ", Bullets Active: "<< (isBulletsActive() ? "Yes" : "No");
+        << ", Bullets Active: "<< (areBulletsActive() ? "Yes" : "No");
 }
 
 PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
@@ -254,24 +259,24 @@ PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
 
 PlayState::PlayState(const PlayState &other)
     : GameState(other),
-      background(dynamic_cast<const SpriteEntity&>(*other.background.clone())),
+      background(other.background),
       shouldTransition(other.shouldTransition),
-      player(dynamic_cast<const Player&>(*other.player.clone())),
-      battleBox(dynamic_cast<const BattleBox&>(*other.battleBox.clone())),
+      player(other.player),
+      battleBox(other.battleBox),
       keysPressed(other.keysPressed),
-      battleText(dynamic_cast<const BattleText&>(*other.battleText.clone())),
-      hp(dynamic_cast<const Hp&>(*other.hp.clone())),
-      fightButton(dynamic_cast<const Button&>(*other.fightButton.clone())),
-      talkButton(dynamic_cast<const Button&>(*other.talkButton.clone())),
-      itemButton(dynamic_cast<const Button&>(*other.itemButton.clone())),
-      spareButton(dynamic_cast<const Button&>(*other.spareButton.clone())),
+      battleText(other.battleText),
+      hp(other.hp),
+      froggit(other.froggit),
+      fightButton(other.fightButton),
+      talkButton(other.talkButton),
+      itemButton(other.itemButton),
+      spareButton(other.spareButton),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
       waitingForTextDelay(other.waitingForTextDelay) {
-    for (const auto& bullet : other.bullets) {
-        bullets.push_back(std::unique_ptr<Bullet>(
-            dynamic_cast<Bullet*>(bullet->clone().release())
-        ));
+    bullets.reserve(other.bullets.size());
+    for (const auto& proto : other.bullets) {
+        bullets.push_back(proto->clone());
     }
     initEntities();
 }
@@ -299,6 +304,7 @@ void swap(PlayState &first, PlayState &second) noexcept {
     swap(first.keysPressed, second.keysPressed);
     swap(first.battleText, second.battleText);
     swap(first.hp, second.hp);
+    swap(first.froggit, second.froggit);
     swap(first.fightButton, second.fightButton);
     swap(first.talkButton, second.talkButton);
     swap(first.itemButton, second.itemButton);
@@ -311,9 +317,3 @@ void swap(PlayState &first, PlayState &second) noexcept {
     first.initEntities();
     second.initEntities();
 }
-
-std::ostream & operator<<(std::ostream &os, const PlayState &state) {
-    state.print(os);
-    return os;
-}
-

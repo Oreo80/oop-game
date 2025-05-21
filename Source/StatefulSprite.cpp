@@ -28,8 +28,3 @@ void StatefulSprite::setState(const std::string &stateName) {
     currentState = stateName;
     sprite.setTexture(stateEntryIt->second);
 }
-
-std::ostream & operator<<(std::ostream &os, const StatefulSprite &obj){
-    obj.print(os);
-    return os;
-}

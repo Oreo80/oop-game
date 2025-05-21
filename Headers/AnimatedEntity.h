@@ -1,11 +1,10 @@
 #pragma once
 #include "ResourceManager.h"
-#include "DrawableEntity.h"
+#include "SpriteEntity.h"
 
-class AnimatedEntity : public DrawableEntity {
+class AnimatedEntity : public SpriteEntity {
 protected:
     std::vector<std::shared_ptr<sf::Texture>> frames;
-    sf::Sprite sprite;
     std::size_t currentFrame = 0;
     sf::Clock animationClock;
     int animationInterval;
@@ -19,10 +18,4 @@ public:
     ~AnimatedEntity() override = default;
     void animate();
     void update() override;
-    void draw(sf::RenderWindow& window) const override;
-    sf::Vector2f getPosition() const override;
-    void setPosition(const sf::Vector2f& pos) override;
-    sf::FloatRect getGlobalBounds() const override;
-    friend std::ostream & operator<<(std::ostream &os, const AnimatedEntity &obj);
-
 };

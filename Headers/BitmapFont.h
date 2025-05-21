@@ -19,6 +19,7 @@ private:
     sf::Vector2f position;
     sf::Color color;
     float scale;
+    static constexpr std::size_t ExpectedGlyphFieldCount = 7;
 
     void load(const std::string& texturePath, const std::string& metadataPath);
     void loadTexture(const std::string& texturePath);
@@ -38,5 +39,4 @@ public:
     sf::Vector2f getPosition() const override;
     sf::FloatRect getGlobalBounds() const override;
     std::unique_ptr<DrawableEntity> clone() const override;
-    friend std::ostream & operator<<(std::ostream &os, const BitmapFont &obj);
 };

@@ -16,5 +16,4 @@ public:
     std::unique_ptr<DrawableEntity> clone() const override;
     void addState(const std::string &stateName, const std::string& texturePath);
     void setState(const std::string& stateName);
-    friend std::ostream & operator<<(std::ostream &os, const StatefulSprite &obj);
 };

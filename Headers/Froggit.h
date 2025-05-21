@@ -22,5 +22,4 @@ public:
             const sf::Vector2f& pos = {215,135});
     void update() override;
     void draw(sf::RenderWindow& window) const override;
-    friend std::ostream & operator<<(std::ostream &os, const Froggit &obj);
 };

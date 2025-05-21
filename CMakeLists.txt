@@ -96,8 +96,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/Exceptions.cpp
         Headers/BitmapFont.h
         Source/BitmapFont.cpp
-        Headers/HpBar.h
-        Source/HpBar.cpp
         Headers/Froggit.h
         Source/Froggit.cpp
         Headers/Hp.h

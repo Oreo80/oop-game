@@ -17,7 +17,10 @@ public:
     [[nodiscard]] virtual sf::FloatRect getGlobalBounds() const = 0;
     [[nodiscard]] virtual std::unique_ptr<DrawableEntity> clone() const = 0;
     virtual ~DrawableEntity() = default;
-    friend std::ostream& operator<<(std::ostream &os, const DrawableEntity&) {return os;}
+    friend std::ostream& operator<<(std::ostream &os, const DrawableEntity& obj) {
+        obj.print(os);
+        return os;
+    }
 
 };
 

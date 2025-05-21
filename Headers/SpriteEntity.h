@@ -16,6 +16,4 @@ public:
     sf::Vector2f getOrigin() const;
     void setOrigin(const sf::Vector2f& origin_);
     ~SpriteEntity() override = default;
-
-    friend std::ostream & operator<<(std::ostream &os, const SpriteEntity &obj);
 };

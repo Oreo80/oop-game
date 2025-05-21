@@ -42,7 +42,3 @@ std::unique_ptr<GameState> SplashState::nextState() {
     return std::make_unique<InstructionsState>();
 }
 
-std::ostream & operator<<(std::ostream &os, const SplashState &state) {
-    state.print(os);
-    return os;
-}

@@ -2,9 +2,13 @@
 
 GameException::GameException(std::string msg): message(std::move(msg)) {}
 
+const char * GameException::what() const noexcept {
+    return message.c_str();
+}
+
 TextureLoadException::TextureLoadException(const std::string &path): GameException("Failed to load texture from: " + path) {}
 
-FontLoadException::FontLoadException(const std::string &path): GameException("Failed to load font from: " + path) {}
+SFMLFontLoadException::SFMLFontLoadException(const std::string &path): GameException("Failed to load sf::Font from: " + path) {}
 
 MusicLoadException::MusicLoadException(const std::string &path): GameException("Failed to load music from: " + path) {}
 

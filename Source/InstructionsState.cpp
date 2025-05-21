@@ -39,8 +39,3 @@ bool InstructionsState::shouldChangeState() const {
 std::unique_ptr<GameState> InstructionsState::nextState() {
     return std::make_unique<PlayState>();
 }
-
-std::ostream & operator<<(std::ostream &os, const InstructionsState &state) {
-    state.print(os);
-    return os;
-}

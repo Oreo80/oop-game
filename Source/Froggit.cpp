@@ -28,7 +28,3 @@ void Froggit::draw(sf::RenderWindow &window) const {
     window.draw(headSprite);
 }
 
-std::ostream & operator<<(std::ostream &os, const Froggit &obj) {
-    obj.print(os);
-    return os;
-}

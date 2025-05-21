@@ -23,5 +23,4 @@ public:
     bool shouldChangeState() const override;
     std::unique_ptr<GameState> nextState() override;
 
-    friend std::ostream& operator<<(std::ostream &os, const SplashState &state);
 };

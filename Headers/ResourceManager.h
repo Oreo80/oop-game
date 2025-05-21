@@ -28,7 +28,7 @@ public:
         }
         else if constexpr (std::is_same_v<Resource, sf::Font>) {
             if (!res->openFromFile(path))
-                throw FontLoadException(path);
+                throw SFMLFontLoadException(path);
         }
         else if constexpr (std::is_same_v<Resource, sf::SoundBuffer>) {
             if (!res->loadFromFile(path))

@@ -20,6 +20,4 @@ public:
     void startHurtAnimation();
     bool isHurting() const;
     void update() override;
-    friend std::ostream & operator<<(std::ostream &os, const Player &obj);
-
 };

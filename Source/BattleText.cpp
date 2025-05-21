@@ -45,8 +45,3 @@ void BattleText::draw(sf::RenderWindow& window) const {
     const_cast<BattleText*>(this)->BitmapFont::setText(substr);
     const_cast<BattleText*>(this)->drawText(window);
 }
-
-std::ostream & operator<<(std::ostream &os, const BattleText &obj){
-    obj.print(os);
-    return os;
-}

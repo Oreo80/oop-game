@@ -63,9 +63,3 @@ void BattleBox::update() {
     shape.setSize(newSize);
     shape.setPosition({currentPos.x - step.x / 2.f, newY});
 }
-
-std::ostream & operator<<(std::ostream &os, const BattleBox &obj){
-    obj.print(os);
-    return os;
-}
-

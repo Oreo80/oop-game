@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "../Headers/SplashState.h"
-
+#include "../Headers/PlayState.h"
 void GameManager::toggleFullscreen() {
     isFullscreen = !isFullscreen;
 
@@ -56,6 +56,8 @@ void GameManager::run() {
             states.top()->update();
 
             if (states.top()->shouldChangeState()) {
+
+                std::cout<<*(states.top())<<std::endl;
                 auto newState = states.top()->nextState();
                 states.pop();
                 if (newState != nullptr) pushState(std::move(newState));

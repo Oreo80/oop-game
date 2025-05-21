@@ -15,7 +15,7 @@ private:
     SpriteEntity background;
     bool shouldTransition = false;
     Player player;
-    std::vector<std::unique_ptr<Bullet>> bullets;
+    std::vector<std::unique_ptr<DrawableEntity>> bullets;
     BattleBox battleBox;
     std::set<sf::Keyboard::Scancode> keysPressed;
     BattleText battleText;
@@ -51,7 +51,7 @@ private:
     void updateEnemyTurn();
     void updateButtonTextures() const;
     void processSelectedAction(int actionIndex);
-    bool isBulletsActive() const;
+    bool areBulletsActive() const;
 protected:
     void print(std::ostream &os) const override;
 public:
@@ -62,5 +62,4 @@ public:
     friend void swap(PlayState& first, PlayState& second) noexcept;
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
-    friend std::ostream& operator<<(std::ostream &os, const PlayState &state);
 };

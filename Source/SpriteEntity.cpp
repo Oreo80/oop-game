@@ -38,8 +38,3 @@ sf::Vector2f SpriteEntity::getOrigin() const {
 void SpriteEntity::setOrigin(const sf::Vector2f &origin_) {
     sprite.setOrigin(origin_);
 }
-
-std::ostream & operator<<(std::ostream &os, const SpriteEntity &obj) {
-    obj.print(os);
-    return os;
-}

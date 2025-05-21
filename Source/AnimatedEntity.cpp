@@ -1,7 +1,5 @@
 #include "../Headers/AnimatedEntity.h"
 
-
-
 std::vector<std::shared_ptr<sf::Texture>> AnimatedEntity::loadTextures(
     const std::vector<std::string>& paths)
 {
@@ -22,9 +20,7 @@ void AnimatedEntity::print(std::ostream &os) const {
 }
 
 AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
-                               const sf::Vector2f &pos, const int interval): frames(loadTextures(paths)), sprite(*frames[0]), animationInterval(interval) {
-    sprite.setPosition(pos);
-}
+                               const sf::Vector2f &pos, const int interval): SpriteEntity(paths[0],pos), frames(loadTextures(paths)),animationInterval(interval) {}
 
 std::unique_ptr<DrawableEntity> AnimatedEntity::clone() const {
     return std::make_unique<AnimatedEntity>(*this);
@@ -40,25 +36,4 @@ void AnimatedEntity::animate() {
 
 void AnimatedEntity::update() {
     animate();
-}
-
-void AnimatedEntity::draw(sf::RenderWindow& window) const {
-    window.draw(sprite);
-}
-
-sf::Vector2f AnimatedEntity::getPosition() const {
-    return sprite.getPosition();
-}
-
-void AnimatedEntity::setPosition(const sf::Vector2f& pos) {
-    sprite.setPosition(pos);
-}
-
-sf::FloatRect AnimatedEntity::getGlobalBounds() const {
-    return sprite.getGlobalBounds();
-}
-
-std::ostream & operator<<(std::ostream &os, const AnimatedEntity &obj) {
-    obj.print(os);
-    return os;
 }

@@ -28,7 +28,3 @@ bool Bullet::isOffScreen(const sf::RenderWindow& window) const {
     return getPosition().x < 0 || getPosition().x > windowWidth ||
            getPosition().y < 0 || getPosition().y > windowHeight;
 }
-std::ostream & operator<<(std::ostream &os, const Bullet &obj) {
-    obj.print(os);
-    return os;
-}

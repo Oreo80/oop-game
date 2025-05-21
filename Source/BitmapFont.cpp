@@ -25,6 +25,11 @@ void BitmapFont::loadMetadata(const std::string& metadataPath) {
     int lineNumber = 0;
     for (const auto& line : lines) {
         ++lineNumber;
+        // o linie din fisier trebuie sa fie sub formatul posX;posY;width;height;shift;offset
+        // unde posX si posY reprezinta coordonatele top-left ale glyph-ului (imaginea cu litera)
+        // width si height reprezinta dimensiunea glyph-ului
+        // shift se refera la numarul de pixeli cu care trebuie sa avanseze cursorul dupa ce a fost desenat caracterul
+        // offset se refera la deplasarea orizontala la care trebuie sa desenezi caracterul in raport cu pozitia cursorului
         const Glyph glyph = parseGlyphLine(line, lineNumber);
         const int code = std::stoi(line.substr(0, line.find(';')));
         glyphs[static_cast<char>(code)] = glyph;
@@ -45,7 +50,7 @@ std::vector<std::string> BitmapFont::readMetadataLines(const std::string& metada
 }
 
 
-Glyph BitmapFont::parseGlyphLine(const std::string &line, int lineNumber) {
+Glyph BitmapFont::parseGlyphLine(const std::string &line, const int lineNumber) {
     std::istringstream ss(line);
     std::string token;
     std::vector<int> values;
@@ -56,13 +61,13 @@ Glyph BitmapFont::parseGlyphLine(const std::string &line, int lineNumber) {
             throw FontMetadataParseException(lineNumber, token);
         }
     }
-    if (values.size() != 7)
-        throw FontMetadataFormatException(lineNumber, values.size(), 7);
+    if (values.size() != ExpectedGlyphFieldCount)
+        throw FontMetadataFormatException(lineNumber, values.size(), ExpectedGlyphFieldCount);
 
-    int x = values[1], y = values[2], w = values[3], h = values[4];
-    if (h > lineHeight) lineHeight = h;
+    int posX = values[1], posY = values[2], width = values[3], height = values[4];
+    if (height > lineHeight) lineHeight = height;
 
-    return Glyph{ sf::IntRect({x, y}, {w, h}), values[5], values[6] };
+    return Glyph{ sf::IntRect({posX, posY}, {width, height}), values[5], values[6] };
 }
 
 void BitmapFont::print(std::ostream &os) const {
@@ -125,7 +130,7 @@ sf::FloatRect BitmapFont::getGlobalBounds() const {
     const float height = static_cast<float>(lineHeight) * scale;
     int lines = 1;
 
-    for (char c : text) {
+    for (const char c : text) {
         if (c == '\n') {
             lines++;
             width = std::max(width, 0.f);
@@ -133,15 +138,10 @@ sf::FloatRect BitmapFont::getGlobalBounds() const {
             width += 20.f * scale;
         }
     }
-    return { position, { width, lines * height } };
+    return { position, { width, static_cast<float>(lines) * height } };
 }
 
 
 std::unique_ptr<DrawableEntity> BitmapFont::clone() const {
     return std::make_unique<BitmapFont>(*this);
-}
-
-std::ostream & operator<<(std::ostream &os, const BitmapFont &obj){
-    obj.print(os);
-    return os;
 }

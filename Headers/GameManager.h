@@ -17,6 +17,11 @@ private:
     std::stack<std::unique_ptr<GameState>> states;
     int shakeFramesRemaining = 0;
     float shakeMagnitude = 2.f;
+    ResourceManager<sf::Texture> textures;
+    ResourceManager<sf::Font> fonts;
+    ResourceManager<sf::SoundBuffer> sounds;
+    ResourceManager<sf::Music> music;
+
 
 
     GameManager() : window(std::make_shared<sf::RenderWindow>(sf::VideoMode({640, 480}), "Game", sf::Style::Titlebar | sf::Style::Close)) {
@@ -27,10 +32,6 @@ private:
     void handleEvents();
     void updateView() const;
 public:
-    ResourceManager<sf::Texture> textures;
-    ResourceManager<sf::Font> fonts;
-    ResourceManager<sf::SoundBuffer> sounds;
-    ResourceManager<sf::Music> music;
 
     GameManager(const GameManager&) = delete;
     GameManager& operator=(const GameManager&) = delete;
@@ -42,6 +43,7 @@ public:
     void pushState(std::unique_ptr<GameState> state);
     // void popState();
     // void clearStates();
+
 
     void run();
 

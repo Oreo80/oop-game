@@ -8,6 +8,7 @@ protected:
     std::string message;
 public:
     explicit GameException(std::string  msg);
+    [[nodiscard]] const char* what() const noexcept override;
     ~GameException() override = default;
 };
 
@@ -15,9 +16,9 @@ class TextureLoadException : public GameException {
 public:
    explicit TextureLoadException(const std::string& path);
 };
-class FontLoadException : public GameException {
+class SFMLFontLoadException : public GameException {
 public:
-    explicit FontLoadException(const std::string& path);
+    explicit SFMLFontLoadException(const std::string& path);
 };
 class MusicLoadException : public GameException {
 public:

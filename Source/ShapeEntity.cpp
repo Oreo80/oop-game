@@ -42,7 +42,10 @@ sf::Vector2f ShapeEntity::getCenter() const {
     return shape.getPosition() + (shape.getSize() / 2.f);
 }
 
-std::ostream & operator<<(std::ostream &os, const ShapeEntity &obj) {
-    obj.print(os);
-    return os;
+void ShapeEntity::setFillColor(const sf::Color &color) {
+    shape.setFillColor(color);
+}
+
+void ShapeEntity::setSize(const sf::Vector2f &size) {
+    shape.setSize(size);
 }

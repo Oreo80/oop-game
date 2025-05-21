@@ -16,6 +16,4 @@ public:
     std::unique_ptr<DrawableEntity> clone() const override;
     void update() override;
     bool isOffScreen(const sf::RenderWindow& window) const;
-
-    friend std::ostream & operator<<(std::ostream &os, const Bullet &obj);
 };
