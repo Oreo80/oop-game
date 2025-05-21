@@ -25,7 +25,7 @@ void BitmapFont::loadMetadata(const std::string& metadataPath) {
     int lineNumber = 0;
     for (const auto& line : lines) {
         ++lineNumber;
-        // o linie din fisier trebuie sa fie sub formatul posX;posY;width;height;shift;offset
+        // o linie din fisier trebuie sa fie sub formatul ASCII_code;posX;posY;width;height;shift;offset
         // unde posX si posY reprezinta coordonatele top-left ale glyph-ului (imaginea cu litera)
         // width si height reprezinta dimensiunea glyph-ului
         // shift se refera la numarul de pixeli cu care trebuie sa avanseze cursorul dupa ce a fost desenat caracterul
