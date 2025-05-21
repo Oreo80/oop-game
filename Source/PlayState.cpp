@@ -55,7 +55,7 @@ std::vector<Button *> PlayState::getButtons() const {
     }
     return buttons;
 }
-
+//h
 sf::Vector2f PlayState::calculateMoveOffset() const {
     constexpr float speed = 4.0f;
     sf::Vector2f moveOffset(0, 0);
@@ -139,7 +139,7 @@ void PlayState::enterPlayerTurn() {
     buttons[0]->setSelected(true);
     keysPressed.clear();
     battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText("*  Smells like frog\n  Temporary text",0.5f);
+    battleText.setText("* Smells like frog\n  Temporary text",0.5f);
 }
 
 void PlayState::updatePlayerTurn() {
