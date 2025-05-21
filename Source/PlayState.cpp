@@ -102,7 +102,7 @@ void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
 
 void PlayState::processDamage() {
     for (auto it = bullets.begin(); it != bullets.end(); ) {
-        if (auto* b = dynamic_cast<Bullet*>(it->get())) {
+        if (const auto* b = dynamic_cast<Bullet*>(it->get())) {
             if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
                 if (!player.isHurting()) {
                     hp.takeDamage(2);
