@@ -29,9 +29,9 @@ public:
     explicit SoundLoadException(const std::string& path);
 };
 
-class InvalidStateException : public GameException {
+class InvalidSpriteStateException : public GameException {
 public:
-    explicit InvalidStateException(const std::string& state);
+    explicit InvalidSpriteStateException(const std::string& state);
 };
 
 class GameLogicException : public GameException {

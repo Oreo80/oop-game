@@ -14,7 +14,7 @@ MusicLoadException::MusicLoadException(const std::string &path): GameException("
 
 SoundLoadException::SoundLoadException(const std::string &path): GameException("Failed to load sound buffer from: " + path) {}
 
-InvalidStateException::InvalidStateException(const std::string &state): GameException("Invalid state: " + state) {}
+InvalidSpriteStateException::InvalidSpriteStateException(const std::string &state): GameException("Invalid state: " + state) {}
 
 GameLogicException::GameLogicException(const std::string &description): GameException("Game logic error: " + description) {}
 

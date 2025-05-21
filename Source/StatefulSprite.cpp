@@ -24,7 +24,7 @@ void StatefulSprite::addState(const std::string &stateName, const std::string &t
 
 void StatefulSprite::setState(const std::string &stateName) {
     const auto stateEntryIt = states.find(stateName);
-    if (stateEntryIt == states.end()) throw InvalidStateException(stateName);
+    if (stateEntryIt == states.end()) throw InvalidSpriteStateException(stateName);
     currentState = stateName;
     sprite.setTexture(stateEntryIt->second);
 }
