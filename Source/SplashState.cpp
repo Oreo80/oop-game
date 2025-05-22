@@ -23,7 +23,7 @@ void SplashState::doUpdate() {
 
 }
 
-void SplashState::doRender(sf::RenderWindow& window) const {
+void SplashState::doRender(sf::RenderWindow& window) {
     background.draw(window);
     const_cast<BitmapFont&>(font).drawText(window);
 }

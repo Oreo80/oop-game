@@ -13,6 +13,24 @@ Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vecto
                                                                                            velocity(dir * BulletType::get(id_).getSpeed()) {
 }
 
+Bullet::Bullet(const Bullet &other): AnimatedEntity(other),
+                                     id(other.id),
+                                     direction(other.direction),
+                                     velocity(other.velocity) {
+}
+
+Bullet::Bullet(Bullet &&other) noexcept: AnimatedEntity(std::move(other)),
+                                         id(other.id),
+                                         direction(std::move(other.direction)),
+                                         velocity(std::move(other.velocity)) {
+}
+
+Bullet & Bullet::operator=(Bullet other) {
+    using std::swap;
+    swap(*this, other);
+    return *this;
+}
+
 std::unique_ptr<DrawableEntity> Bullet::clone() const {
     return std::make_unique<Bullet>(*this);
 }

@@ -15,7 +15,7 @@ protected:
 
     virtual void doProcessEvent(const std::optional<sf::Event> &event) = 0;
     virtual void doUpdate() = 0;
-    virtual void doRender(sf::RenderWindow& window) const = 0;
+    virtual void doRender(sf::RenderWindow& window) = 0;
 
     virtual void preUpdate() {}
     virtual void postUpdate() {}
@@ -37,7 +37,7 @@ public:
         postUpdate();
     }
 
-    void render(sf::RenderWindow& window) const {
+    void render(sf::RenderWindow& window) {
         preRender(window);
         doRender(window);
         postRender(window);

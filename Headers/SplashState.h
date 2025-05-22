@@ -11,7 +11,7 @@ private:
 
     void doProcessEvent(const std::optional<sf::Event> &event) override;
     void doUpdate() override;
-    void doRender(sf::RenderWindow& window) const override;
+    void doRender(sf::RenderWindow& window) override;
 protected:
     void print(std::ostream& os) const override;
 public:

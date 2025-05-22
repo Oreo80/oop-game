@@ -11,6 +11,22 @@ SpriteEntity::SpriteEntity(const std::string &texturePath, const sf::Vector2f &p
     sprite.setPosition(pos);
 }
 
+SpriteEntity::SpriteEntity(const SpriteEntity &other): DrawableEntity(other),
+                                                       texture(other.texture),
+                                                       sprite(other.sprite) {
+}
+
+SpriteEntity::SpriteEntity(SpriteEntity &&other) noexcept: DrawableEntity(std::move(other)),
+                                                           texture(std::move(other.texture)),
+                                                           sprite(std::move(other.sprite)) {
+}
+
+SpriteEntity & SpriteEntity::operator=(SpriteEntity other) {
+    using std::swap;
+    swap(*this, other);
+    return *this;
+}
+
 std::unique_ptr<DrawableEntity> SpriteEntity::clone() const {
     return std::make_unique<SpriteEntity>(*this);
 }

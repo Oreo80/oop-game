@@ -2,7 +2,7 @@
 
 void Player::updateHurtAnimation() {
     if (hurtFramesRemaining <= 0) return;
-    int phaseIndex = ((hurtFramesRemaining - 1) / framesPerPhase) % 2;
+    const int phaseIndex = ((hurtFramesRemaining - 1) / framesPerPhase) % 2;
     if (phaseIndex == 1) {
         setState("hurt");
     } else {
@@ -48,6 +48,7 @@ void Player::startHurtAnimation() {
 bool Player::isHurting() const {
     return hurtFramesRemaining > 0;
 }
+
 
 void Player::update() {
     updateHurtAnimation();

@@ -4,6 +4,7 @@
 
 #include "../Headers/SplashState.h"
 #include "../Headers/PlayState.h"
+#include <cstdint>
 void GameManager::toggleFullscreen() {
     isFullscreen = !isFullscreen;
 
@@ -45,10 +46,23 @@ void GameManager::pushState(std::unique_ptr<GameState> state) {
 //     window->close();
 // }
 
+void GameManager::updateScreenShake() {
+    if (shakeFramesRemaining > 0) {
+        sf::View shake = window->getView();
+        shake.move({-shakeMagnitude, -shakeMagnitude});
+        window->setView(shake);
+        --shakeFramesRemaining;
+    }
+}
+
 void GameManager::run() {
     std::cout << "Running..." << std::endl;
     pushState(std::make_unique<SplashState>());
+
+    sf::Clock clock;
+
     while(window->isOpen()) {
+        const float dt = clock.restart().asSeconds();
         handleEvents();
         cleanupSounds();
 
@@ -56,7 +70,6 @@ void GameManager::run() {
             states.top()->update();
 
             if (states.top()->shouldChangeState()) {
-
                 std::cout<<*(states.top())<<std::endl;
                 auto newState = states.top()->nextState();
                 states.pop();
@@ -69,13 +82,10 @@ void GameManager::run() {
 
             window->clear();
             updateView();
-            if (shakeFramesRemaining > 0) {
-                sf::View shake = window->getView();
-                shake.move({-shakeMagnitude, -shakeMagnitude});
-                window->setView(shake);
-                --shakeFramesRemaining;
-            }
+            updateScreenShake();
+            updateFade(dt);
             states.top()->render(*window);
+            drawFade();
             window->display();
         }
     }
@@ -88,6 +98,10 @@ void GameManager::playMusic(const std::string &path) {
         currentMusic->setLooping(true);
         currentMusic->play();
     }
+}
+
+void GameManager::stopMusic() const {
+    if (currentMusic) currentMusic->stop();
 }
 
 void GameManager::playSound(const std::string& path)
@@ -103,6 +117,23 @@ void GameManager::cleanupSounds()
     std::erase_if(activeSounds, [](const sf::Sound &s) {
         return s.getStatus() == sf::Sound::Status::Stopped;
     });
+}
+void GameManager::fadeIn(const float duration) {
+    fading = true;
+    fadeInActive = true;
+    fadeOutActive = false;
+    fadeDuration = duration;
+    fadeTimer = 0.f;
+    fadeOverlay.setFillColor(sf::Color(0, 0, 0, 255));
+}
+
+void GameManager::fadeOut(const float duration) {
+    fading = true;
+    fadeOutActive = true;
+    fadeInActive = false;
+    fadeDuration = duration;
+    fadeTimer = 0.f;
+    fadeOverlay.setFillColor(sf::Color(0, 0, 0, 0));
 }
 
 void GameManager::handleEvents() {
@@ -137,4 +168,32 @@ void GameManager::updateView() const {
     }
 
     window->setView(view);
+}
+
+void GameManager::updateFade(const float dt) {
+    if (fadeInActive) {
+        fadeTimer += dt;
+        float alpha = 255.f * (1.f - (fadeTimer / fadeDuration));
+        if (fadeTimer >= fadeDuration) {
+            alpha = 0.f;
+            fadeInActive = false;
+            fading = false;
+        }
+        fadeOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<std::uint8_t>(alpha)));
+    } else if (fadeOutActive) {
+        fadeTimer += dt;
+        float alpha = 255.f * (fadeTimer / fadeDuration);
+        if (fadeTimer >= fadeDuration) {
+            alpha = 255.f;
+            fadeOutActive = false;
+            fading = false;
+        }
+        fadeOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<std::uint8_t>(alpha)));
+    }
+}
+
+void GameManager::drawFade() const {
+    if (fading || fadeInActive || fadeOutActive) {
+        window->draw(fadeOverlay);
+    }
 }

@@ -6,7 +6,8 @@ void BattleText::print(std::ostream &os) const {
 }
 
 BattleText::BattleText(const std::string &texturePath, const std::string &metadataPath, const sf::Vector2f &position,
-                       const float scale): BitmapFont(texturePath, metadataPath, "", position, sf::Color::White, scale) {}
+                       const float scale, const float letterSpeed_, const float textStartDelay_): BitmapFont(texturePath, metadataPath, "", position, sf::Color::White, scale),
+                       letterSpeed(letterSpeed_), textStartDelay(textStartDelay_) {}
 
 std::unique_ptr<DrawableEntity> BattleText::clone() const {
     return std::make_unique<BattleText>(*this);

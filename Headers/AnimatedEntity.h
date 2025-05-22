@@ -14,6 +14,9 @@ protected:
 
 public:
     explicit AnimatedEntity(const std::vector<std::string> &paths, const sf::Vector2f &pos, int interval = 100);
+    AnimatedEntity(const AnimatedEntity &other);
+    AnimatedEntity(AnimatedEntity &&other) noexcept;
+    AnimatedEntity & operator=(AnimatedEntity other);
     std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();

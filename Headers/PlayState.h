@@ -9,7 +9,7 @@
 #include "BattleText.h"
 #include "Hp.h"
 #include "Froggit.h"
-
+#include "ShardEntity.h"
 class PlayState : public GameState {
 private:
     SpriteEntity background;
@@ -35,14 +35,31 @@ private:
     static const float enemyTurnDuration;
     int currentActionIndex = 0;
     bool waitingForTextDelay=false;
-
+    enum class DeathStage {
+        None,
+        ShowPlayer,
+        ShowBrokenHeart,
+        ShowShards,
+        FadeOut
+    };
+    DeathStage deathStage = DeathStage::None;
+    int deathFrame = -1;
+    std::vector<std::unique_ptr<ShardEntity>> shards;
     void doProcessEvent(const std::optional<sf::Event> &event) override;
+
+    static void spawnShards(std::vector<std::unique_ptr<ShardEntity>>& shards, const sf::Vector2f& playerPos, int shardCount = 6);
+    static sf::Vector2f generateShardVelocity(int index, int totalShards);
+    void updateDeath();
+    void renderDeath(sf::RenderWindow &window);
     void doUpdate() override;
-    void doRender(sf::RenderWindow& window) const override;
+    void doRender(sf::RenderWindow& window) override;
     void initEntities();
     std::vector<Button*> getButtons() const;
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
+
+    void startDeath();
+
     void processDamage();
     void cleanupBullets();
     void enterPlayerTurn();
@@ -62,4 +79,8 @@ public:
     friend void swap(PlayState& first, PlayState& second) noexcept;
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
+
+    void runSelfTest() const;
+
+    // std::unique_ptr<GameState> nextState() override;
 };
