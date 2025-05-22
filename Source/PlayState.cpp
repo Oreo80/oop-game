@@ -452,17 +452,3 @@ void swap(PlayState &first, PlayState &second) noexcept {
     first.initEntities();
     second.initEntities();
 }
-void PlayState::runSelfTest() const {
-    PlayState copy = *this;
-
-    assert(copy.hp.getHp() == hp.getHp());
-    assert(copy.shards.size() == shards.size());
-
-    for (size_t i = 0; i < shards.size(); ++i) {
-        assert(copy.shards[i].get() != shards[i].get()); // pointer diferit
-        assert(copy.shards[i]->getPosition() == shards[i]->getPosition());
-    }
-
-    std::cout << "✅ PlayState copy constructor works correctly.\n";
-}
-

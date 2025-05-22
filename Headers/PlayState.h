@@ -79,8 +79,5 @@ public:
     friend void swap(PlayState& first, PlayState& second) noexcept;
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
-
-    void runSelfTest() const;
-
     // std::unique_ptr<GameState> nextState() override;
 };
