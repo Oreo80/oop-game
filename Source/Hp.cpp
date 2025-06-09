@@ -25,7 +25,11 @@ void Hp::setHp(const int newHp) {
 }
 
 void Hp::takeDamage(const int dmg) {
-    setHp(currentHp - dmg);
+    setHp(std::max(currentHp - dmg,0));
+}
+
+void Hp::heal(const int hp) {
+    setHp(std::min(currentHp + hp, maxHp));
 }
 
 int Hp::getHp() const { return currentHp; }

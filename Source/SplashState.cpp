@@ -25,7 +25,7 @@ void SplashState::doUpdate() {
 
 void SplashState::doRender(sf::RenderWindow& window) {
     background.draw(window);
-    const_cast<BitmapFont&>(font).drawText(window);
+    font.drawText(window);
 }
 
 void SplashState::print(std::ostream &os) const {

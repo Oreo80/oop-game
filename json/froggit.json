@@ -1,0 +1,52 @@
+{
+  "name": "Froggit",
+  "hp": 30,
+  "attack": 4,
+  "defense": 5,
+  "acts": [
+    {"name": "Check", "spareProgress": 0},
+    {"name": "Compliment", "spareProgress": 1},
+    {"name": "Threaten", "spareProgress": 1}
+  ],
+  "quotes": {
+    "Neutral": [
+      "Ribbit, ribbit.",
+      "Croak, croak.",
+      "Hop, hop.",
+      "Meow."
+    ],
+    "Compliment": [
+      "(Blushes deeply.) Ribbit.."
+    ],
+    "Threaten": [
+      "Shiver, shiver."
+    ]
+  },
+  "flavorText": {
+    "Check": [
+      "* Life is difficult for this enemy."
+    ],
+    "Encounter": [
+      "* Froggit hopped close!"
+    ],
+    "Neutral": [
+      "* Froggit doesn't seem to\n  know why it's here.",
+      "* Froggit hops to and fro.",
+      "* The battlefield is filled\n  with the smell of mustard seed.",
+      "* You are intimidated by\n  Froggit's raw strength. Only kidding."
+    ],
+    "Compliment": [
+      "* Froggit didn't understand what\n  you said, but was flattered anyway."
+    ],
+    "Threaten": [
+      "* Froggit didn't understand what\n  you said, but was scared anyway."
+    ],
+    "Low HP": [
+      "* Froggit is trying to run away."
+    ],
+    "Spare": [
+      "* Froggit seems reluctant to fight you."
+    ]
+  },
+  "spareThreshold": 1
+}

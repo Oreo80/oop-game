@@ -25,5 +25,6 @@ interactiv.
 
 ## Resurse
 - [UndertaleModTool](https://github.com/UnderminersTeam/UndertaleModTool)
+- [nlohmann/json](https://github.com/nlohmann/json) (MIT)
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library

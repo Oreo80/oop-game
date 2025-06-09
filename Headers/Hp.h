@@ -21,6 +21,7 @@ public:
     explicit Hp(int maxHp_ = 20);
     void setHp( int newHp);
     void takeDamage(int dmg);
+    void heal(int hp);
     int getHp() const;
     void draw(sf::RenderWindow &window) const override;
     sf::Vector2f getPosition() const override;

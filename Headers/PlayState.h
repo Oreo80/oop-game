@@ -12,6 +12,19 @@
 #include "ShardEntity.h"
 class PlayState : public GameState {
 private:
+    struct Item {
+        std::string realName;
+        std::string shortName;
+        int healAmount;
+    };
+    struct MenuState {
+        std::vector<std::string> options;
+        int currentIndex = 0;
+        bool inMessagePhase = false;
+        std::function<void(int)> onSelect;
+    };
+    MenuState actMenuState;
+    MenuState itemMenuState;
     SpriteEntity background;
     bool shouldTransition = false;
     Player player;
@@ -21,14 +34,44 @@ private:
     BattleText battleText;
     Hp hp;
     Froggit froggit;
+    bool actionConfirmed = false;
+    bool mercyConditionsMet = false;
+    int currentActIndex = 0;
+    bool actFlavorTextDisplaying = false;
+    std::vector<Item> inventory = {
+        {"Monster Candy", "MnstrCndy", 10},
+        {"Spider Donut", "SpidrDont", 12},
+        {"Butterscotch Pie", "ButtsPie", 20},
+        { "Spider Cider", "SpidrCidr", 18}
+    };
+    int currentItemIndex = 0;
+    bool itemMessageDisplaying = false;
+    bool victoryAchieved = false;
+    int victoryFrame = 0;
+    std::vector<std::string> actOptions;
+    std::vector<BitmapFont> subMenuText =
+        {BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{90,268}, sf::Color::White, 1.f),
+        BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{350,268}, sf::Color::White, 1.f),
+        BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{90,310}, sf::Color::White, 1.f),
+        BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{350,310}, sf::Color::White, 1.f)};
     Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
             talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
             itemButton{"./img/spr_itembt_0.png","./img/spr_itembt_1.png",{345,432}},
             spareButton{"./img/spr_sparebt_0.png","./img/spr_sparebt_1.png",{500,432}};
     enum class TurnState {
         PlayerTurn,
-        EnemyTurn
+        EnemyTurn,
+        SubMenu
     };
+    enum class SubMenuState {
+        None,
+        Fight,
+        Talk,
+        Item,
+        Spare
+    };
+    SubMenuState currentSubMenu = SubMenuState::None;
+    size_t savedActionIndex = 0;
     std::vector<DrawableEntity*> entities;
     TurnState currentTurn = TurnState::PlayerTurn;
     sf::Clock enemyTurnClock;
@@ -46,7 +89,6 @@ private:
     int deathFrame = -1;
     std::vector<std::unique_ptr<ShardEntity>> shards;
     void doProcessEvent(const std::optional<sf::Event> &event) override;
-
     static void spawnShards(std::vector<std::unique_ptr<ShardEntity>>& shards, const sf::Vector2f& playerPos, int shardCount = 6);
     static sf::Vector2f generateShardVelocity(int index, int totalShards);
     void updateDeath();
@@ -57,9 +99,7 @@ private:
     std::vector<Button*> getButtons() const;
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;
-
     void startDeath();
-
     void processDamage();
     void cleanupBullets();
     void enterPlayerTurn();
@@ -67,6 +107,18 @@ private:
     void enterEnemyTurn();
     void updateEnemyTurn();
     void updateButtonTextures() const;
+    void updateMenu(MenuState &menuState);
+    void enterSubMenu();
+    void exitSubMenu();
+    void updateMercyMenu();
+    void useItem(int itemIndex);
+    void processActSelection(int actIndex);
+    static void updateFightMenu();
+    void updateSubMenu();
+    void enterFightSubMenu();
+    void enterTalkSubMenu();
+    void enterItemSubMenu();
+    void enterMercySubMenu();
     void processSelectedAction(int actionIndex);
     bool areBulletsActive() const;
 protected:

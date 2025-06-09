@@ -35,7 +35,9 @@ public:
     void drawText(sf::RenderTarget& window);
     void draw(sf::RenderWindow &window) const override;
     void setText(const std::string& text_);
+    void setColor (sf::Color color_);
     void setPosition(const sf::Vector2f& pos) override;
+    sf::Vector2f getPositionForPlayer() const;
     sf::Vector2f getPosition() const override;
     sf::FloatRect getGlobalBounds() const override;
     std::unique_ptr<DrawableEntity> clone() const override;

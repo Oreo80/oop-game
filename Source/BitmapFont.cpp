@@ -118,8 +118,16 @@ void BitmapFont::setText(const std::string &text_) {
     text = text_;
 }
 
+void BitmapFont::setColor(const sf::Color color_) {
+    color = color_;
+}
+
 void BitmapFont::setPosition(const sf::Vector2f &pos) {
     position=pos;
+}
+
+sf::Vector2f BitmapFont::getPositionForPlayer() const {
+    return {position.x - 36, position.y + 8};
 }
 
 sf::Vector2f BitmapFont::getPosition() const {

@@ -24,7 +24,7 @@ void InstructionsState::doUpdate() {
 
 void InstructionsState::doRender(sf::RenderWindow& window) {
     window.clear();
-    const_cast<BitmapFont&>(font).drawText(window);
+    font.drawText(window);
 }
 
 void InstructionsState::print(std::ostream &os) const {

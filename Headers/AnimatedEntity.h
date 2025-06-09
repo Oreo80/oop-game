@@ -17,6 +17,7 @@ public:
     AnimatedEntity(const AnimatedEntity &other);
     AnimatedEntity(AnimatedEntity &&other) noexcept;
     AnimatedEntity & operator=(AnimatedEntity other);
+    friend void swap(AnimatedEntity &lhs, AnimatedEntity &rhs) noexcept;
     std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();

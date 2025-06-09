@@ -28,7 +28,10 @@ class SoundLoadException : public GameException {
 public:
     explicit SoundLoadException(const std::string& path);
 };
-
+class JSONLoadException : public GameException {
+public:
+    explicit JSONLoadException(const std::string& path);
+};
 class InvalidSpriteStateException : public GameException {
 public:
     explicit InvalidSpriteStateException(const std::string& state);

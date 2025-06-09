@@ -110,6 +110,13 @@ void PlayState::renderDeath(sf::RenderWindow& window) {
 }
 
 void PlayState::doUpdate() {
+    if (victoryAchieved) {
+        victoryFrame++;
+        if (victoryFrame > 60) {
+            windowPtr->close();
+        }
+        return;
+    }
     if (deathStage != DeathStage::None) {
         updateDeath();
         return;
@@ -120,6 +127,9 @@ void PlayState::doUpdate() {
         break;
         case TurnState::EnemyTurn:
             updateEnemyTurn();
+        break;
+        case TurnState::SubMenu:
+            updateSubMenu();
         break;
     }
 }
@@ -148,7 +158,11 @@ void PlayState::initEntities() {
         &spareButton,
         &player,
         &hp,
-        &froggit
+        &froggit,
+        &subMenuText[0],
+        &subMenuText[1],
+        &subMenuText[2],
+        &subMenuText[3]
     };
 }
 
@@ -257,7 +271,7 @@ void PlayState::enterPlayerTurn() {
     buttons[0]->setSelected(true);
     keysPressed.clear();
     battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText("* Smells like frog\n  Temporary text",0.5f);
+    battleText.setText(froggit.getFlavorText("Neutral"),0.5f);
 }
 
 void PlayState::updatePlayerTurn() {
@@ -280,13 +294,16 @@ void PlayState::updatePlayerTurn() {
     }
 
     if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
-        processSelectedAction(currentActionIndex);
+        if (!battleBox.isUpdating()){
         buttons[currentActionIndex]->setSelected(false);
-        enterEnemyTurn();
+        processSelectedAction(currentActionIndex);
+        // enterEnemyTurn();
+        }
     }
 }
 
 void PlayState::enterEnemyTurn() {
+    player.setState("normal");
     battleText.setText("");
     currentTurn = TurnState::EnemyTurn;
     keysPressed.clear();
@@ -328,29 +345,254 @@ void PlayState::updateButtonTextures() const {
         }
     }
 }
+void PlayState::updateMenu(MenuState& menuState) {
+    if (keysPressed.contains(sf::Keyboard::Scancode::Down)) {
+        menuState.currentIndex = static_cast<int>((menuState.currentIndex + 1) % menuState.options.size());
+        player.setPosition(subMenuText[menuState.currentIndex].getPositionForPlayer());
+        keysPressed.erase(sf::Keyboard::Scancode::Down);
+    }
+    else if (keysPressed.contains(sf::Keyboard::Scancode::Up)) {
+        menuState.currentIndex = static_cast<int>((menuState.currentIndex - 1 + menuState.options.size()) % menuState.options.size());
+        player.setPosition(subMenuText[menuState.currentIndex].getPositionForPlayer());
+        keysPressed.erase(sf::Keyboard::Scancode::Up);
+    }
+
+    if ((keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
+        (keysPressed.contains(sf::Keyboard::Scancode::Z))))
+    {
+        if (menuState.onSelect) {
+            menuState.onSelect(menuState.currentIndex);
+        }
+        menuState.inMessagePhase = true;
+        keysPressed.clear();
+    }
+}
+
+void PlayState::enterSubMenu() {
+    currentTurn = TurnState::SubMenu;
+    player.centerPlayer(battleBox);
+    keysPressed.clear();
+    battleText.setText("");
+}
+
+void PlayState::exitSubMenu() {
+    currentTurn = TurnState::PlayerTurn;
+    currentSubMenu = SubMenuState::None;
+    battleText.setText("");
+
+    const auto buttons = getButtons();
+    if (savedActionIndex < buttons.size()) {
+        buttons[savedActionIndex]->setSelected(true);
+        player.setPosition(buttons[savedActionIndex]->getPositionForPlayer());
+    }
+    keysPressed.clear();
+    actionConfirmed = false;
+    subMenuText[0].setColor(sf::Color::White);
+}
+
+void PlayState::updateMercyMenu() {
+    if (keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
+        keysPressed.contains(sf::Keyboard::Scancode::Z)) {
+
+        if (mercyConditionsMet) {
+            battleText.setText("YOU WON!", 0.0f);
+            subMenuText[0].setText("");
+            player.setState("transparent");
+            victoryAchieved = true;
+            victoryFrame = 0;
+        }
+        actionConfirmed = true;
+        }
+}
+void PlayState::useItem(const int itemIndex) {
+    if (itemIndex < 0 || itemIndex >= static_cast<int>(inventory.size())) return;
+    const Item usedItem = inventory[itemIndex];
+    const int oldHp = hp.getHp();
+    hp.heal(usedItem.healAmount);
+    const int healed = hp.getHp() - oldHp;
+    battleText.setText("* You used the " + usedItem.realName + ".\n* You recovered " +
+                      std::to_string(healed) + " HP!", 0.0f);
+    inventory.erase(inventory.begin() + itemIndex);
+    for (auto& text : subMenuText) {
+        text.setText("");
+    }
+
+    itemMessageDisplaying = true;
+}
+
+void PlayState::processActSelection(const int actIndex) {
+    if (actIndex < 0 || actIndex >= static_cast<int>(actMenuState.options.size())) return;
+    const auto& acts = froggit.getAvailableActs();
+    const auto& selectedAct = acts[actIndex];
+    froggit.increaseSpareProgress(selectedAct.spareProgress);
+    battleText.setText(froggit.getFlavorText(selectedAct.name), 0.0f);
+    for (auto& text : subMenuText) {
+        text.setText("");
+    }
+    if (froggit.canBeSpared()) mercyConditionsMet = true;
+    actFlavorTextDisplaying = true;
+
+}
+
+void PlayState::updateFightMenu() {
+}
+
+void PlayState::updateSubMenu() {
+    if (keysPressed.contains(sf::Keyboard::Scancode::X) ||
+        keysPressed.contains(sf::Keyboard::Scancode::LShift) ||
+        keysPressed.contains(sf::Keyboard::Scancode::RShift)) {
+        if (!actionConfirmed) {
+            exitSubMenu();
+        }
+    }
+    else if ((keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
+         keysPressed.contains(sf::Keyboard::Scancode::Z)) && actionConfirmed == true)
+    {
+        actionConfirmed = false;
+        currentSubMenu = SubMenuState::None;
+        enterEnemyTurn();
+        keysPressed.clear();
+        for (auto& text : subMenuText) {
+            text.setText("");
+        }
+        return;
+    }
+    switch (currentSubMenu) {
+        case SubMenuState::Fight:
+            updateFightMenu();
+        break;
+        case SubMenuState::Talk:
+            updateMenu(actMenuState);
+        break;
+        case SubMenuState::Item:
+            updateMenu(itemMenuState);
+        break;
+        case SubMenuState::Spare:
+            updateMercyMenu();
+        break;
+        default:
+            battleText.setText(froggit.getFlavorText("Neutral"),0);
+            for (auto& text : subMenuText) {
+                text.setText("");
+            }
+            break;
+    }
+}
+void PlayState::enterFightSubMenu() {
+    // for (auto& text : subMenuText) {
+    //     text.setText("");
+    // }
+    currentSubMenu = SubMenuState::Fight;
+    const int damage = static_cast<int>(7 + rng()) % 5;
+    froggit.takeDamage(damage);
+    const std::string msg = "* You dealt " + std::to_string(damage) + " damage to " +
+                     froggit.getName() + ". " + "\n" +
+                     std::to_string(froggit.getCurrentHp()) + " HP remaining.";
+    battleText.setText(msg,0);
+    player.setState("transparent");
+    actionConfirmed = true;
+}
+
+void PlayState::enterTalkSubMenu() {
+    currentSubMenu = SubMenuState::Talk;
+
+    actMenuState.options.clear();
+    for (const auto& act : froggit.getAvailableActs()) {
+        actMenuState.options.push_back("* " + act.name);
+    }
+    actMenuState.currentIndex = 0;
+    actMenuState.inMessagePhase = false;
+    actMenuState.onSelect = [this](const int index) {
+        processActSelection(index);
+        actMenuState.inMessagePhase = true;
+        actionConfirmed = true;
+        player.setState("transparent");
+    };
+
+    for (size_t i = 0; i < subMenuText.size(); i++) {
+        if (i < actMenuState.options.size()) {
+            subMenuText[i].setText(actMenuState.options[i]);
+        } else {
+            subMenuText[i].setText("");
+        }
+    }
+
+    player.setPosition(subMenuText[0].getPositionForPlayer());
+    actionConfirmed = false;
+}
+
+void PlayState::enterItemSubMenu() {
+    currentSubMenu = SubMenuState::Item;
+
+    itemMenuState.options.clear();
+    for (const auto& item : inventory) {
+        itemMenuState.options.push_back("* " + item.shortName);
+    }
+    itemMenuState.currentIndex = 0;
+    itemMenuState.inMessagePhase = false;
+    itemMenuState.onSelect = [this](int index) {
+        useItem(index);
+        itemMenuState.inMessagePhase = true;
+        actionConfirmed = true;
+        player.setState("transparent");
+    };
+
+    for (size_t i = 0; i < subMenuText.size(); i++) {
+        if (i < itemMenuState.options.size()) {
+            subMenuText[i].setText(itemMenuState.options[i]);
+        } else {
+            subMenuText[i].setText("");
+        }
+    }
+
+    if (!inventory.empty()) {
+        player.setPosition(subMenuText[0].getPositionForPlayer());
+    }
+    actionConfirmed = false;
+}
+
+void PlayState::enterMercySubMenu() {
+    currentSubMenu = SubMenuState::Spare;
+    for (auto& text : subMenuText) {
+        text.setText("");
+    }
+
+    subMenuText[0].setText("* Spare");
+
+    if (mercyConditionsMet) {
+        subMenuText[0].setColor(sf::Color::Yellow);
+    } else {
+        subMenuText[0].setColor(sf::Color::White);
+    }
+
+    player.setPosition(subMenuText[0].getPositionForPlayer());
+    actionConfirmed = false;
+}
 
 void PlayState::processSelectedAction(const int actionIndex) {
+    enterSubMenu();
     switch (actionIndex) {
         case 0: // Fight
-            // battleText.setText("* You throw a punch!");
+                enterFightSubMenu();
                 std::cout << "Fight selected! Player attacks!\n";
         break;
         case 1: // Talk
-            // battleText.setText("* You try to reason with them.");
+                enterTalkSubMenu();
                 std::cout << "Talk selected! Player tries to communicate.\n";
         break;
         case 2: // Item
-            // battleText.setText("* You check your inventory.");
+                enterItemSubMenu();
                 std::cout << "Item selected! Open inventory.\n";
         break;
         case 3: // Spare
             // battleText.setText("* You show mercy...");
+                enterMercySubMenu();
                 std::cout << "Spare selected! Attempting mercy...\n";
         break;
         default:
             std::cerr << "Invalid action index!\n";
     };
-    waitingForTextDelay = true;
+    savedActionIndex = actionIndex;
 }
 
 bool PlayState::areBulletsActive() const {
@@ -452,3 +694,4 @@ void swap(PlayState &first, PlayState &second) noexcept {
     first.initEntities();
     second.initEntities();
 }
+

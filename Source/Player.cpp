@@ -24,6 +24,7 @@ void Player::print(std::ostream &os) const {
 Player::Player(const std::string &normalPath, const std::string &hurtPath, const sf::Vector2f &pos): StatefulSprite(
     normalPath, "normal", pos) {
     addState("hurt", hurtPath);
+    addState("transparent", "./img/transparent.png");
 }
 
 std::unique_ptr<DrawableEntity> Player::clone() const {

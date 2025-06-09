@@ -13,4 +13,5 @@ public:
     void setBottomY(float fixedBottomY);
     void resizeCentered(const sf::Vector2f& deltaSize);
     void update() override;
+    bool isUpdating() const { return isResizing; }
 };
