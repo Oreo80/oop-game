@@ -36,16 +36,14 @@ private:
     Froggit froggit;
     bool actionConfirmed = false;
     bool mercyConditionsMet = false;
-    int currentActIndex = 0;
-    bool actFlavorTextDisplaying = false;
+    // bool actFlavorTextDisplaying = false;
     std::vector<Item> inventory = {
         {"Monster Candy", "MnstrCndy", 10},
         {"Spider Donut", "SpidrDont", 12},
         {"Butterscotch Pie", "ButtsPie", 20},
         { "Spider Cider", "SpidrCidr", 18}
     };
-    int currentItemIndex = 0;
-    bool itemMessageDisplaying = false;
+    // bool itemMessageDisplaying = false;
     bool victoryAchieved = false;
     int victoryFrame = 0;
     std::vector<std::string> actOptions;

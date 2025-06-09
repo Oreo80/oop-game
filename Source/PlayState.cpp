@@ -417,7 +417,7 @@ void PlayState::useItem(const int itemIndex) {
         text.setText("");
     }
 
-    itemMessageDisplaying = true;
+    itemMenuState.inMessagePhase = true;
 }
 
 void PlayState::processActSelection(const int actIndex) {
@@ -430,7 +430,7 @@ void PlayState::processActSelection(const int actIndex) {
         text.setText("");
     }
     if (froggit.canBeSpared()) mercyConditionsMet = true;
-    actFlavorTextDisplaying = true;
+    actMenuState.inMessagePhase = true;
 
 }
 
