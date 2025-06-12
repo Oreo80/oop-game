@@ -139,6 +139,7 @@ void PlayState::doRender(sf::RenderWindow &window) {
         renderDeath(window);
         return;
     }
+    ui.tick(window);
     for (auto* e : entities) {
         e->tick(window);
     }
@@ -149,32 +150,19 @@ void PlayState::doRender(sf::RenderWindow &window) {
 
 void PlayState::initEntities() {
     entities = {
-        &background,
-        &battleBox,
-        &battleText,
-        &fightButton,
-        &talkButton,
-        &itemButton,
-        &spareButton,
-        &player,
-        &hp,
-        &froggit,
-        &subMenuText[0],
-        &subMenuText[1],
-        &subMenuText[2],
-        &subMenuText[3]
+        &player
     };
 }
 
-std::vector<Button *> PlayState::getButtons() const {
-    std::vector<Button*> buttons;
-    for (auto* e : entities) {
-        if (auto* btn = dynamic_cast<Button*>(e)) {
-            buttons.push_back(btn);
-        }
-    }
-    return buttons;
-}
+// std::vector<Button *> PlayState::getButtons() const {
+//     std::vector<Button*> buttons;
+//     for (auto* e : entities) {
+//         if (auto* btn = dynamic_cast<Button*>(e)) {
+//             buttons.push_back(btn);
+//         }
+//     }
+//     return buttons;
+// }
 
 sf::Vector2f PlayState::calculateMoveOffset() const {
     constexpr float speed = 4.0f;
@@ -196,8 +184,10 @@ sf::Vector2f PlayState::calculateMoveOffset() const {
     return moveOffset;
 }
 
-void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) const {
-    const sf::FloatRect innerBounds=battleBox.getInnerBounds();
+void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) {
+    const BattleBox battleBox = ui.getBattleBox();
+    const sf::FloatRect innerBounds = battleBox.getInnerBounds();
+
 
     const sf::Vector2f playerPos = player.getPosition() + moveOffset;
     const sf::Vector2f playerSize = {player.getGlobalBounds().size.x, player.getGlobalBounds().size.y};
@@ -232,9 +222,9 @@ void PlayState::processDamage() {
         if (const auto* b = dynamic_cast<Bullet*>(it->get())) {
             if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
                 if (!player.isHurting()) {
-                    hp.takeDamage(4);
+                    ui.takePlayerDamage(4);
                     it = bullets.erase(it);
-                    if (hp.getHp()<=0 && deathStage == DeathStage::None) {
+                    if (ui.getCurrentHp()<=0 && deathStage == DeathStage::None) {
                         startDeath();
                     }
                     else {
@@ -266,36 +256,41 @@ void PlayState::cleanupBullets() {
 
 void PlayState::enterPlayerTurn() {
     currentActionIndex = 0;
-    const auto buttons = getButtons();
-    player.setPosition(buttons[0]->getPositionForPlayer());
-    buttons[0]->setSelected(true);
+    // const auto buttons = getButtons();
+    ui.positionPlayerAtButton(player,0);
+    ui.selectButton(0);
     keysPressed.clear();
-    battleBox.resizeCentered({205 * 2, 0});
-    battleText.setText(froggit.getFlavorText("Neutral"),0.5f);
+    ui.resizeBattleBox({205 * 2, 0});
+    ui.setFlavorText();
 }
 
 void PlayState::updatePlayerTurn() {
-    const auto buttons = getButtons();
+    // const auto buttons = getButtons();
     if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
-        currentActionIndex = (currentActionIndex - 1 + static_cast<int>(buttons.size())) % static_cast<int>(
-                                 buttons.size());
-        player.setPosition(buttons[currentActionIndex]->getPositionForPlayer());
+        currentActionIndex = (currentActionIndex - 1 + static_cast<int>(ui.getButtonCount())) % static_cast<int>(
+                                 ui.getButtonCount());
+        ui.positionPlayerAtButton(player, currentActionIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Left);
         keysPressed.erase(sf::Keyboard::Scancode::A);
-        updateButtonTextures();
+        // updateButtonTextures();
+        ui.deselectAllButtons();
+        ui.selectButton(currentActionIndex);
     }
     if (keysPressed.contains(sf::Keyboard::Scancode::Right) || keysPressed.contains(sf::Keyboard::Scancode::D)) {
-        currentActionIndex = (currentActionIndex + 1 + static_cast<int>(buttons.size())) % static_cast<int>(
-                                 buttons.size());
-        player.setPosition(buttons[currentActionIndex]->getPositionForPlayer());
+        currentActionIndex = (currentActionIndex + 1 + static_cast<int>(ui.getButtonCount())) % static_cast<int>(
+                                 ui.getButtonCount());
+        ui.positionPlayerAtButton(player, currentActionIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Right);
         keysPressed.erase(sf::Keyboard::Scancode::D);
-        updateButtonTextures();
+        // updateButtonTextures();
+        ui.deselectAllButtons();
+        ui.selectButton(currentActionIndex);
     }
 
     if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
-        if (!battleBox.isUpdating()){
-        buttons[currentActionIndex]->setSelected(false);
+        if (!ui.getBattleBox().isUpdating()){
+        // buttons[currentActionIndex]->setSelected(false);
+        ui.deselectAllButtons();
         processSelectedAction(currentActionIndex);
         // enterEnemyTurn();
         }
@@ -304,12 +299,12 @@ void PlayState::updatePlayerTurn() {
 
 void PlayState::enterEnemyTurn() {
     player.setState("normal");
-    battleText.setText("");
+    ui.setBattleText("");
     currentTurn = TurnState::EnemyTurn;
     keysPressed.clear();
-    player.centerPlayer(battleBox);
+    player.centerPlayer(ui.getBattleBox());
     enemyTurnClock.restart();
-    battleBox.resizeCentered({-205 * 2, 0});
+    ui.resizeBattleBox({-205 * 2, 0});
 
     for (int i = 0; i < 5; i++) {
         bullets.emplace_back(std::make_unique<Bullet>(
@@ -336,24 +331,24 @@ void PlayState::updateEnemyTurn() {
     }
 }
 
-void PlayState::updateButtonTextures() const {
-    int idx = 0;
-    for (auto* e : entities) {
-        if (auto* btn = dynamic_cast<Button*>(e)) {
-            btn->setSelected(idx == currentActionIndex);
-            ++idx;
-        }
-    }
-}
+// void PlayState::updateButtonTextures() const {
+    // int idx = 0;
+    // for (auto* e : entities) {
+    //     if (auto* btn = dynamic_cast<Button*>(e)) {
+    //         btn->setSelected(idx == currentActionIndex);
+    //         ++idx;
+    //     }
+    // }
+// }
 void PlayState::updateMenu(MenuState& menuState) {
     if (keysPressed.contains(sf::Keyboard::Scancode::Down)) {
         menuState.currentIndex = static_cast<int>((menuState.currentIndex + 1) % menuState.options.size());
-        player.setPosition(subMenuText[menuState.currentIndex].getPositionForPlayer());
+        ui.positionPlayerAtSubMenu(player, menuState.currentIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Down);
     }
     else if (keysPressed.contains(sf::Keyboard::Scancode::Up)) {
         menuState.currentIndex = static_cast<int>((menuState.currentIndex - 1 + menuState.options.size()) % menuState.options.size());
-        player.setPosition(subMenuText[menuState.currentIndex].getPositionForPlayer());
+        ui.positionPlayerAtSubMenu(player, menuState.currentIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Up);
     }
 
@@ -370,24 +365,24 @@ void PlayState::updateMenu(MenuState& menuState) {
 
 void PlayState::enterSubMenu() {
     currentTurn = TurnState::SubMenu;
-    player.centerPlayer(battleBox);
+    player.centerPlayer(ui.getBattleBox());
     keysPressed.clear();
-    battleText.setText("");
+    ui.setBattleText("");
 }
 
 void PlayState::exitSubMenu() {
     currentTurn = TurnState::PlayerTurn;
     currentSubMenu = SubMenuState::None;
-    battleText.setText("");
+    ui.setBattleText("");
 
-    const auto buttons = getButtons();
-    if (savedActionIndex < buttons.size()) {
-        buttons[savedActionIndex]->setSelected(true);
-        player.setPosition(buttons[savedActionIndex]->getPositionForPlayer());
+    // const auto buttons = getButtons();
+    if (savedActionIndex < ui.getButtonCount()) {
+        ui.selectButton(savedActionIndex);
+        ui.positionPlayerAtButton(player, savedActionIndex);
     }
     keysPressed.clear();
     actionConfirmed = false;
-    subMenuText[0].setColor(sf::Color::White);
+    ui.setSubMenuColor(1,sf::Color::White);
 }
 
 void PlayState::updateMercyMenu() {
@@ -395,8 +390,8 @@ void PlayState::updateMercyMenu() {
         keysPressed.contains(sf::Keyboard::Scancode::Z)) {
 
         if (mercyConditionsMet) {
-            battleText.setText("YOU WON!", 0.0f);
-            subMenuText[0].setText("");
+            ui.setBattleText("YOU WON", 0);
+            ui.setSubMenuText(0,"");
             player.setState("transparent");
             victoryAchieved = true;
             victoryFrame = 0;
@@ -407,31 +402,18 @@ void PlayState::updateMercyMenu() {
 void PlayState::useItem(const int itemIndex) {
     if (itemIndex < 0 || itemIndex >= static_cast<int>(inventory.size())) return;
     const Item usedItem = inventory[itemIndex];
-    const int oldHp = hp.getHp();
-    hp.heal(usedItem.healAmount);
-    const int healed = hp.getHp() - oldHp;
-    battleText.setText("* You used the " + usedItem.realName + ".\n* You recovered " +
-                      std::to_string(healed) + " HP!", 0.0f);
+    ui.executeUseItemAction(usedItem.realName, usedItem.healAmount);
     inventory.erase(inventory.begin() + itemIndex);
-    for (auto& text : subMenuText) {
-        text.setText("");
-    }
-
     itemMenuState.inMessagePhase = true;
 }
 
 void PlayState::processActSelection(const int actIndex) {
     if (actIndex < 0 || actIndex >= static_cast<int>(actMenuState.options.size())) return;
-    const auto& acts = froggit.getAvailableActs();
+    const auto& acts = ui.getFroggitActs();
     const auto& selectedAct = acts[actIndex];
-    froggit.increaseSpareProgress(selectedAct.spareProgress);
-    battleText.setText(froggit.getFlavorText(selectedAct.name), 0.0f);
-    for (auto& text : subMenuText) {
-        text.setText("");
-    }
-    if (froggit.canBeSpared()) mercyConditionsMet = true;
+    ui.executeActSelection(selectedAct);
+    if (ui.canSpareEnemy()) mercyConditionsMet = true;
     actMenuState.inMessagePhase = true;
-
 }
 
 void PlayState::updateFightMenu() {
@@ -452,9 +434,7 @@ void PlayState::updateSubMenu() {
         currentSubMenu = SubMenuState::None;
         enterEnemyTurn();
         keysPressed.clear();
-        for (auto& text : subMenuText) {
-            text.setText("");
-        }
+        ui.clearSubMenuTexts();
         return;
     }
     switch (currentSubMenu) {
@@ -471,10 +451,8 @@ void PlayState::updateSubMenu() {
             updateMercyMenu();
         break;
         default:
-            battleText.setText(froggit.getFlavorText("Neutral"),0);
-            for (auto& text : subMenuText) {
-                text.setText("");
-            }
+            ui.setFlavorText(0);
+            ui.clearSubMenuTexts();
             break;
     }
 }
@@ -484,11 +462,7 @@ void PlayState::enterFightSubMenu() {
     // }
     currentSubMenu = SubMenuState::Fight;
     const int damage = static_cast<int>(7 + rng()) % 5;
-    froggit.takeDamage(damage);
-    const std::string msg = "* You dealt " + std::to_string(damage) + " damage to " +
-                     froggit.getName() + ". " + "\n" +
-                     std::to_string(froggit.getCurrentHp()) + " HP remaining.";
-    battleText.setText(msg,0);
+    ui.executeFightAction(damage);
     player.setState("transparent");
     actionConfirmed = true;
 }
@@ -497,7 +471,7 @@ void PlayState::enterTalkSubMenu() {
     currentSubMenu = SubMenuState::Talk;
 
     actMenuState.options.clear();
-    for (const auto& act : froggit.getAvailableActs()) {
+    for (const auto& act : ui.getFroggitActs()) {
         actMenuState.options.push_back("* " + act.name);
     }
     actMenuState.currentIndex = 0;
@@ -509,15 +483,15 @@ void PlayState::enterTalkSubMenu() {
         player.setState("transparent");
     };
 
-    for (size_t i = 0; i < subMenuText.size(); i++) {
+    for (size_t i = 0; i < ui.getSubMenuTexts().size(); i++) {
         if (i < actMenuState.options.size()) {
-            subMenuText[i].setText(actMenuState.options[i]);
+            ui.setSubMenuText(i,actMenuState.options[i]);
         } else {
-            subMenuText[i].setText("");
+            ui.setSubMenuText(i,"");
         }
     }
 
-    player.setPosition(subMenuText[0].getPositionForPlayer());
+    ui.positionPlayerAtSubMenu(player,0);
     actionConfirmed = false;
 }
 
@@ -537,35 +511,32 @@ void PlayState::enterItemSubMenu() {
         player.setState("transparent");
     };
 
-    for (size_t i = 0; i < subMenuText.size(); i++) {
+    for (size_t i = 0; i < ui.getSubMenuTexts().size(); i++) {
         if (i < itemMenuState.options.size()) {
-            subMenuText[i].setText(itemMenuState.options[i]);
+            ui.setSubMenuText(i,itemMenuState.options[i]);
         } else {
-            subMenuText[i].setText("");
+            ui.setSubMenuText(i,"");
+
         }
     }
 
     if (!inventory.empty()) {
-        player.setPosition(subMenuText[0].getPositionForPlayer());
+        ui.positionPlayerAtSubMenu(player,0);
     }
     actionConfirmed = false;
 }
 
 void PlayState::enterMercySubMenu() {
     currentSubMenu = SubMenuState::Spare;
-    for (auto& text : subMenuText) {
-        text.setText("");
-    }
-
-    subMenuText[0].setText("* Spare");
+    ui.clearSubMenuTexts();
+    ui.setSubMenuText(0,"* Spare");
 
     if (mercyConditionsMet) {
-        subMenuText[0].setColor(sf::Color::Yellow);
+        ui.setSubMenuColor(0,sf::Color::Yellow);
     } else {
-        subMenuText[0].setColor(sf::Color::White);
+        ui.setSubMenuColor(0,sf::Color::White);
     }
-
-    player.setPosition(subMenuText[0].getPositionForPlayer());
+    ui.positionPlayerAtSubMenu(player,0);
     actionConfirmed = false;
 }
 
@@ -603,35 +574,38 @@ void PlayState::print(std::ostream &os) const {
     GameState::print(os);
     os
         << "Play State, "
-        << "Player: "<< player << ", Player HP: " << hp
-        << ", Battle Box: "<<battleBox
+        << "Player: "<< player
+        // << ", Player HP: " << hp
+        // << ", Battle Box: "<<battleBox
         << ", Bullets Active: "<< (areBulletsActive() ? "Yes" : "No");
 }
 
-PlayState::PlayState() : background("./img/spr_battlebg_0.png"),
-                         battleBox({242, 150},{155, 130}),
-                         battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270}) {
+PlayState::PlayState()
+// background("./img/spr_battlebg_0.png"),
+//                          battleBox({242, 150},{155, 130}),
+//                          battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270})
+{
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");
-    battleBox.setBottomY(385.f);
+    // battleBox.setBottomY(385.f);
     initEntities();
     enterPlayerTurn();
 }
 
 PlayState::PlayState(const PlayState &other)
     : GameState(other),
-      background(other.background),
+      // background(other.background),
       shouldTransition(other.shouldTransition),
       player(other.player),
-      battleBox(other.battleBox),
+      // battleBox(other.battleBox),
       keysPressed(other.keysPressed),
-      battleText(other.battleText),
-      hp(other.hp),
-      froggit(other.froggit),
-      fightButton(other.fightButton),
-      talkButton(other.talkButton),
-      itemButton(other.itemButton),
-      spareButton(other.spareButton),
+      // battleText(other.battleText),
+      // hp(other.hp),
+      // froggit(other.froggit),
+      // fightButton(other.fightButton),
+      // talkButton(other.talkButton),
+      // itemButton(other.itemButton),
+      // spareButton(other.spareButton),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
       waitingForTextDelay(other.waitingForTextDelay),
@@ -670,19 +644,19 @@ bool PlayState::shouldChangeState() const {
 
 void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
-    swap(first.background, second.background);
+    // swap(first.background, second.background);
     swap(first.shouldTransition, second.shouldTransition);
     swap(first.player, second.player);
     swap(first.bullets, second.bullets);
-    swap(first.battleBox, second.battleBox);
+    // swap(first.battleBox, second.battleBox);
     swap(first.keysPressed, second.keysPressed);
-    swap(first.battleText, second.battleText);
-    swap(first.hp, second.hp);
-    swap(first.froggit, second.froggit);
-    swap(first.fightButton, second.fightButton);
-    swap(first.talkButton, second.talkButton);
-    swap(first.itemButton, second.itemButton);
-    swap(first.spareButton, second.spareButton);
+    // swap(first.battleText, second.battleText);
+    // swap(first.hp, second.hp);
+    // swap(first.froggit, second.froggit);
+    // swap(first.fightButton, second.fightButton);
+    // swap(first.talkButton, second.talkButton);
+    // swap(first.itemButton, second.itemButton);
+    // swap(first.spareButton, second.spareButton);
     swap(first.currentTurn, second.currentTurn);
     swap(first.enemyTurnClock, second.enemyTurnClock);
     swap(first.currentActionIndex, second.currentActionIndex);

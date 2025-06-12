@@ -113,6 +113,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/ShardEntity.cpp
         Headers/Enemy.h
         Source/Enemy.cpp
+        Headers/BattleUISystem.h
+        Source/BattleUISystem.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
