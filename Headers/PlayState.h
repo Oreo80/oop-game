@@ -2,8 +2,6 @@
 #include "GameState.h"
 #include "Bullet.h"
 #include "Player.h"
-#include "BattleBox.h"
-#include "Button.h"
 #include <set>
 #include <SFML/Audio.hpp>
 #include "BattleText.h"
@@ -27,37 +25,21 @@ private:
     };
     MenuState actMenuState;
     MenuState itemMenuState;
-    // SpriteEntity background;
     bool shouldTransition = false;
     Player player;
     std::vector<std::unique_ptr<DrawableEntity>> bullets;
-    // BattleBox battleBox;
     std::set<sf::Keyboard::Scancode> keysPressed;
-    // BattleText battleText;
-    // Hp hp;
-    // Froggit froggit;
     bool actionConfirmed = false;
     bool mercyConditionsMet = false;
-    // bool actFlavorTextDisplaying = false;
     std::vector<Item> inventory = {
         {"Monster Candy", "MnstrCndy", 10},
         {"Spider Donut", "SpidrDont", 12},
         {"Butterscotch Pie", "ButtsPie", 20},
         { "Spider Cider", "SpidrCidr", 18}
     };
-    // bool itemMessageDisplaying = false;
     bool victoryAchieved = false;
     int victoryFrame = 0;
     std::vector<std::string> actOptions;
-    // std::vector<BitmapFont> subMenuText =
-    //     {BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{90,268}, sf::Color::White, 1.f),
-    //     BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{350,268}, sf::Color::White, 1.f),
-    //     BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{90,310}, sf::Color::White, 1.f),
-    //     BitmapFont("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv","",{350,310}, sf::Color::White, 1.f)};
-    // Button fightButton{"./img/spr_fightbt_0.png","./img/spr_fightbt_1.png",{32,432}},
-    //         talkButton{"./img/spr_talkbt_0.png","./img/spr_talkbt_1.png",{185,432}},
-    //         itemButton{"./img/spr_itembt_0.png","./img/spr_itembt_1.png",{345,432}},
-    //         spareButton{"./img/spr_sparebt_0.png","./img/spr_sparebt_1.png",{500,432}};
     enum class TurnState {
         PlayerTurn,
         EnemyTurn,
@@ -96,7 +78,6 @@ private:
     void doUpdate() override;
     void doRender(sf::RenderWindow& window) override;
     void initEntities();
-    // std::vector<Button*> getButtons() const;
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset);
     void startDeath();
@@ -106,7 +87,6 @@ private:
     void updatePlayerTurn();
     void enterEnemyTurn();
     void updateEnemyTurn();
-    void updateButtonTextures() const;
     void updateMenu(MenuState &menuState);
     void enterSubMenu();
     void exitSubMenu();

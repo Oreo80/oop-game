@@ -27,12 +27,10 @@ public:
     int getCurrentHp() const;
     void setFlavorText(float delay = 0.5f);
     void setBattleText(const std::string& text, float delay = 0.5f);
-    void updateBattleText();
     void takePlayerDamage(int damage);
     void executeFightAction(int damage);
     void executeUseItemAction(const std::string &itemName, int healAmount);
     void executeActSelection(const EnemyAct &selectedAct);
-    void healPlayer(int amount);
     void selectButton(size_t index);
     void deselectAllButtons();
     size_t getButtonCount() const;
@@ -43,7 +41,7 @@ public:
     void positionPlayerAtSubMenu(Player &player, size_t index) const;
     void setSubMenuColor(size_t index, sf::Color color);
     std::vector<EnemyAct> getFroggitActs() const;
-    std::vector<BitmapFont> getSubMenuTexts() const;
+    const std::vector<BitmapFont>& getSubMenuTexts() const;
     void tick(sf::RenderWindow& window) const;
 
 };

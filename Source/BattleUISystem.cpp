@@ -63,10 +63,6 @@ void BattleUISystem::setBattleText(const std::string& text, const float delay) {
     battleText.setText(text, delay);
 }
 
-void BattleUISystem::updateBattleText() {
-    battleText.update();
-}
-
 void BattleUISystem::takePlayerDamage(const int damage) {
     hp.takeDamage(damage);
 }
@@ -92,11 +88,6 @@ void BattleUISystem::executeActSelection(const EnemyAct &selectedAct) {
     froggit.increaseSpareProgress(selectedAct.spareProgress);
     battleText.setText(froggit.getFlavorText(selectedAct.name), 0.0f);
     clearSubMenuTexts();
-}
-
-
-void BattleUISystem::healPlayer(const int amount) {
-    hp.heal(amount);
 }
 
 void BattleUISystem::selectButton(const size_t index) {
@@ -152,7 +143,7 @@ std::vector<EnemyAct> BattleUISystem::getFroggitActs() const {
     return froggit.getAvailableActs();
 }
 
-std::vector<BitmapFont> BattleUISystem::getSubMenuTexts() const {
+const std::vector<BitmapFont>& BattleUISystem::getSubMenuTexts() const {
     return subMenuTexts;
 }
 

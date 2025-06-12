@@ -154,16 +154,6 @@ void PlayState::initEntities() {
     };
 }
 
-// std::vector<Button *> PlayState::getButtons() const {
-//     std::vector<Button*> buttons;
-//     for (auto* e : entities) {
-//         if (auto* btn = dynamic_cast<Button*>(e)) {
-//             buttons.push_back(btn);
-//         }
-//     }
-//     return buttons;
-// }
-
 sf::Vector2f PlayState::calculateMoveOffset() const {
     constexpr float speed = 4.0f;
     sf::Vector2f moveOffset(0, 0);
@@ -256,7 +246,6 @@ void PlayState::cleanupBullets() {
 
 void PlayState::enterPlayerTurn() {
     currentActionIndex = 0;
-    // const auto buttons = getButtons();
     ui.positionPlayerAtButton(player,0);
     ui.selectButton(0);
     keysPressed.clear();
@@ -265,14 +254,12 @@ void PlayState::enterPlayerTurn() {
 }
 
 void PlayState::updatePlayerTurn() {
-    // const auto buttons = getButtons();
     if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
         currentActionIndex = (currentActionIndex - 1 + static_cast<int>(ui.getButtonCount())) % static_cast<int>(
                                  ui.getButtonCount());
         ui.positionPlayerAtButton(player, currentActionIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Left);
         keysPressed.erase(sf::Keyboard::Scancode::A);
-        // updateButtonTextures();
         ui.deselectAllButtons();
         ui.selectButton(currentActionIndex);
     }
@@ -282,17 +269,14 @@ void PlayState::updatePlayerTurn() {
         ui.positionPlayerAtButton(player, currentActionIndex);
         keysPressed.erase(sf::Keyboard::Scancode::Right);
         keysPressed.erase(sf::Keyboard::Scancode::D);
-        // updateButtonTextures();
         ui.deselectAllButtons();
         ui.selectButton(currentActionIndex);
     }
 
     if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
         if (!ui.getBattleBox().isUpdating()){
-        // buttons[currentActionIndex]->setSelected(false);
         ui.deselectAllButtons();
         processSelectedAction(currentActionIndex);
-        // enterEnemyTurn();
         }
     }
 }
@@ -331,15 +315,6 @@ void PlayState::updateEnemyTurn() {
     }
 }
 
-// void PlayState::updateButtonTextures() const {
-    // int idx = 0;
-    // for (auto* e : entities) {
-    //     if (auto* btn = dynamic_cast<Button*>(e)) {
-    //         btn->setSelected(idx == currentActionIndex);
-    //         ++idx;
-    //     }
-    // }
-// }
 void PlayState::updateMenu(MenuState& menuState) {
     if (keysPressed.contains(sf::Keyboard::Scancode::Down)) {
         menuState.currentIndex = static_cast<int>((menuState.currentIndex + 1) % menuState.options.size());
@@ -375,7 +350,6 @@ void PlayState::exitSubMenu() {
     currentSubMenu = SubMenuState::None;
     ui.setBattleText("");
 
-    // const auto buttons = getButtons();
     if (savedActionIndex < ui.getButtonCount()) {
         ui.selectButton(savedActionIndex);
         ui.positionPlayerAtButton(player, savedActionIndex);
@@ -457,9 +431,6 @@ void PlayState::updateSubMenu() {
     }
 }
 void PlayState::enterFightSubMenu() {
-    // for (auto& text : subMenuText) {
-    //     text.setText("");
-    // }
     currentSubMenu = SubMenuState::Fight;
     const int damage = static_cast<int>(7 + rng()) % 5;
     ui.executeFightAction(damage);
@@ -580,32 +551,18 @@ void PlayState::print(std::ostream &os) const {
         << ", Bullets Active: "<< (areBulletsActive() ? "Yes" : "No");
 }
 
-PlayState::PlayState()
-// background("./img/spr_battlebg_0.png"),
-//                          battleBox({242, 150},{155, 130}),
-//                          battleText("./fonts/fnt_main.png","./fonts/glyphs_fnt_main.csv",{52,270})
-{
+PlayState::PlayState() {
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");
-    // battleBox.setBottomY(385.f);
     initEntities();
     enterPlayerTurn();
 }
 
 PlayState::PlayState(const PlayState &other)
     : GameState(other),
-      // background(other.background),
       shouldTransition(other.shouldTransition),
       player(other.player),
-      // battleBox(other.battleBox),
       keysPressed(other.keysPressed),
-      // battleText(other.battleText),
-      // hp(other.hp),
-      // froggit(other.froggit),
-      // fightButton(other.fightButton),
-      // talkButton(other.talkButton),
-      // itemButton(other.itemButton),
-      // spareButton(other.spareButton),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
       waitingForTextDelay(other.waitingForTextDelay),
@@ -644,19 +601,10 @@ bool PlayState::shouldChangeState() const {
 
 void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
-    // swap(first.background, second.background);
     swap(first.shouldTransition, second.shouldTransition);
     swap(first.player, second.player);
     swap(first.bullets, second.bullets);
-    // swap(first.battleBox, second.battleBox);
     swap(first.keysPressed, second.keysPressed);
-    // swap(first.battleText, second.battleText);
-    // swap(first.hp, second.hp);
-    // swap(first.froggit, second.froggit);
-    // swap(first.fightButton, second.fightButton);
-    // swap(first.talkButton, second.talkButton);
-    // swap(first.itemButton, second.itemButton);
-    // swap(first.spareButton, second.spareButton);
     swap(first.currentTurn, second.currentTurn);
     swap(first.enemyTurnClock, second.enemyTurnClock);
     swap(first.currentActionIndex, second.currentActionIndex);
