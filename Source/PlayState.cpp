@@ -556,6 +556,9 @@ PlayState::PlayState() {
     gameManager.playMusic("./mus/mus_battle1.ogg");
     initEntities();
     enterPlayerTurn();
+    const auto useless = player.clone();
+    std::cout<<useless;
+    // total garbage, i know, n-am vrut sa comentez in 7 locuri diferite o functie care va trebui sa o folosesc
 }
 
 PlayState::PlayState(const PlayState &other)
