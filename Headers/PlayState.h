@@ -1,6 +1,5 @@
 #pragma once
 #include "GameState.h"
-#include "Bullet.h"
 #include "Player.h"
 #include <set>
 #include <SFML/Audio.hpp>
@@ -10,10 +9,14 @@
 #include "ShardEntity.h"
 #include "BattleUISystem.h"
 #include "BulletManager.h"
+#include "DeathAnimationManager.h"
 class PlayState : public GameState {
 private:
+    bool shouldTransition = false;
+    Player player;
     BattleUISystem ui;
     BulletManager bulletManager;
+    DeathAnimationManager deathManager;
     struct Item {
         std::string realName;
         std::string shortName;
@@ -27,9 +30,6 @@ private:
     };
     MenuState actMenuState;
     MenuState itemMenuState;
-    bool shouldTransition = false;
-    Player player;
-    // std::vector<std::unique_ptr<DrawableEntity>> bullets;
     std::set<sf::Keyboard::Scancode> keysPressed;
     bool actionConfirmed = false;
     bool mercyConditionsMet = false;
@@ -62,29 +62,28 @@ private:
     static const float enemyTurnDuration;
     int currentActionIndex = 0;
     bool waitingForTextDelay=false;
-    enum class DeathStage {
-        None,
-        ShowPlayer,
-        ShowBrokenHeart,
-        ShowShards,
-        FadeOut
-    };
-    DeathStage deathStage = DeathStage::None;
-    int deathFrame = -1;
-    std::vector<std::unique_ptr<ShardEntity>> shards;
+    // enum class DeathStage {
+    //     None,
+    //     ShowPlayer,
+    //     ShowBrokenHeart,
+    //     ShowShards,
+    //     FadeOut
+    // };
+    // DeathStage deathStage = DeathStage::None;
+    // int deathFrame = -1;
+    // std::vector<std::unique_ptr<ShardEntity>> shards;
     void doProcessEvent(const std::optional<sf::Event> &event) override;
-    static void spawnShards(std::vector<std::unique_ptr<ShardEntity>>& shards, const sf::Vector2f& playerPos, int shardCount = 6);
-    static sf::Vector2f generateShardVelocity(int index, int totalShards);
-    void updateDeath();
-    void renderDeath(sf::RenderWindow &window);
+    // static void spawnShards(std::vector<std::unique_ptr<ShardEntity>>& shards, const sf::Vector2f& playerPos, int shardCount = 6);
+    // static sf::Vector2f generateShardVelocity(int index, int totalShards);
+    // void updateDeath();
+    // void renderDeath(sf::RenderWindow &window);
     void doUpdate() override;
     void doRender(sf::RenderWindow& window) override;
     void initEntities();
     sf::Vector2f calculateMoveOffset() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset);
-    void startDeath();
+    // void startDeath();
     void processDamage();
-    // void cleanupBullets();
     void enterPlayerTurn();
     void updatePlayerTurn();
     void enterEnemyTurn();

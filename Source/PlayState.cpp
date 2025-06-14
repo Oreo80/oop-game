@@ -1,7 +1,6 @@
 #include "../Headers/PlayState.h"
 // #include "../Headers/GameOverState.h"
 #include <random>
-#include <numbers>
 
 const float PlayState::enemyTurnDuration = 10.f;
 void PlayState::doProcessEvent(const std::optional<sf::Event> &event) {
@@ -15,99 +14,99 @@ void PlayState::doProcessEvent(const std::optional<sf::Event> &event) {
     }
 }
 
-void PlayState::spawnShards(std::vector<std::unique_ptr<ShardEntity>> &shards, const sf::Vector2f &playerPos, int shardCount) {
-    shards.clear();
-
-    const std::vector<std::string> shardPaths = {
-        "./img/spr_heartshards_0.png",
-        "./img/spr_heartshards_1.png",
-        "./img/spr_heartshards_2.png",
-        "./img/spr_heartshards_3.png"
-    };
-
-    for (int i = 0; i < shardCount; ++i) {
-        auto velocity = generateShardVelocity(i, shardCount);
-        shards.push_back(std::make_unique<ShardEntity>(shardPaths, playerPos, velocity));
-    }
-}
-
+// void PlayState::spawnShards(std::vector<std::unique_ptr<ShardEntity>> &shards, const sf::Vector2f &playerPos, int shardCount) {
+//     shards.clear();
+//
+//     const std::vector<std::string> shardPaths = {
+//         "./img/spr_heartshards_0.png",
+//         "./img/spr_heartshards_1.png",
+//         "./img/spr_heartshards_2.png",
+//         "./img/spr_heartshards_3.png"
+//     };
+//
+//     for (int i = 0; i < shardCount; ++i) {
+//         auto velocity = generateShardVelocity(i, shardCount);
+//         shards.push_back(std::make_unique<ShardEntity>(shardPaths, playerPos, velocity));
+//     }
+// }
+//
 static std::mt19937 rng(std::random_device{}());
+//
+// sf::Vector2f PlayState::generateShardVelocity(const int index, const int totalShards) {
+//     const float angleDegrees = (static_cast<float>(index) / static_cast<float>(totalShards)) * 360.f;
+//     const float angleRadians = angleDegrees * std::numbers::pi_v<float> / 180.f;
+//
+//     std::uniform_real_distribution speedDist(3.f, 6.f);
+//     const float speed = speedDist(rng);
+//
+//     sf::Vector2f velocity;
+//     velocity.x = std::cos(angleRadians) * speed;
+//     velocity.y = -std::abs(std::sin(angleRadians) * speed); // upward initial burst
+//
+//     return velocity;
+// }
 
-sf::Vector2f PlayState::generateShardVelocity(const int index, const int totalShards) {
-    const float angleDegrees = (static_cast<float>(index) / static_cast<float>(totalShards)) * 360.f;
-    const float angleRadians = angleDegrees * std::numbers::pi_v<float> / 180.f;
-
-    std::uniform_real_distribution speedDist(3.f, 6.f);
-    const float speed = speedDist(rng);
-
-    sf::Vector2f velocity;
-    velocity.x = std::cos(angleRadians) * speed;
-    velocity.y = -std::abs(std::sin(angleRadians) * speed); // upward initial burst
-
-    return velocity;
-}
-
-void PlayState::updateDeath() {
-    if (deathStage == DeathStage::None) return;
-
-    deathFrame++;
-
-    switch (deathFrame) {
-        case 0:
-            deathStage = DeathStage::ShowPlayer;
-        break;
-        case 30:
-            deathStage = DeathStage::ShowBrokenHeart;
-            gameManager.playSound("./sounds/snd_break1.wav");
-        break;
-        case 90:
-            deathStage = DeathStage::ShowShards;
-            gameManager.playSound("./sounds/snd_break2.wav");
-            spawnShards(shards, player.getPosition(), 6);
-        break;
-        case 150:
-            deathStage = DeathStage::FadeOut;
-        break;
-        default:
-            break;
-    }
-
-}
-void PlayState::renderDeath(sf::RenderWindow& window) {
-    static sf::RectangleShape blackScreen;
-    blackScreen.setSize({static_cast<float>(window.getSize().x) * 1.f, static_cast<float>(window.getSize().y) * 1.f});
-    blackScreen.setFillColor(sf::Color::Black);
-    window.draw(blackScreen);
-
-    const auto playerPos = player.getPosition();
-
-    switch (deathStage) {
-        case DeathStage::ShowPlayer:
-            player.tick(window);
-        break;
-
-        case DeathStage::ShowBrokenHeart:
-        {
-            static SpriteEntity brokenHeartSprite("./img/spr_heartbreak.png");
-            brokenHeartSprite.setPosition(playerPos);
-            brokenHeartSprite.tick(window);
-        }
-        break;
-
-        case DeathStage::ShowShards:
-            for (const auto& shard : shards)
-                shard->tick(window);
-        break;
-
-        case DeathStage::FadeOut:
-            gameManager.fadeOut(1.f);
-        shouldTransition = true;
-        break;
-
-        default:
-            break;
-    }
-}
+// void PlayState::updateDeath() {
+//     if (deathStage == DeathStage::None) return;
+//
+//     deathFrame++;
+//
+//     switch (deathFrame) {
+//         case 0:
+//             deathStage = DeathStage::ShowPlayer;
+//         break;
+//         case 30:
+//             deathStage = DeathStage::ShowBrokenHeart;
+//             gameManager.playSound("./sounds/snd_break1.wav");
+//         break;
+//         case 90:
+//             deathStage = DeathStage::ShowShards;
+//             gameManager.playSound("./sounds/snd_break2.wav");
+//             spawnShards(shards, player.getPosition(), 6);
+//         break;
+//         case 150:
+//             deathStage = DeathStage::FadeOut;
+//         break;
+//         default:
+//             break;
+//     }
+//
+// }
+// void PlayState::renderDeath(sf::RenderWindow& window) {
+//     static sf::RectangleShape blackScreen;
+//     blackScreen.setSize({static_cast<float>(window.getSize().x) * 1.f, static_cast<float>(window.getSize().y) * 1.f});
+//     blackScreen.setFillColor(sf::Color::Black);
+//     window.draw(blackScreen);
+//
+//     const auto playerPos = player.getPosition();
+//
+//     switch (deathStage) {
+//         case DeathStage::ShowPlayer:
+//             player.tick(window);
+//         break;
+//
+//         case DeathStage::ShowBrokenHeart:
+//         {
+//             static SpriteEntity brokenHeartSprite("./img/spr_heartbreak.png");
+//             brokenHeartSprite.setPosition(playerPos);
+//             brokenHeartSprite.tick(window);
+//         }
+//         break;
+//
+//         case DeathStage::ShowShards:
+//             for (const auto& shard : shards)
+//                 shard->tick(window);
+//         break;
+//
+//         case DeathStage::FadeOut:
+//             gameManager.fadeOut(1.f);
+//         shouldTransition = true;
+//         break;
+//
+//         default:
+//             break;
+//     }
+// }
 
 void PlayState::doUpdate() {
     if (victoryAchieved) {
@@ -117,10 +116,18 @@ void PlayState::doUpdate() {
         }
         return;
     }
-    if (deathStage != DeathStage::None) {
-        updateDeath();
+    // if (deathStage != DeathStage::None) {
+    //     updateDeath();
+    //     return;
+    // }
+    if (deathManager.isActive()) {
+        deathManager.update();
+        if (deathManager.isComplete()) {
+            shouldTransition = true;
+        }
         return;
     }
+    deathManager.update();
     switch (currentTurn) {
         case TurnState::PlayerTurn:
             updatePlayerTurn();
@@ -135,10 +142,15 @@ void PlayState::doUpdate() {
 }
 
 void PlayState::doRender(sf::RenderWindow &window) {
-    if (deathStage != DeathStage::None) {
-        renderDeath(window);
+    // if (deathStage != DeathStage::None) {
+    //     renderDeath(window);
+    //     return;
+    // }
+    if (deathManager.isActive()) {
+        deathManager.render(window);
         return;
     }
+    deathManager.render(window);
     ui.tick(window);
     bulletManager.tick(window);
     for (auto* e : entities) {
@@ -198,12 +210,12 @@ void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) {
     }
 }
 
-void PlayState::startDeath() {
-    deathStage = DeathStage::ShowPlayer;
-    deathFrame = 0;
-    gameManager.stopMusic();
-    shards.clear();
-}
+// void PlayState::startDeath() {
+//     deathStage = DeathStage::ShowPlayer;
+//     deathFrame = 0;
+//     gameManager.stopMusic();
+//     shards.clear();
+// }
 
 void PlayState::processDamage() {
     for (auto it = bulletManager.getBullets().begin(); it != bulletManager.getBullets().end(); ) {
@@ -212,8 +224,8 @@ void PlayState::processDamage() {
             if (!player.isHurting()) {
                 ui.takePlayerDamage(4);
                 it = bulletManager.getBullets().erase(it);
-                if (ui.getCurrentHp()<=0 && deathStage == DeathStage::None) {
-                    startDeath();
+                if (ui.getCurrentHp()<=0 && !deathManager.isActive()) {
+                    deathManager.start();
                 }
                 else {
                     gameManager.triggerCameraShake(2);
@@ -230,16 +242,6 @@ void PlayState::processDamage() {
     }
 
 };
-
-
-// void PlayState::cleanupBullets() {
-//     std::erase_if(bullets, [&](auto& drawablePtr) {
-//         if (const auto* b = dynamic_cast<Bullet*>(drawablePtr.get())) {
-//             return b->isOffScreen(*windowPtr);
-//         }
-//         return false;
-//     });
-// }
 
 void PlayState::enterPlayerTurn() {
     currentActionIndex = 0;
@@ -287,13 +289,6 @@ void PlayState::enterEnemyTurn() {
     enemyTurnClock.restart();
     ui.resizeBattleBox({-205 * 2, 0});
 
-    // for (int i = 0; i < 5; i++) {
-    //     bullets.emplace_back(std::make_unique<Bullet>(
-    //         BulletID::Fly,
-    //         sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
-    //         sf::Vector2f{1.0f, 0.0f}
-    //     ));
-    // }
     bulletManager.spawnFlyBullets(5,225,30, {1.0f, 0.f});
 }
 
@@ -301,12 +296,8 @@ void PlayState::updateEnemyTurn() {
     sf::Vector2f moveOffset = calculateMoveOffset();
     enforceBattleBoxBounds(moveOffset);
     player.move(moveOffset);
-
     processDamage();
-    // cleanupBullets();
-
     if (!areBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
-        // bullets.clear();
         bulletManager.clearBullets();
         currentTurn = TurnState::PlayerTurn;
         enterPlayerTurn();
@@ -515,20 +506,15 @@ void PlayState::processSelectedAction(const int actionIndex) {
     switch (actionIndex) {
         case 0: // Fight
                 enterFightSubMenu();
-                // std::cout << "Fight selected! Player attacks!\n";
         break;
         case 1: // Talk
                 enterTalkSubMenu();
-                // std::cout << "Talk selected! Player tries to communicate.\n";
         break;
         case 2: // Item
                 enterItemSubMenu();
-                // std::cout << "Item selected! Open inventory.\n";
         break;
         case 3: // Spare
-            // battleText.setText("* You show mercy...");
                 enterMercySubMenu();
-                // std::cout << "Spare selected! Attempting mercy...\n";
         break;
         default:
             std::cerr << "Invalid action index!\n";
@@ -537,7 +523,6 @@ void PlayState::processSelectedAction(const int actionIndex) {
 }
 
 bool PlayState::areBulletsActive() const {
-    // return !bullets.empty();
     return !bulletManager.isEmpty();
 }
 
@@ -551,13 +536,13 @@ void PlayState::print(std::ostream &os) const {
         << ", Bullets Active: "<< (areBulletsActive() ? "Yes" : "No");
 }
 
-PlayState::PlayState() {
+PlayState::PlayState() : deathManager(&player, &gameManager) {
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");
     initEntities();
     enterPlayerTurn();
     const auto useless = player.clone();
-    std::cout<<useless;
+    std::cout<<*useless;
     // total garbage, i know, n-am vrut sa comentez in 7 locuri diferite o functie care va trebui sa o folosesc
 }
 
@@ -565,22 +550,18 @@ PlayState::PlayState(const PlayState &other)
     : GameState(other),
       shouldTransition(other.shouldTransition),
       player(other.player),
+      deathManager(&player, &gameManager),
       keysPressed(other.keysPressed),
       currentTurn(other.currentTurn),
       currentActionIndex(other.currentActionIndex),
-      waitingForTextDelay(other.waitingForTextDelay),
-      deathStage(other.deathStage),
-      deathFrame(other.deathFrame)
+      waitingForTextDelay(other.waitingForTextDelay)
+// deathStage(other.deathStage),
+// deathFrame(other.deathFrame)
 {
-    // bullets.reserve(other.bullets.size());
-    // for (const auto& proto : other.bullets) {
-    //     bullets.push_back(proto->clone());
+    // shards.reserve(other.shards.size());
+    // for (const auto& shard : other.shards) {
+    //     shards.push_back(std::make_unique<ShardEntity>(*shard));
     // }
-
-    shards.reserve(other.shards.size());
-    for (const auto& shard : other.shards) {
-        shards.push_back(std::make_unique<ShardEntity>(*shard));
-    }
 
     initEntities();
 }
@@ -590,31 +571,22 @@ PlayState & PlayState::operator=(PlayState other) {
     return *this;
 }
 
-// std::unique_ptr<GameState> PlayState::clone() const {
-//     return std::make_unique<PlayState>(*this);
-// }
-
 bool PlayState::shouldChangeState() const {
     return shouldTransition;
 }
-
-// std::unique_ptr<GameState> PlayState::nextState() {
-//     return std::make_unique<GameOverState>();
-// }
 
 void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
     swap(first.shouldTransition, second.shouldTransition);
     swap(first.player, second.player);
-    // swap(first.bullets, second.bullets);
     swap(first.keysPressed, second.keysPressed);
     swap(first.currentTurn, second.currentTurn);
     swap(first.enemyTurnClock, second.enemyTurnClock);
     swap(first.currentActionIndex, second.currentActionIndex);
     swap(first.waitingForTextDelay, second.waitingForTextDelay);
-    swap(first.deathStage, second.deathStage);
-    swap(first.deathFrame, second.deathFrame);
-    swap(first.shards, second.shards);
+    // swap(first.deathStage, second.deathStage);
+    // swap(first.deathFrame, second.deathFrame);
+    // swap(first.shards, second.shards);
 
     first.initEntities();
     second.initEntities();
