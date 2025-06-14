@@ -14,9 +14,9 @@ void BulletManager::clearBullets() {
 }
 
 
-// void BulletManager::addBullet(std::unique_ptr<Bullet> bullet) {
-//     bullets.push_back(std::move(bullet));
-// }
+void BulletManager::addBullet(std::unique_ptr<Bullet> bullet) {
+    bullets.push_back(std::move(bullet));
+}
 
 void BulletManager::tick(sf::RenderWindow& window) {
     cleanup(window);

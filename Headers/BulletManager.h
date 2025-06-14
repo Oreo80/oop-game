@@ -11,7 +11,7 @@ private:
 public:
     void cleanup(const sf::RenderWindow& window);
     void clearBullets();
-    // void addBullet(std::unique_ptr<Bullet> bullet);
+    void addBullet(std::unique_ptr<Bullet> bullet);
     void tick(sf::RenderWindow& window);
     std::vector<std::unique_ptr<Bullet>>& getBullets() { return bullets; }
     bool isEmpty() const;
