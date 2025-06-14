@@ -9,9 +9,11 @@
 #include "Froggit.h"
 #include "ShardEntity.h"
 #include "BattleUISystem.h"
+#include "BulletManager.h"
 class PlayState : public GameState {
 private:
     BattleUISystem ui;
+    BulletManager bulletManager;
     struct Item {
         std::string realName;
         std::string shortName;
@@ -27,7 +29,7 @@ private:
     MenuState itemMenuState;
     bool shouldTransition = false;
     Player player;
-    std::vector<std::unique_ptr<DrawableEntity>> bullets;
+    // std::vector<std::unique_ptr<DrawableEntity>> bullets;
     std::set<sf::Keyboard::Scancode> keysPressed;
     bool actionConfirmed = false;
     bool mercyConditionsMet = false;
@@ -82,7 +84,7 @@ private:
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset);
     void startDeath();
     void processDamage();
-    void cleanupBullets();
+    // void cleanupBullets();
     void enterPlayerTurn();
     void updatePlayerTurn();
     void enterEnemyTurn();

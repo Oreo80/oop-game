@@ -140,11 +140,9 @@ void PlayState::doRender(sf::RenderWindow &window) {
         return;
     }
     ui.tick(window);
+    bulletManager.tick(window);
     for (auto* e : entities) {
         e->tick(window);
-    }
-    for (const auto& b : bullets) {
-        b->tick(window);
     }
 }
 
@@ -208,41 +206,40 @@ void PlayState::startDeath() {
 }
 
 void PlayState::processDamage() {
-    for (auto it = bullets.begin(); it != bullets.end(); ) {
-        if (const auto* b = dynamic_cast<Bullet*>(it->get())) {
-            if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
-                if (!player.isHurting()) {
-                    ui.takePlayerDamage(4);
-                    it = bullets.erase(it);
-                    if (ui.getCurrentHp()<=0 && deathStage == DeathStage::None) {
-                        startDeath();
-                    }
-                    else {
-                        gameManager.triggerCameraShake(2);
-                        player.startHurtAnimation();
-                        gameManager.playSound("./sounds/snd_hurt1.wav");
-                    }
+    for (auto it = bulletManager.getBullets().begin(); it != bulletManager.getBullets().end(); ) {
+        const Bullet* b = it->get();
+        if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
+            if (!player.isHurting()) {
+                ui.takePlayerDamage(4);
+                it = bulletManager.getBullets().erase(it);
+                if (ui.getCurrentHp()<=0 && deathStage == DeathStage::None) {
+                    startDeath();
                 }
                 else {
-                    ++it; // player has invincibility if it already got hit
+                    gameManager.triggerCameraShake(2);
+                    player.startHurtAnimation();
+                    gameManager.playSound("./sounds/snd_hurt1.wav");
                 }
-            } else {
-                ++it;
             }
+            else {
+                ++it; // player has invincibility if it already got hit
+            }
+        } else {
+            ++it;
         }
     }
 
 };
 
 
-void PlayState::cleanupBullets() {
-    std::erase_if(bullets, [&](auto& drawablePtr) {
-        if (const auto* b = dynamic_cast<Bullet*>(drawablePtr.get())) {
-            return b->isOffScreen(*windowPtr);
-        }
-        return false;
-    });
-}
+// void PlayState::cleanupBullets() {
+//     std::erase_if(bullets, [&](auto& drawablePtr) {
+//         if (const auto* b = dynamic_cast<Bullet*>(drawablePtr.get())) {
+//             return b->isOffScreen(*windowPtr);
+//         }
+//         return false;
+//     });
+// }
 
 void PlayState::enterPlayerTurn() {
     currentActionIndex = 0;
@@ -290,13 +287,14 @@ void PlayState::enterEnemyTurn() {
     enemyTurnClock.restart();
     ui.resizeBattleBox({-205 * 2, 0});
 
-    for (int i = 0; i < 5; i++) {
-        bullets.emplace_back(std::make_unique<Bullet>(
-            BulletID::Fly,
-            sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
-            sf::Vector2f{1.0f, 0.0f}
-        ));
-    }
+    // for (int i = 0; i < 5; i++) {
+    //     bullets.emplace_back(std::make_unique<Bullet>(
+    //         BulletID::Fly,
+    //         sf::Vector2f{100.f, static_cast<float>(225 + (i + 1) * 30)},
+    //         sf::Vector2f{1.0f, 0.0f}
+    //     ));
+    // }
+    bulletManager.spawnFlyBullets(5,225,30, {1.0f, 0.f});
 }
 
 void PlayState::updateEnemyTurn() {
@@ -305,10 +303,11 @@ void PlayState::updateEnemyTurn() {
     player.move(moveOffset);
 
     processDamage();
-    cleanupBullets();
+    // cleanupBullets();
 
     if (!areBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
-        bullets.clear();
+        // bullets.clear();
+        bulletManager.clearBullets();
         currentTurn = TurnState::PlayerTurn;
         enterPlayerTurn();
 
@@ -516,20 +515,20 @@ void PlayState::processSelectedAction(const int actionIndex) {
     switch (actionIndex) {
         case 0: // Fight
                 enterFightSubMenu();
-                std::cout << "Fight selected! Player attacks!\n";
+                // std::cout << "Fight selected! Player attacks!\n";
         break;
         case 1: // Talk
                 enterTalkSubMenu();
-                std::cout << "Talk selected! Player tries to communicate.\n";
+                // std::cout << "Talk selected! Player tries to communicate.\n";
         break;
         case 2: // Item
                 enterItemSubMenu();
-                std::cout << "Item selected! Open inventory.\n";
+                // std::cout << "Item selected! Open inventory.\n";
         break;
         case 3: // Spare
             // battleText.setText("* You show mercy...");
                 enterMercySubMenu();
-                std::cout << "Spare selected! Attempting mercy...\n";
+                // std::cout << "Spare selected! Attempting mercy...\n";
         break;
         default:
             std::cerr << "Invalid action index!\n";
@@ -538,7 +537,8 @@ void PlayState::processSelectedAction(const int actionIndex) {
 }
 
 bool PlayState::areBulletsActive() const {
-    return !bullets.empty();
+    // return !bullets.empty();
+    return !bulletManager.isEmpty();
 }
 
 void PlayState::print(std::ostream &os) const {
@@ -569,10 +569,10 @@ PlayState::PlayState(const PlayState &other)
       deathStage(other.deathStage),
       deathFrame(other.deathFrame)
 {
-    bullets.reserve(other.bullets.size());
-    for (const auto& proto : other.bullets) {
-        bullets.push_back(proto->clone());
-    }
+    // bullets.reserve(other.bullets.size());
+    // for (const auto& proto : other.bullets) {
+    //     bullets.push_back(proto->clone());
+    // }
 
     shards.reserve(other.shards.size());
     for (const auto& shard : other.shards) {
@@ -603,7 +603,7 @@ void swap(PlayState &first, PlayState &second) noexcept {
     using std::swap;
     swap(first.shouldTransition, second.shouldTransition);
     swap(first.player, second.player);
-    swap(first.bullets, second.bullets);
+    // swap(first.bullets, second.bullets);
     swap(first.keysPressed, second.keysPressed);
     swap(first.currentTurn, second.currentTurn);
     swap(first.enemyTurnClock, second.enemyTurnClock);

@@ -115,6 +115,10 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/Enemy.cpp
         Headers/BattleUISystem.h
         Source/BattleUISystem.cpp
+        Headers/PlayerTurnSystem.h
+        Source/PlayerTurnSystem.cpp
+        Headers/BulletManager.h
+        Source/BulletManager.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
