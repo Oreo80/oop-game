@@ -25,7 +25,7 @@ AnimatedEntity::AnimatedEntity(const std::vector<std::string> &paths,
 AnimatedEntity::AnimatedEntity(const AnimatedEntity &other) = default;
 
 AnimatedEntity::AnimatedEntity(AnimatedEntity &&other) noexcept: SpriteEntity(std::move(other)),
-                                                                 frames(std::move(other.frames)),
+                                                                 frames((other.frames)),
                                                                  currentFrame(other.currentFrame),
                                                                  animationClock(other.animationClock),
                                                                  animationInterval(other.animationInterval) {

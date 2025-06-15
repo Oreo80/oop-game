@@ -14,112 +14,7 @@ void PlayState::doProcessEvent(const std::optional<sf::Event> &event) {
     }
 }
 
-// void PlayState::spawnShards(std::vector<std::unique_ptr<ShardEntity>> &shards, const sf::Vector2f &playerPos, int shardCount) {
-//     shards.clear();
-//
-//     const std::vector<std::string> shardPaths = {
-//         "./img/spr_heartshards_0.png",
-//         "./img/spr_heartshards_1.png",
-//         "./img/spr_heartshards_2.png",
-//         "./img/spr_heartshards_3.png"
-//     };
-//
-//     for (int i = 0; i < shardCount; ++i) {
-//         auto velocity = generateShardVelocity(i, shardCount);
-//         shards.push_back(std::make_unique<ShardEntity>(shardPaths, playerPos, velocity));
-//     }
-// }
-//
-static std::mt19937 rng(std::random_device{}());
-//
-// sf::Vector2f PlayState::generateShardVelocity(const int index, const int totalShards) {
-//     const float angleDegrees = (static_cast<float>(index) / static_cast<float>(totalShards)) * 360.f;
-//     const float angleRadians = angleDegrees * std::numbers::pi_v<float> / 180.f;
-//
-//     std::uniform_real_distribution speedDist(3.f, 6.f);
-//     const float speed = speedDist(rng);
-//
-//     sf::Vector2f velocity;
-//     velocity.x = std::cos(angleRadians) * speed;
-//     velocity.y = -std::abs(std::sin(angleRadians) * speed); // upward initial burst
-//
-//     return velocity;
-// }
-
-// void PlayState::updateDeath() {
-//     if (deathStage == DeathStage::None) return;
-//
-//     deathFrame++;
-//
-//     switch (deathFrame) {
-//         case 0:
-//             deathStage = DeathStage::ShowPlayer;
-//         break;
-//         case 30:
-//             deathStage = DeathStage::ShowBrokenHeart;
-//             gameManager.playSound("./sounds/snd_break1.wav");
-//         break;
-//         case 90:
-//             deathStage = DeathStage::ShowShards;
-//             gameManager.playSound("./sounds/snd_break2.wav");
-//             spawnShards(shards, player.getPosition(), 6);
-//         break;
-//         case 150:
-//             deathStage = DeathStage::FadeOut;
-//         break;
-//         default:
-//             break;
-//     }
-//
-// }
-// void PlayState::renderDeath(sf::RenderWindow& window) {
-//     static sf::RectangleShape blackScreen;
-//     blackScreen.setSize({static_cast<float>(window.getSize().x) * 1.f, static_cast<float>(window.getSize().y) * 1.f});
-//     blackScreen.setFillColor(sf::Color::Black);
-//     window.draw(blackScreen);
-//
-//     const auto playerPos = player.getPosition();
-//
-//     switch (deathStage) {
-//         case DeathStage::ShowPlayer:
-//             player.tick(window);
-//         break;
-//
-//         case DeathStage::ShowBrokenHeart:
-//         {
-//             static SpriteEntity brokenHeartSprite("./img/spr_heartbreak.png");
-//             brokenHeartSprite.setPosition(playerPos);
-//             brokenHeartSprite.tick(window);
-//         }
-//         break;
-//
-//         case DeathStage::ShowShards:
-//             for (const auto& shard : shards)
-//                 shard->tick(window);
-//         break;
-//
-//         case DeathStage::FadeOut:
-//             gameManager.fadeOut(1.f);
-//         shouldTransition = true;
-//         break;
-//
-//         default:
-//             break;
-//     }
-// }
-
 void PlayState::doUpdate() {
-    if (victoryAchieved) {
-        victoryFrame++;
-        if (victoryFrame > 60) {
-            windowPtr->close();
-        }
-        return;
-    }
-    // if (deathStage != DeathStage::None) {
-    //     updateDeath();
-    //     return;
-    // }
     if (deathManager.isActive()) {
         deathManager.update();
         if (deathManager.isComplete()) {
@@ -127,25 +22,24 @@ void PlayState::doUpdate() {
         }
         return;
     }
-    deathManager.update();
-    switch (currentTurn) {
-        case TurnState::PlayerTurn:
-            updatePlayerTurn();
-        break;
-        case TurnState::EnemyTurn:
-            updateEnemyTurn();
-        break;
-        case TurnState::SubMenu:
-            updateSubMenu();
-        break;
+    if (currentTurn == TurnState::PlayerTurn) {
+        switch (playerTurnSystem.update()) {
+            case PlayerTurnSystem::Signal::PlayerTurnComplete:
+                enterEnemyTurn();
+            break;
+            case PlayerTurnSystem::Signal::VictoryAchieved:
+                windowPtr->close();
+            break;
+            default:
+                break;
+        }
+    }
+    else if (currentTurn == TurnState::EnemyTurn) {
+        updateEnemyTurn();
     }
 }
 
 void PlayState::doRender(sf::RenderWindow &window) {
-    // if (deathStage != DeathStage::None) {
-    //     renderDeath(window);
-    //     return;
-    // }
     if (deathManager.isActive()) {
         deathManager.render(window);
         return;
@@ -153,15 +47,7 @@ void PlayState::doRender(sf::RenderWindow &window) {
     deathManager.render(window);
     ui.tick(window);
     bulletManager.tick(window);
-    for (auto* e : entities) {
-        e->tick(window);
-    }
-}
-
-void PlayState::initEntities() {
-    entities = {
-        &player
-    };
+    player.tick(window);
 }
 
 sf::Vector2f PlayState::calculateMoveOffset() const {
@@ -210,13 +96,6 @@ void PlayState::enforceBattleBoxBounds(sf::Vector2f &moveOffset) {
     }
 }
 
-// void PlayState::startDeath() {
-//     deathStage = DeathStage::ShowPlayer;
-//     deathFrame = 0;
-//     gameManager.stopMusic();
-//     shards.clear();
-// }
-
 void PlayState::processDamage() {
     for (auto it = bulletManager.getBullets().begin(); it != bulletManager.getBullets().end(); ) {
         const Bullet* b = it->get();
@@ -242,44 +121,6 @@ void PlayState::processDamage() {
     }
 
 };
-
-void PlayState::enterPlayerTurn() {
-    currentActionIndex = 0;
-    ui.positionPlayerAtButton(player,0);
-    ui.selectButton(0);
-    keysPressed.clear();
-    ui.resizeBattleBox({205 * 2, 0});
-    ui.setFlavorText();
-}
-
-void PlayState::updatePlayerTurn() {
-    if (keysPressed.contains(sf::Keyboard::Scancode::Left) || keysPressed.contains(sf::Keyboard::Scancode::A)) {
-        currentActionIndex = (currentActionIndex - 1 + static_cast<int>(ui.getButtonCount())) % static_cast<int>(
-                                 ui.getButtonCount());
-        ui.positionPlayerAtButton(player, currentActionIndex);
-        keysPressed.erase(sf::Keyboard::Scancode::Left);
-        keysPressed.erase(sf::Keyboard::Scancode::A);
-        ui.deselectAllButtons();
-        ui.selectButton(currentActionIndex);
-    }
-    if (keysPressed.contains(sf::Keyboard::Scancode::Right) || keysPressed.contains(sf::Keyboard::Scancode::D)) {
-        currentActionIndex = (currentActionIndex + 1 + static_cast<int>(ui.getButtonCount())) % static_cast<int>(
-                                 ui.getButtonCount());
-        ui.positionPlayerAtButton(player, currentActionIndex);
-        keysPressed.erase(sf::Keyboard::Scancode::Right);
-        keysPressed.erase(sf::Keyboard::Scancode::D);
-        ui.deselectAllButtons();
-        ui.selectButton(currentActionIndex);
-    }
-
-    if (keysPressed.contains(sf::Keyboard::Scancode::Enter) || keysPressed.contains(sf::Keyboard::Scancode::Z)) {
-        if (!ui.getBattleBox().isUpdating()){
-        ui.deselectAllButtons();
-        processSelectedAction(currentActionIndex);
-        }
-    }
-}
-
 void PlayState::enterEnemyTurn() {
     player.setState("normal");
     ui.setBattleText("");
@@ -300,227 +141,10 @@ void PlayState::updateEnemyTurn() {
     if (!areBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
         bulletManager.clearBullets();
         currentTurn = TurnState::PlayerTurn;
-        enterPlayerTurn();
-
+        playerTurnSystem.enterPlayerTurn();
     }
 }
 
-void PlayState::updateMenu(MenuState& menuState) {
-    if (keysPressed.contains(sf::Keyboard::Scancode::Down)) {
-        menuState.currentIndex = static_cast<int>((menuState.currentIndex + 1) % menuState.options.size());
-        ui.positionPlayerAtSubMenu(player, menuState.currentIndex);
-        keysPressed.erase(sf::Keyboard::Scancode::Down);
-    }
-    else if (keysPressed.contains(sf::Keyboard::Scancode::Up)) {
-        menuState.currentIndex = static_cast<int>((menuState.currentIndex - 1 + menuState.options.size()) % menuState.options.size());
-        ui.positionPlayerAtSubMenu(player, menuState.currentIndex);
-        keysPressed.erase(sf::Keyboard::Scancode::Up);
-    }
-
-    if ((keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
-        (keysPressed.contains(sf::Keyboard::Scancode::Z))))
-    {
-        if (menuState.onSelect) {
-            menuState.onSelect(menuState.currentIndex);
-        }
-        menuState.inMessagePhase = true;
-        keysPressed.clear();
-    }
-}
-
-void PlayState::enterSubMenu() {
-    currentTurn = TurnState::SubMenu;
-    player.centerPlayer(ui.getBattleBox());
-    keysPressed.clear();
-    ui.setBattleText("");
-}
-
-void PlayState::exitSubMenu() {
-    currentTurn = TurnState::PlayerTurn;
-    currentSubMenu = SubMenuState::None;
-    ui.setBattleText("");
-
-    if (savedActionIndex < ui.getButtonCount()) {
-        ui.selectButton(savedActionIndex);
-        ui.positionPlayerAtButton(player, savedActionIndex);
-    }
-    keysPressed.clear();
-    actionConfirmed = false;
-    ui.setSubMenuColor(1,sf::Color::White);
-}
-
-void PlayState::updateMercyMenu() {
-    if (keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
-        keysPressed.contains(sf::Keyboard::Scancode::Z)) {
-
-        if (mercyConditionsMet) {
-            ui.setBattleText("YOU WON", 0);
-            ui.setSubMenuText(0,"");
-            player.setState("transparent");
-            victoryAchieved = true;
-            victoryFrame = 0;
-        }
-        actionConfirmed = true;
-        }
-}
-void PlayState::useItem(const int itemIndex) {
-    if (itemIndex < 0 || itemIndex >= static_cast<int>(inventory.size())) return;
-    const Item usedItem = inventory[itemIndex];
-    ui.executeUseItemAction(usedItem.realName, usedItem.healAmount);
-    inventory.erase(inventory.begin() + itemIndex);
-    itemMenuState.inMessagePhase = true;
-}
-
-void PlayState::processActSelection(const int actIndex) {
-    if (actIndex < 0 || actIndex >= static_cast<int>(actMenuState.options.size())) return;
-    const auto& acts = ui.getFroggitActs();
-    const auto& selectedAct = acts[actIndex];
-    ui.executeActSelection(selectedAct);
-    if (ui.canSpareEnemy()) mercyConditionsMet = true;
-    actMenuState.inMessagePhase = true;
-}
-
-void PlayState::updateFightMenu() {
-}
-
-void PlayState::updateSubMenu() {
-    if (keysPressed.contains(sf::Keyboard::Scancode::X) ||
-        keysPressed.contains(sf::Keyboard::Scancode::LShift) ||
-        keysPressed.contains(sf::Keyboard::Scancode::RShift)) {
-        if (!actionConfirmed) {
-            exitSubMenu();
-        }
-    }
-    else if ((keysPressed.contains(sf::Keyboard::Scancode::Enter) ||
-         keysPressed.contains(sf::Keyboard::Scancode::Z)) && actionConfirmed == true)
-    {
-        actionConfirmed = false;
-        currentSubMenu = SubMenuState::None;
-        enterEnemyTurn();
-        keysPressed.clear();
-        ui.clearSubMenuTexts();
-        return;
-    }
-    switch (currentSubMenu) {
-        case SubMenuState::Fight:
-            updateFightMenu();
-        break;
-        case SubMenuState::Talk:
-            updateMenu(actMenuState);
-        break;
-        case SubMenuState::Item:
-            updateMenu(itemMenuState);
-        break;
-        case SubMenuState::Spare:
-            updateMercyMenu();
-        break;
-        default:
-            ui.setFlavorText(0);
-            ui.clearSubMenuTexts();
-            break;
-    }
-}
-void PlayState::enterFightSubMenu() {
-    currentSubMenu = SubMenuState::Fight;
-    const int damage = static_cast<int>(7 + rng()) % 5;
-    ui.executeFightAction(damage);
-    player.setState("transparent");
-    actionConfirmed = true;
-}
-
-void PlayState::enterTalkSubMenu() {
-    currentSubMenu = SubMenuState::Talk;
-
-    actMenuState.options.clear();
-    for (const auto& act : ui.getFroggitActs()) {
-        actMenuState.options.push_back("* " + act.name);
-    }
-    actMenuState.currentIndex = 0;
-    actMenuState.inMessagePhase = false;
-    actMenuState.onSelect = [this](const int index) {
-        processActSelection(index);
-        actMenuState.inMessagePhase = true;
-        actionConfirmed = true;
-        player.setState("transparent");
-    };
-
-    for (size_t i = 0; i < ui.getSubMenuTexts().size(); i++) {
-        if (i < actMenuState.options.size()) {
-            ui.setSubMenuText(i,actMenuState.options[i]);
-        } else {
-            ui.setSubMenuText(i,"");
-        }
-    }
-
-    ui.positionPlayerAtSubMenu(player,0);
-    actionConfirmed = false;
-}
-
-void PlayState::enterItemSubMenu() {
-    currentSubMenu = SubMenuState::Item;
-
-    itemMenuState.options.clear();
-    for (const auto& item : inventory) {
-        itemMenuState.options.push_back("* " + item.shortName);
-    }
-    itemMenuState.currentIndex = 0;
-    itemMenuState.inMessagePhase = false;
-    itemMenuState.onSelect = [this](int index) {
-        useItem(index);
-        itemMenuState.inMessagePhase = true;
-        actionConfirmed = true;
-        player.setState("transparent");
-    };
-
-    for (size_t i = 0; i < ui.getSubMenuTexts().size(); i++) {
-        if (i < itemMenuState.options.size()) {
-            ui.setSubMenuText(i,itemMenuState.options[i]);
-        } else {
-            ui.setSubMenuText(i,"");
-
-        }
-    }
-
-    if (!inventory.empty()) {
-        ui.positionPlayerAtSubMenu(player,0);
-    }
-    actionConfirmed = false;
-}
-
-void PlayState::enterMercySubMenu() {
-    currentSubMenu = SubMenuState::Spare;
-    ui.clearSubMenuTexts();
-    ui.setSubMenuText(0,"* Spare");
-
-    if (mercyConditionsMet) {
-        ui.setSubMenuColor(0,sf::Color::Yellow);
-    } else {
-        ui.setSubMenuColor(0,sf::Color::White);
-    }
-    ui.positionPlayerAtSubMenu(player,0);
-    actionConfirmed = false;
-}
-
-void PlayState::processSelectedAction(const int actionIndex) {
-    enterSubMenu();
-    switch (actionIndex) {
-        case 0: // Fight
-                enterFightSubMenu();
-        break;
-        case 1: // Talk
-                enterTalkSubMenu();
-        break;
-        case 2: // Item
-                enterItemSubMenu();
-        break;
-        case 3: // Spare
-                enterMercySubMenu();
-        break;
-        default:
-            std::cerr << "Invalid action index!\n";
-    };
-    savedActionIndex = actionIndex;
-}
 
 bool PlayState::areBulletsActive() const {
     return !bulletManager.isEmpty();
@@ -536,11 +160,10 @@ void PlayState::print(std::ostream &os) const {
         << ", Bullets Active: "<< (areBulletsActive() ? "Yes" : "No");
 }
 
-PlayState::PlayState() : deathManager(&player, &gameManager) {
+PlayState::PlayState() : deathManager(&player, &gameManager), playerTurnSystem(&ui, &player, &keysPressed) {
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");
-    initEntities();
-    enterPlayerTurn();
+    playerTurnSystem.enterPlayerTurn();
     const auto useless = player.clone();
     std::cout<<*useless;
     // total garbage, i know, n-am vrut sa comentez in 7 locuri diferite o functie care va trebui sa o folosesc
@@ -550,20 +173,11 @@ PlayState::PlayState(const PlayState &other)
     : GameState(other),
       shouldTransition(other.shouldTransition),
       player(other.player),
-      deathManager(&player, &gameManager),
       keysPressed(other.keysPressed),
+      deathManager(&player, &gameManager),
+      playerTurnSystem(&ui, &player, &keysPressed),
       currentTurn(other.currentTurn),
-      currentActionIndex(other.currentActionIndex),
-      waitingForTextDelay(other.waitingForTextDelay)
-// deathStage(other.deathStage),
-// deathFrame(other.deathFrame)
-{
-    // shards.reserve(other.shards.size());
-    // for (const auto& shard : other.shards) {
-    //     shards.push_back(std::make_unique<ShardEntity>(*shard));
-    // }
-
-    initEntities();
+      waitingForTextDelay(other.waitingForTextDelay){
 }
 
 PlayState & PlayState::operator=(PlayState other) {
@@ -582,13 +196,6 @@ void swap(PlayState &first, PlayState &second) noexcept {
     swap(first.keysPressed, second.keysPressed);
     swap(first.currentTurn, second.currentTurn);
     swap(first.enemyTurnClock, second.enemyTurnClock);
-    swap(first.currentActionIndex, second.currentActionIndex);
     swap(first.waitingForTextDelay, second.waitingForTextDelay);
-    // swap(first.deathStage, second.deathStage);
-    // swap(first.deathFrame, second.deathFrame);
-    // swap(first.shards, second.shards);
-
-    first.initEntities();
-    second.initEntities();
 }
 
