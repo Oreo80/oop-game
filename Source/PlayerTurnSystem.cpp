@@ -80,7 +80,7 @@ void PlayerTurnSystem::enterSubMenu() {
 }
 
 void PlayerTurnSystem::exitSubMenu() {
-    ui->setBattleText("");
+    ui->setFlavorText(0);
     ui->clearSubMenuTexts();
 
     if (savedActionIndex < ui->getButtonCount()) {
@@ -122,20 +122,47 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateSubMenu() {
 }
 
 PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) const {
-    if (keysPressed->contains(sf::Keyboard::Scancode::Down)) {
-        menuState.currentIndex = (menuState.currentIndex + 1) % menuState.options.size();
-        ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+    const int count = static_cast<int>(menuState.options.size());
+    constexpr int cols = 2;
+    const int rows = (count + cols - 1) / cols;
+    const int idx = menuState.currentIndex;
+    const int row = idx / cols;
+    const int col = idx % cols;
+
+    if (keysPressed->contains(sf::Keyboard::Scancode::Left)) {
+        const int newCol = (col - 1 + cols) % cols;
+        if (const int newIdx = row * cols + newCol; newIdx < count) {
+            menuState.currentIndex = newIdx;
+            ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+        }
+        keysPressed->erase(sf::Keyboard::Scancode::Left);
+    }
+    else if (keysPressed->contains(sf::Keyboard::Scancode::Right)) {
+        const int newCol = (col + 1) % cols;
+        if (const int newIdx = row * cols + newCol; newIdx < count) {
+            menuState.currentIndex = newIdx;
+            ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+        }
+        keysPressed->erase(sf::Keyboard::Scancode::Right);
+    }
+    else if (keysPressed->contains(sf::Keyboard::Scancode::Down)) {
+        const int newRow = (row + 1) % rows;
+        if (const int newIdx = newRow * cols + col; newIdx < count) {
+            menuState.currentIndex = newIdx;
+            ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+        }
         keysPressed->erase(sf::Keyboard::Scancode::Down);
     }
     else if (keysPressed->contains(sf::Keyboard::Scancode::Up)) {
-        menuState.currentIndex = (menuState.currentIndex - 1 + menuState.options.size()) %
-                                 menuState.options.size();
-        ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+        const int newRow = (row - 1 + rows) % rows;
+        if (const int newIdx = newRow * cols + col; newIdx < count) {
+            menuState.currentIndex = newIdx;
+            ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
+        }
         keysPressed->erase(sf::Keyboard::Scancode::Up);
     }
-
     if ((keysPressed->contains(sf::Keyboard::Scancode::Enter) ||
-        keysPressed->contains(sf::Keyboard::Scancode::Z))) {
+         keysPressed->contains(sf::Keyboard::Scancode::Z))) {
         if (menuState.onSelect) {
             menuState.onSelect(menuState.currentIndex);
         }

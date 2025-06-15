@@ -1,5 +1,13 @@
 #include "../Headers/Bullet.h"
 
+void Bullet::swap(Bullet &other) noexcept {
+    using std::swap;
+    AnimatedEntity::operator=(static_cast<AnimatedEntity>(other));
+    swap(id, other.id);
+    swap(direction, other.direction);
+    swap(velocity, other.velocity);
+}
+
 void Bullet::print(std::ostream &os) const {
     AnimatedEntity::print(os);
         os << ", Velocity: ( "<< velocity.x << ", " << velocity.y
@@ -11,6 +19,17 @@ Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vecto
                                                                                            id(id_),
                                                                                            direction(dir),
                                                                                            velocity(dir * BulletType::get(id_).getSpeed()) {
+}
+
+Bullet::Bullet(const Bullet &other): AnimatedEntity(other) {
+    id = other.id;
+    direction = other.direction;
+    velocity = other.velocity;
+}
+
+Bullet & Bullet::operator=(Bullet other) {
+    swap(other);
+    return *this;
 }
 
 std::unique_ptr<DrawableEntity> Bullet::clone() const {

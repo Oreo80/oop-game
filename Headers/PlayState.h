@@ -19,11 +19,6 @@ private:
     DeathAnimationManager deathManager;
     PlayerTurnSystem playerTurnSystem;
     EnemyTurnSystem enemyTurnSystem;
-    // struct Item {
-    //     std::string realName;
-    //     std::string shortName;
-    //     int healAmount;
-    // };
     enum class TurnState {
         PlayerTurn,
         EnemyTurn

@@ -10,6 +10,13 @@ void BitmapFont::load(const std::string& texturePath,
 {
     loadTexture(texturePath);
     loadMetadata(metadataPath);
+    // practic, tot rostul la clasa asta e sa nu imi bat capul cu sf::Font
+    // eu vreau sa pot sa fac jocul fullscreen, si indiferent de cum modificam sf::Font, aparea blurry
+    // asa ca eu am decis sa fac o clasa care citeste dintr-o textura (spritesheet) mai multe caractere, numite glyphs
+    // datele din csv, cat si textura in sine de font, sunt datamined din Undertale, dar daca as fi vrut as fi putut
+    // sa le determin manual intr-un photo editor, orice, pana si paint
+    // da, am incercat suficiente alternative inainte sa ajung la prostia asta, but it works
+    // habar n-am de ce sf::Fontul nu se scaleaza bine, dar macar sprite-urile se scaleaza perfect
 }
 
 void BitmapFont::loadTexture(const std::string& texturePath) {
