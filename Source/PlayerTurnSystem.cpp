@@ -5,7 +5,7 @@
 PlayerTurnSystem::PlayerTurnSystem(BattleUISystem* ui, Player* player, std::set<sf::Keyboard::Scancode>* keysPressed )
     : ui(ui), player(player), keysPressed(keysPressed) {}
 
-void PlayerTurnSystem::enterPlayerTurn() {
+void PlayerTurnSystem::start() {
     currentActionIndex = 0;
     currentSubMenu = SubMenuState::None;
     actionConfirmed = false;

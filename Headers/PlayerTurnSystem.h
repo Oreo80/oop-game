@@ -74,6 +74,6 @@ private:
 
 public:
     PlayerTurnSystem(BattleUISystem* ui, Player* player, std::set<sf::Keyboard::Scancode>* keysPressed);
-    void enterPlayerTurn();
+    void start();
     Signal update();
 };
