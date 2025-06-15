@@ -21,12 +21,6 @@ Bullet::Bullet(const BulletID id_, const sf::Vector2f &startPos, const sf::Vecto
                                                                                            velocity(dir * BulletType::get(id_).getSpeed()) {
 }
 
-Bullet::Bullet(const Bullet &other): AnimatedEntity(other) {
-    id = other.id;
-    direction = other.direction;
-    velocity = other.velocity;
-}
-
 Bullet & Bullet::operator=(Bullet other) {
     swap(other);
     return *this;
