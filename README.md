@@ -19,8 +19,14 @@ interactiv.
 ### 👾 Meniu 👾
 - F4 pentru fullscreen
 - Enter sau Z pentru confirmarea alegerii
+- Shift sau X pentru anularea alegerii
 - ESC pentru închiderea ferestrei
-
+---
+### 🎯 Condiții de câștig 🎯
+Pentru a învinge inamicul Froggit, jucătorii pot alege una dintre următoarele strategii:
+- 🟢 Pacifist: Folosește acțiunea Compliment sau Threat, apoi Spare din meniul Mercy.
+- 🟡 Mercy sub presiune: Așteaptă ca Froggit să ajungă la o viață scăzută (< 10 HP) și alege Spare.
+- 🔴 Neutral: Învinge Froggit folosind acțiunea Fight până când HP-ul lui ajunge la 0.
 ---
 
 ## Resurse
