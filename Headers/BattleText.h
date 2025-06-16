@@ -16,6 +16,7 @@ protected:
 public:
     explicit BattleText(const std::string& texturePath="./fonts/fnt_main.png", const std::string& metadataPath="./fonts/glyphs_fnt_main.csv",
         const sf::Vector2f& position = {0,0}, float scale = 1.f, float letterSpeed_ = 0.05f, float textStartDelay_ = 0.5f);
+    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
     void setText(const std::string& newText, float delayTime = 0.5f);
     void update() override;

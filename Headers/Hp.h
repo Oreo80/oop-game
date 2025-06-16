@@ -27,5 +27,6 @@ public:
     sf::Vector2f getPosition() const override;
     void setPosition(const sf::Vector2f &pos) override;
     sf::FloatRect getGlobalBounds() const override;
+    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
 };

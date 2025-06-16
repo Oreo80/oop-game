@@ -68,9 +68,6 @@ PlayState::PlayState() : deathManager(&player, &gameManager),
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");
     playerTurnSystem.start();
-    const auto useless = player.clone();
-    std::cout<<*useless;
-    // total garbage, i know, n-am vrut sa comentez in 7 locuri diferite o functie care va trebui sa o folosesc
 }
 
 bool PlayState::shouldChangeState() const {
