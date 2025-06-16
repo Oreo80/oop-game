@@ -25,7 +25,7 @@ public:
     BattleUISystem();
     void resizeBattleBox(const sf::Vector2f& delta);
     BattleBox& getBattleBox();
-    std::unique_ptr<DrawableEntity> getEnemy();
+    std::unique_ptr<Enemy> getEnemy();
     int getCurrentHp() const;
     void setFlavorText(float delay = 0.5f);
     void setBattleText(const std::string& text, float delay = 0.5f);

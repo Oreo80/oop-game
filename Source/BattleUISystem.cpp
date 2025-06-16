@@ -4,9 +4,8 @@ BattleUISystem::BattleUISystem() :
     background("./img/spr_battlebg_0.png"),
     battleBox({242, 150}, {155, 130}),
     battleText("./fonts/fnt_main.png", "./fonts/glyphs_fnt_main.csv", {52, 270}),
-    hp(20)
+    hp(20), enemy(std::make_unique<Froggit>())
 {
-    enemy = std::make_unique<Froggit>();
     battleBox.setBottomY(385.f);
     initUI();
     allComponents = {
@@ -50,8 +49,8 @@ BattleBox & BattleUISystem::getBattleBox() {
     return battleBox;
 }
 
-std::unique_ptr<DrawableEntity> BattleUISystem::getEnemy() {
-    return enemy->clone();
+std::unique_ptr<Enemy> BattleUISystem::getEnemy() {
+    return enemy->cloneEnemy();
 }
 
 int BattleUISystem::getCurrentHp() const {

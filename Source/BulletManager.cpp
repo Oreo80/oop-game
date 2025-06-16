@@ -1,7 +1,7 @@
 #include "../Headers/BulletManager.h"
 #include "../Headers/BulletPattern.h"
 #include <algorithm>
-#include <bits/random.h>
+#include <random>
 
 
 void BulletManager::spawnRandomPattern(const sf::Vector2f& playerPosition) {

@@ -1,8 +1,4 @@
 #include "../Headers/EnemyTurnSystem.h"
-
-#include <bits/random.h>
-
-#include "../Headers/BulletPattern.h"
 EnemyTurnSystem::EnemyTurnSystem(Player& player, 
                                  BattleUISystem& ui, 
                                  BulletManager& bulletManager,
@@ -93,7 +89,7 @@ void EnemyTurnSystem::processDamage() const {
         const Bullet* b = it->get();
         if (std::nullopt != player.getGlobalBounds().findIntersection(b->getGlobalBounds())) {
             if (!player.isHurting()) {
-                ui.takePlayerDamage(4);
+                ui.takePlayerDamage(ui.getEnemy()->getAttack());
                 it = bulletManager.getBullets().erase(it);
                 if (ui.getCurrentHp() <= 0 && !deathManager.isActive()) {
                     deathManager.start();

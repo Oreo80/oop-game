@@ -33,3 +33,7 @@ void Froggit::draw(sf::RenderWindow &window) const {
     Enemy::draw(window);
     window.draw(headSprite);
 }
+
+std::unique_ptr<Enemy> Froggit::cloneEnemy() const {
+    return std::make_unique<Froggit>(*this);
+}

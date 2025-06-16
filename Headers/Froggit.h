@@ -20,4 +20,5 @@ public:
     explicit Froggit(const sf::Vector2f& pos = {215, 135});
     void update() override;
     void draw(sf::RenderWindow& window) const override;
+    [[nodiscard]] std::unique_ptr<Enemy> cloneEnemy() const override;
 };

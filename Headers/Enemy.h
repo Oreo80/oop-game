@@ -31,9 +31,9 @@ public:
     std::string getFlavorText(const std::string& category) const;
     // std::string getQuote(const std::string& category) const;
     std::string getStatsText() const;
-
     std::vector<EnemyAct> getAvailableActs() const;
     std::string getName() const;
+    [[nodiscard]] virtual std::unique_ptr<Enemy> cloneEnemy() const = 0;
     void takeDamage(int dmg);
     int getCurrentHp() const;
     int getAttack() const;
