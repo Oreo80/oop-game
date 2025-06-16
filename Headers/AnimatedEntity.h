@@ -3,6 +3,8 @@
 #include "SpriteEntity.h"
 
 class AnimatedEntity : public SpriteEntity {
+private:
+    friend void swap(AnimatedEntity &lhs, AnimatedEntity &rhs) noexcept;
 protected:
     std::vector<std::shared_ptr<sf::Texture>> frames;
     std::size_t currentFrame = 0;
@@ -17,7 +19,6 @@ public:
     AnimatedEntity(const AnimatedEntity &other);
     AnimatedEntity(AnimatedEntity &&other) noexcept;
     AnimatedEntity & operator=(AnimatedEntity other);
-    friend void swap(AnimatedEntity &lhs, AnimatedEntity &rhs) noexcept;
     std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();

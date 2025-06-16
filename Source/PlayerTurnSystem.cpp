@@ -187,7 +187,8 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMercyMenu() {
         keysPressed->contains(sf::Keyboard::Scancode::Z))) {
         gameManager->playSound("../sounds/snd_select.wav");
         if (mercyConditionsMet) {
-            ui->setBattleText("YOU WON", 0);
+            ui->setBattleText("* YOU WON!", 0);
+            gameManager->playMusic("../sounds/snd_vaporized.wav", false);
             ui->setSubMenuText(0, "");
             player->setState("transparent");
             victorySequenceActive = true;
@@ -209,11 +210,12 @@ void PlayerTurnSystem::enterFightSubMenu() {
     ui->executeFightAction(damage);
 
     if (ui->isEnemyDefeated()) {
-        ui->setBattleText("YOU WON", 0);
+        ui->setBattleText("* YOU WON!", 0);
+        gameManager->playMusic("../sounds/snd_vaporized.wav", false);
         victorySequenceActive = true;
         victoryFrame = 0;
     }
-
+    gameManager->playSound("../sounds/snd_laz_c.wav");
     player->setState("transparent");
     actionConfirmed = true;
 }
@@ -287,6 +289,7 @@ void PlayerTurnSystem::useItem(const int itemIndex) {
     const Item& usedItem = inventory[itemIndex];
     ui->executeUseItemAction(usedItem.realName, usedItem.healAmount);
     inventory.erase(inventory.begin() + itemIndex);
+    gameManager->playSound("../sounds/snd_heal_c.wav");
 }
 
 void PlayerTurnSystem::processActSelection(const int actIndex) {

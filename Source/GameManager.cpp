@@ -91,11 +91,11 @@ void GameManager::run() {
     }
 }
 
-void GameManager::playMusic(const std::string &path) {
+void GameManager::playMusic(const std::string &path, const bool loop) {
     if(const auto newMusic = music.get(path); currentMusic != newMusic) {
         if(currentMusic) currentMusic->stop();
         currentMusic = newMusic;
-        currentMusic->setLooping(true);
+        currentMusic->setLooping(loop);
         currentMusic->play();
     }
 }

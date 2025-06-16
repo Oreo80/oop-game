@@ -55,7 +55,7 @@ public:
 
     // void popState();
     // void clearStates();
-    void playMusic(const std::string &path);
+    void playMusic(const std::string &path, bool loop = true);
     void stopMusic() const;
     void playSound(const std::string& path);
     void fadeIn(float duration = 1.f);

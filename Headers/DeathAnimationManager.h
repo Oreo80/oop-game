@@ -18,7 +18,6 @@ private:
     Stage currentStage = Stage::None;
     int frameCounter = 0;
     std::vector<std::unique_ptr<ShardEntity>> shards;
-
     void spawnShards();
 public:
     DeathAnimationManager(Player* player, GameManager* gameManager);
