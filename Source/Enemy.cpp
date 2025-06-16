@@ -39,7 +39,11 @@ void Enemy::loadFromJSON(const std::string &jsonPath) {
 }
 
 std::string Enemy::getFlavorText(const std::string& category) const {
-    if (category == "Check") return getStatsText();
+    if (category == "Neutral") {
+        if (currentHp < 10) return getRandomLine(flavorTexts, "Low HP");
+        if (canBeSpared()) return getRandomLine(flavorTexts, "Spare");
+    }
+    else if (category == "Check") return getStatsText();
     return getRandomLine(flavorTexts, category);
 }
 //
@@ -80,7 +84,7 @@ void Enemy::increaseSpareProgress(const int amount) {
 }
 
 bool Enemy::canBeSpared() const {
-    return currentSpareProgress >= spareThreshold;
+    return currentSpareProgress >= spareThreshold || currentHp < 10;
 }
 
 std::string Enemy::getRandomLine(const std::unordered_map<std::string, std::vector<std::string>>& source, const std::string& key) {

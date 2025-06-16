@@ -207,6 +207,13 @@ void PlayerTurnSystem::enterFightSubMenu() {
     const int damage = dist(rng);
 
     ui->executeFightAction(damage);
+
+    if (ui->isEnemyDefeated()) {
+        ui->setBattleText("YOU WON", 0);
+        victorySequenceActive = true;
+        victoryFrame = 0;
+    }
+
     player->setState("transparent");
     actionConfirmed = true;
 }

@@ -92,19 +92,19 @@ void DeathAnimationManager::render(sf::RenderWindow& window) const {
 
     switch (currentStage) {
         case Stage::ShowPlayer:
-            player->draw(window);
+            player->tick(window);
             break;
             
         case Stage::ShowBrokenHeart: {
             static SpriteEntity brokenHeartSprite("./img/spr_heartbreak.png");
             brokenHeartSprite.setPosition(playerPos);
-            brokenHeartSprite.draw(window);
+            brokenHeartSprite.tick(window);
             break;
         }
             
         case Stage::ShowShards:
             for (const auto& shard : shards) {
-                shard->draw(window);
+                shard->tick(window);
             }
             break;
             

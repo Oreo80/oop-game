@@ -49,7 +49,7 @@ BattleBox & BattleUISystem::getBattleBox() {
     return battleBox;
 }
 
-std::unique_ptr<Enemy> BattleUISystem::getEnemy() {
+std::unique_ptr<Enemy> BattleUISystem::getEnemy() const {
     return enemy->cloneEnemy();
 }
 
@@ -154,4 +154,8 @@ void BattleUISystem::tick(sf::RenderWindow &window) const {
     for (auto& c : allComponents) {
         c->tick(window);
     }
+}
+
+bool BattleUISystem::isEnemyDefeated() const {
+    return enemy->getCurrentHp() <= 0;
 }

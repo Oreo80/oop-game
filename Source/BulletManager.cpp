@@ -40,7 +40,7 @@ void BulletManager::spawnRandomPattern(const sf::Vector2f& playerPosition) {
         case 3:
             BulletPatterns::spawnFlyLine(
                 *this,
-                5,
+                6,
                 {100.f, 225.f},
                 30.f,
                 {1.f, 0.f},
@@ -71,8 +71,7 @@ void BulletManager::addBullet(std::unique_ptr<Bullet> bullet) {
 void BulletManager::tick(sf::RenderWindow& window) {
     cleanup(window);
     for (const auto& bullet : bullets) {
-        bullet->update();
-        bullet->draw(window);
+        bullet->tick(window);
     }
 }
 

@@ -25,7 +25,7 @@ public:
     BattleUISystem();
     void resizeBattleBox(const sf::Vector2f& delta);
     BattleBox& getBattleBox();
-    std::unique_ptr<Enemy> getEnemy();
+    std::unique_ptr<Enemy> getEnemy() const;
     int getCurrentHp() const;
     void setFlavorText(float delay = 0.5f);
     void setBattleText(const std::string& text, float delay = 0.5f);
@@ -45,5 +45,5 @@ public:
     std::vector<EnemyAct> getEnemyActs() const;
     const std::vector<BitmapFont>& getSubMenuTexts() const;
     void tick(sf::RenderWindow& window) const;
-
+    bool isEnemyDefeated() const;
 };

@@ -10,6 +10,7 @@ public:
         update();
         draw(window);
     }
+    // nu prea pot sa fac update si draw protected din cauza la HP
     virtual void update() { } // no-op
     virtual void draw(sf::RenderWindow &window) const = 0;
     [[nodiscard]] virtual sf::Vector2f getPosition() const = 0;
