@@ -26,7 +26,7 @@ Player::Player(const std::string &normalPath, const std::string &hurtPath, const
     addState("hurt", hurtPath);
     addState("transparent", "./img/transparent.png");
 }
-
+//cppcheck-suppress unusedFunction
 std::unique_ptr<DrawableEntity> Player::clone() const {
     return std::make_unique<Player>(*this);
 }
