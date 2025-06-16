@@ -133,7 +133,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
     const int row = idx / cols;
     const int col = idx % cols;
 
-    if (keysPressed->contains(sf::Keyboard::Scancode::Left)) {
+    if (keysPressed->contains(sf::Keyboard::Scancode::Left) || keysPressed->contains(sf::Keyboard::Scancode::A)) {
         const int newCol = (col - 1 + cols) % cols;
         if (const int newIdx = row * cols + newCol; newIdx < count) {
             menuState.currentIndex = newIdx;
@@ -141,8 +141,9 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
             gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Left);
+        keysPressed->erase(sf::Keyboard::Scancode::A);
     }
-    else if (keysPressed->contains(sf::Keyboard::Scancode::Right)) {
+    else if (keysPressed->contains(sf::Keyboard::Scancode::Right) || keysPressed->contains(sf::Keyboard::Scancode::D)) {
         const int newCol = (col + 1) % cols;
         if (const int newIdx = row * cols + newCol; newIdx < count) {
             menuState.currentIndex = newIdx;
@@ -150,8 +151,9 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
             gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Right);
+        keysPressed->erase(sf::Keyboard::Scancode::D);
     }
-    else if (keysPressed->contains(sf::Keyboard::Scancode::Down)) {
+    else if (keysPressed->contains(sf::Keyboard::Scancode::Down) || keysPressed->contains(sf::Keyboard::Scancode::S)) {
         const int newRow = (row + 1) % rows;
         if (const int newIdx = newRow * cols + col; newIdx < count) {
             menuState.currentIndex = newIdx;
@@ -159,8 +161,9 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
             gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Down);
+        keysPressed->erase(sf::Keyboard::Scancode::S);
     }
-    else if (keysPressed->contains(sf::Keyboard::Scancode::Up)) {
+    else if (keysPressed->contains(sf::Keyboard::Scancode::Up) || keysPressed->contains(sf::Keyboard::Scancode::W)) {
         const int newRow = (row - 1 + rows) % rows;
         if (const int newIdx = newRow * cols + col; newIdx < count) {
             menuState.currentIndex = newIdx;
@@ -168,6 +171,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
             gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Up);
+        keysPressed->erase(sf::Keyboard::Scancode::W);
     }
     if ((keysPressed->contains(sf::Keyboard::Scancode::Enter) ||
          keysPressed->contains(sf::Keyboard::Scancode::Z))) {
