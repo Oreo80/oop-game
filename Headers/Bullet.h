@@ -16,7 +16,6 @@ public:
                     const sf::Vector2f &dir = {1.0f, 0.0f});
     Bullet(const Bullet& other) = default;
     Bullet& operator=(Bullet other);
-    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
     void update() override;
     bool isOffScreen(const sf::RenderWindow& window) const;

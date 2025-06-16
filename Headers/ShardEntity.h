@@ -12,7 +12,6 @@ public:
     ShardEntity(ShardEntity &&other) noexcept;
     ShardEntity & operator=(ShardEntity other);
     void update() override;
-    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
 
 };

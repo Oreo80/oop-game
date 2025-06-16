@@ -19,7 +19,6 @@ public:
     AnimatedEntity(const AnimatedEntity &other);
     AnimatedEntity(AnimatedEntity &&other) noexcept;
     AnimatedEntity & operator=(AnimatedEntity other);
-    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
     ~AnimatedEntity() override = default;
     void animate();

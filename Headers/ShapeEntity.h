@@ -7,7 +7,6 @@ protected:
     void print(std::ostream& os) const override;
 public:
     ShapeEntity(const sf::Vector2f &pos, const sf::Vector2f &size);
-    // cppcheck-suppress unusedFunction
     std::unique_ptr<DrawableEntity> clone() const override;
     void draw(sf::RenderWindow &window) const override;
     sf::Vector2f getPosition() const override;
