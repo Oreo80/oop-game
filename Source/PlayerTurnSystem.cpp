@@ -38,7 +38,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::update() {
         keysPressed->erase(sf::Keyboard::Scancode::A);
         ui->deselectAllButtons();
         ui->selectButton(currentActionIndex);
-        gameManager->playSound("../sounds/snd_squeak.wav");
+        gameManager->playSound("./sounds/snd_squeak.wav");
     }
     else if (keysPressed->contains(sf::Keyboard::Scancode::Right) ||
              keysPressed->contains(sf::Keyboard::Scancode::D)) {
@@ -48,7 +48,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::update() {
         keysPressed->erase(sf::Keyboard::Scancode::D);
         ui->deselectAllButtons();
         ui->selectButton(currentActionIndex);
-        gameManager->playSound("../sounds/snd_squeak.wav");
+        gameManager->playSound("./sounds/snd_squeak.wav");
     }
 
     if ((keysPressed->contains(sf::Keyboard::Scancode::Enter) ||
@@ -56,7 +56,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::update() {
         !ui->getBattleBox().isUpdating()) {
         ui->deselectAllButtons();
         processSelectedAction(currentActionIndex);
-        gameManager->playSound("../sounds/snd_select.wav");
+        gameManager->playSound("./sounds/snd_select.wav");
     }
 
     return Signal::None;
@@ -138,7 +138,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
         if (const int newIdx = row * cols + newCol; newIdx < count) {
             menuState.currentIndex = newIdx;
             ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
-            gameManager->playSound("../sounds/snd_squeak.wav");
+            gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Left);
     }
@@ -147,7 +147,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
         if (const int newIdx = row * cols + newCol; newIdx < count) {
             menuState.currentIndex = newIdx;
             ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
-            gameManager->playSound("../sounds/snd_squeak.wav");
+            gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Right);
     }
@@ -156,7 +156,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
         if (const int newIdx = newRow * cols + col; newIdx < count) {
             menuState.currentIndex = newIdx;
             ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
-            gameManager->playSound("../sounds/snd_squeak.wav");
+            gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Down);
     }
@@ -165,7 +165,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
         if (const int newIdx = newRow * cols + col; newIdx < count) {
             menuState.currentIndex = newIdx;
             ui->positionPlayerAtSubMenu(*player, menuState.currentIndex);
-            gameManager->playSound("../sounds/snd_squeak.wav");
+            gameManager->playSound("./sounds/snd_squeak.wav");
         }
         keysPressed->erase(sf::Keyboard::Scancode::Up);
     }
@@ -174,7 +174,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
         if (menuState.onSelect) {
             menuState.onSelect(menuState.currentIndex);
         }
-        gameManager->playSound("../sounds/snd_select.wav");
+        gameManager->playSound("./sounds/snd_select.wav");
         menuState.inMessagePhase = true;
         keysPressed->clear();
     }
@@ -185,10 +185,10 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMenu(MenuState& menuState) cons
 PlayerTurnSystem::Signal PlayerTurnSystem::updateMercyMenu() {
     if ((keysPressed->contains(sf::Keyboard::Scancode::Enter) ||
         keysPressed->contains(sf::Keyboard::Scancode::Z))) {
-        gameManager->playSound("../sounds/snd_select.wav");
+        gameManager->playSound("./sounds/snd_select.wav");
         if (mercyConditionsMet) {
             ui->setBattleText("* YOU WON!", 0);
-            gameManager->playMusic("../sounds/snd_vaporized.wav", false);
+            gameManager->playMusic("./sounds/snd_vaporized.wav", false);
             ui->setSubMenuText(0, "");
             player->setState("transparent");
             victorySequenceActive = true;
@@ -211,11 +211,11 @@ void PlayerTurnSystem::enterFightSubMenu() {
 
     if (ui->isEnemyDefeated()) {
         ui->setBattleText("* YOU WON!", 0);
-        gameManager->playMusic("../sounds/snd_vaporized.wav", false);
+        gameManager->playMusic("./sounds/snd_vaporized.wav", false);
         victorySequenceActive = true;
         victoryFrame = 0;
     }
-    gameManager->playSound("../sounds/snd_laz_c.wav");
+    gameManager->playSound("./sounds/snd_laz_c.wav");
     player->setState("transparent");
     actionConfirmed = true;
 }
@@ -289,7 +289,7 @@ void PlayerTurnSystem::useItem(const int itemIndex) {
     const Item& usedItem = inventory[itemIndex];
     ui->executeUseItemAction(usedItem.realName, usedItem.healAmount);
     inventory.erase(inventory.begin() + itemIndex);
-    gameManager->playSound("../sounds/snd_heal_c.wav");
+    gameManager->playSound("./sounds/snd_heal_c.wav");
 }
 
 void PlayerTurnSystem::processActSelection(const int actIndex) {
