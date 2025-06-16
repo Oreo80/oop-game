@@ -4,9 +4,9 @@ BattleUISystem::BattleUISystem() :
     background("./img/spr_battlebg_0.png"),
     battleBox({242, 150}, {155, 130}),
     battleText("./fonts/fnt_main.png", "./fonts/glyphs_fnt_main.csv", {52, 270}),
-    hp(20),
-    froggit({215, 135})
+    hp(20)
 {
+    enemy = std::make_unique<Froggit>();
     battleBox.setBottomY(385.f);
     initUI();
     allComponents = {
@@ -14,7 +14,7 @@ BattleUISystem::BattleUISystem() :
         &battleBox,
         &battleText,
         &hp,
-        &froggit
+        &*enemy
     };
 
     for (auto& button : actionButtons) {
@@ -50,12 +50,16 @@ BattleBox & BattleUISystem::getBattleBox() {
     return battleBox;
 }
 
+std::unique_ptr<DrawableEntity> BattleUISystem::getEnemy() {
+    return enemy->clone();
+}
+
 int BattleUISystem::getCurrentHp() const {
     return hp.getHp();
 }
 
 void BattleUISystem::setFlavorText(const float delay) {
-    battleText.setText(froggit.getFlavorText("Neutral"), delay);
+    battleText.setText(enemy->getFlavorText("Neutral"), delay);
     // hopefully more logic soon
 }
 
@@ -68,10 +72,10 @@ void BattleUISystem::takePlayerDamage(const int damage) {
 }
 
 void BattleUISystem::executeFightAction(const int damage) {
-    froggit.takeDamage(damage);
+    enemy->takeDamage(damage);
     const std::string msg = "* You dealt " + std::to_string(damage) + " damage to " +
-                     froggit.getName() + ". " + "\n" +
-                     std::to_string(froggit.getCurrentHp()) + " HP remaining.";
+                     enemy->getName() + ". " + "\n" +
+                     std::to_string(enemy->getCurrentHp()) + " HP remaining.";
     battleText.setText(msg,0);
 }
 
@@ -85,8 +89,8 @@ void BattleUISystem::executeUseItemAction(const std::string &itemName, const int
 }
 
 void BattleUISystem::executeActSelection(const EnemyAct &selectedAct) {
-    froggit.increaseSpareProgress(selectedAct.spareProgress);
-    battleText.setText(froggit.getFlavorText(selectedAct.name), 0.0f);
+    enemy->increaseSpareProgress(selectedAct.spareProgress);
+    battleText.setText(enemy->getFlavorText(selectedAct.name), 0.0f);
     clearSubMenuTexts();
 }
 
@@ -120,7 +124,7 @@ void BattleUISystem::clearSubMenuTexts() {
 }
 
 bool BattleUISystem::canSpareEnemy() const {
-    return froggit.canBeSpared();
+    return enemy->canBeSpared();
 }
 
 void BattleUISystem::positionPlayerAtButton(Player &player, const size_t index) const {
@@ -139,8 +143,8 @@ void BattleUISystem::setSubMenuColor(const size_t index, const sf::Color color) 
     subMenuTexts[index].setColor(color);
 }
 
-std::vector<EnemyAct> BattleUISystem::getFroggitActs() const {
-    return froggit.getAvailableActs();
+std::vector<EnemyAct> BattleUISystem::getEnemyActs() const {
+    return enemy->getAvailableActs();
 }
 
 const std::vector<BitmapFont>& BattleUISystem::getSubMenuTexts() const {

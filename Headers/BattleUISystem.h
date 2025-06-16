@@ -14,7 +14,8 @@ private:
     BattleBox battleBox;
     BattleText battleText;
     Hp hp;
-    Froggit froggit;
+    // Froggit froggit;
+    std::unique_ptr<Enemy> enemy;
     std::vector<Button> actionButtons;
     std::vector<BitmapFont> subMenuTexts;
     std::vector<DrawableEntity*> allComponents;
@@ -24,6 +25,7 @@ public:
     BattleUISystem();
     void resizeBattleBox(const sf::Vector2f& delta);
     BattleBox& getBattleBox();
+    std::unique_ptr<DrawableEntity> getEnemy();
     int getCurrentHp() const;
     void setFlavorText(float delay = 0.5f);
     void setBattleText(const std::string& text, float delay = 0.5f);
@@ -40,7 +42,7 @@ public:
     void positionPlayerAtButton(Player &player, size_t index) const;
     void positionPlayerAtSubMenu(Player &player, size_t index) const;
     void setSubMenuColor(size_t index, sf::Color color);
-    std::vector<EnemyAct> getFroggitActs() const;
+    std::vector<EnemyAct> getEnemyActs() const;
     const std::vector<BitmapFont>& getSubMenuTexts() const;
     void tick(sf::RenderWindow& window) const;
 

@@ -1,5 +1,8 @@
 #include "../Headers/EnemyTurnSystem.h"
 
+#include <bits/random.h>
+
+#include "../Headers/BulletPattern.h"
 EnemyTurnSystem::EnemyTurnSystem(Player& player, 
                                  BattleUISystem& ui, 
                                  BulletManager& bulletManager,
@@ -20,7 +23,8 @@ void EnemyTurnSystem::start() {
     player.centerPlayer(ui.getBattleBox());
     enemyTurnClock.restart();
     ui.resizeBattleBox({-205 * 2, 0});
-    bulletManager.spawnFlyBullets(5, 225, 30, {1.0f, 0.f});
+
+    bulletManager.spawnRandomPattern(player.getPosition());
 }
 
 bool EnemyTurnSystem::update() const {
@@ -28,7 +32,7 @@ bool EnemyTurnSystem::update() const {
     enforceBattleBoxBounds(moveOffset);
     player.move(moveOffset);
     processDamage();
-    
+
     if (!areBulletsActive() || enemyTurnClock.getElapsedTime().asSeconds() >= enemyTurnDuration) {
         return true;
     }

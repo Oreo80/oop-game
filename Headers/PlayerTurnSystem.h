@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include "GameManager.h"
+
 class PlayerTurnSystem {
 public:
     enum class Signal {
@@ -16,6 +18,8 @@ public:
 private:
     BattleUISystem* ui;
     Player* player;
+    std::set<sf::Keyboard::Scancode>* keysPressed;
+    GameManager* gameManager;
 
     struct Item {
         std::string realName;
@@ -41,8 +45,6 @@ private:
     SubMenuState currentSubMenu = SubMenuState::None;
     MenuState actMenuState;
     MenuState itemMenuState;
-
-    std::set<sf::Keyboard::Scancode>* keysPressed;
     bool actionConfirmed = false;
     bool mercyConditionsMet = false;
     size_t savedActionIndex = 0;
@@ -73,7 +75,7 @@ private:
     void updateVictorySequence();
 
 public:
-    PlayerTurnSystem(BattleUISystem* ui, Player* player, std::set<sf::Keyboard::Scancode>* keysPressed);
+    PlayerTurnSystem(BattleUISystem* ui, Player* player, std::set<sf::Keyboard::Scancode>* keysPressed, GameManager* gameManager);
     void start();
     Signal update();
 };

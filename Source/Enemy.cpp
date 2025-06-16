@@ -39,6 +39,7 @@ void Enemy::loadFromJSON(const std::string &jsonPath) {
 }
 
 std::string Enemy::getFlavorText(const std::string& category) const {
+    if (category == "Check") return getStatsText();
     return getRandomLine(flavorTexts, category);
 }
 //
@@ -47,7 +48,8 @@ std::string Enemy::getFlavorText(const std::string& category) const {
 // }
 
 std::string Enemy::getStatsText() const {
-    return "* " + name + " - ATK " + std::to_string(attack) + " DEF " + std::to_string(defense) + "\n" + getFlavorText("Check");
+    return "* " + name + " - ATK " + std::to_string(attack) + " DEF " + std::to_string(defense) + "\n" +
+        getRandomLine(flavorTexts, "Check");
 }
 
 std::vector<EnemyAct> Enemy::getAvailableActs() const {

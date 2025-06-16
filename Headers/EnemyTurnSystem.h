@@ -16,7 +16,7 @@ private:
     GameManager& gameManager;
 
     sf::Clock enemyTurnClock;
-    static constexpr float enemyTurnDuration = 10.0f;
+    static constexpr float enemyTurnDuration = 6.0f;
 
     void processDamage() const;
     void enforceBattleBoxBounds(sf::Vector2f& moveOffset) const;

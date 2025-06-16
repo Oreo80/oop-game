@@ -123,6 +123,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/DeathAnimationManager.cpp
         Headers/EnemyTurnSystem.h
         Source/EnemyTurnSystem.cpp
+        Headers/BulletPattern.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

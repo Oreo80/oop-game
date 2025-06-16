@@ -63,7 +63,7 @@ void PlayState::print(std::ostream &os) const {
 }
 
 PlayState::PlayState() : deathManager(&player, &gameManager),
-                         playerTurnSystem(&ui, &player, &keysPressed),
+                         playerTurnSystem(&ui, &player, &keysPressed, &gameManager),
                          enemyTurnSystem(player,ui,bulletManager,deathManager,keysPressed, gameManager){
     gameManager.fadeIn(1.f);
     gameManager.playMusic("./mus/mus_battle1.ogg");

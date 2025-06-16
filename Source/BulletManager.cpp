@@ -1,6 +1,56 @@
 #include "../Headers/BulletManager.h"
+#include "../Headers/BulletPattern.h"
 #include <algorithm>
+#include <bits/random.h>
 
+
+void BulletManager::spawnRandomPattern(const sf::Vector2f& playerPosition) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> distrib(0, 3);
+
+    switch (distrib(gen)) {
+        case 0:
+            BulletPatterns::spawnTriangleSpread(
+                *this,
+                6,
+                {playerPosition.x - 250, playerPosition.y},
+                {0.f, 30.f},
+                25.f,
+                1.f
+            );
+        break;
+        case 1:
+            BulletPatterns::spawnSineWave(
+                *this,
+                7,
+                {playerPosition.x - 350, playerPosition.y},
+                {40.f, 0.f},
+                40.f, 0.1f, 3.5f
+            );
+        break;
+        case 2:
+            BulletPatterns::spawnWindowPattern(
+                *this,
+                playerPosition,
+                {50.f, 30.f},
+                {1.f, 0.f}
+            );
+        break;
+        case 3:
+            BulletPatterns::spawnFlyLine(
+                *this,
+                5,
+                {100.f, 225.f},
+                30.f,
+                {1.f, 0.f},
+                1.f
+            );
+        break;
+        default:
+            break;
+    }
+}
 
 void BulletManager::cleanup(const sf::RenderWindow& window) {
     std::erase_if(bullets,
@@ -28,14 +78,4 @@ void BulletManager::tick(sf::RenderWindow& window) {
 
 bool BulletManager::isEmpty() const {
     return bullets.empty();
-}
-
-void BulletManager::spawnFlyBullets(const int count, const float startY, const float spacing, sf::Vector2f speed) {
-    for (int i = 0; i < count; ++i) {
-        addBullet(std::make_unique<Bullet>(
-            BulletID::Fly,
-            sf::Vector2f{100.f, startY + (i + 1) * spacing},
-            speed
-        ));
-    }
 }
