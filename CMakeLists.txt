@@ -107,8 +107,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Source/Froggit.cpp
         Headers/Hp.h
         Source/Hp.cpp
-#        Headers/GameOverState.h
-#        Source/GameOverState.cpp
+        Headers/GameOverState.h
+        Source/GameOverState.cpp
         Headers/ShardEntity.h
         Source/ShardEntity.cpp
         Headers/Enemy.h

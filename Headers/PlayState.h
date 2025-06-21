@@ -34,5 +34,5 @@ public:
     ~PlayState() override = default;
     // std::unique_ptr<GameState> clone() const override;
     bool shouldChangeState() const override;
-    // std::unique_ptr<GameState> nextState() override;
+    std::unique_ptr<GameState> nextState() override;
 };

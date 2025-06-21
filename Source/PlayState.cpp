@@ -1,5 +1,5 @@
 #include "../Headers/PlayState.h"
-// #include "../Headers/GameOverState.h"
+#include "../Headers/GameOverState.h"
 #include <random>
 
 void PlayState::doProcessEvent(const std::optional<sf::Event> &event) {
@@ -72,4 +72,8 @@ PlayState::PlayState() : deathManager(&player, &gameManager),
 
 bool PlayState::shouldChangeState() const {
     return shouldTransition;
+}
+
+std::unique_ptr<GameState> PlayState::nextState() {
+    return std::make_unique<GameOverState>();
 }
