@@ -22,7 +22,7 @@ void PlayerTurnSystem::start() {
 PlayerTurnSystem::Signal PlayerTurnSystem::update() {
     if (victorySequenceActive) {
         updateVictorySequence();
-        return (victoryFrame > 60) ? Signal::VictoryAchieved : Signal::None;
+        return (victoryFrame > 120) ? Signal::VictoryAchieved : Signal::None;
     }
 
     if (currentSubMenu != SubMenuState::None) {
@@ -191,7 +191,7 @@ PlayerTurnSystem::Signal PlayerTurnSystem::updateMercyMenu() {
         keysPressed->contains(sf::Keyboard::Scancode::Z))) {
         gameManager->playSound("./sounds/snd_select.wav");
         if (mercyConditionsMet) {
-            ui->setBattleText("* YOU WON!", 0);
+            ui->setBattleText("* YOU WON!\n* Froggit lives to croak another day.", 0);
             gameManager->playMusic("./sounds/snd_vaporized.wav", false);
             ui->setSubMenuText(0, "");
             player->setState("transparent");
@@ -214,7 +214,7 @@ void PlayerTurnSystem::enterFightSubMenu() {
     ui->executeFightAction(damage);
 
     if (ui->isEnemyDefeated()) {
-        ui->setBattleText("* YOU WON!", 0);
+        ui->setBattleText("* YOU WON!\n* Victory tastes a bit like regret.", 0);
         gameManager->playMusic("./sounds/snd_vaporized.wav", false);
         victorySequenceActive = true;
         victoryFrame = 0;
